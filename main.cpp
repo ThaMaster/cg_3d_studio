@@ -1,7 +1,13 @@
+#include <cmath>
+
+//          Copyright Joe Coder 2004 - 2006.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE_1_0.txt or copy at
+//          https://www.boost.org/LICENSE_1_0.txt)
+
 #include <boost/numeric/ublas/assignment.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
-#include <cmath>
 
 using namespace boost::numeric::ublas;
 
