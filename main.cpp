@@ -2,7 +2,6 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include <cmath>
-#include <chrono>
 
 using namespace boost::numeric::ublas;
 
@@ -11,21 +10,18 @@ matrix<float> scale(float sx, float sy, float sz);
 matrix<float> rotatez(float a);
 matrix<float> rotatey(float a);
 matrix<float> rotatex(float a);
+matrix<float> shear(float a, char on, char from);
 
 int main () {
-    matrix<float> m (4, 4);
-    int i = 0;
-    int j = 0;
-    while(i < m.size1()) {
-        m (i, j) = 1;
-        i++;
-        j++;
-    }
-    std::cout << translate(1,2,3) << std::endl;
-    std::cout << scale(1,2,3) << std::endl;
-    std::cout << rotatez(45 *(M_PI/180)) << std::endl;
-    std::cout << rotatey(45 *(M_PI/180)) << std::endl;
-    std::cout << rotatex(45 *(M_PI/180)) << std::endl;
+    std::cout << "Translation: " << translate(1,2,3) << std::endl;
+    std::cout << "Scale: " << scale(1,2,3) << std::endl;
+    std::cout << "Rotate-Z: " << rotatez(45 *(M_PI/180)) << std::endl;
+    std::cout << "Rotate-Y: " << rotatey(45 *(M_PI/180)) << std::endl;
+    std::cout << "Rotate-X: " << rotatex(45 *(M_PI/180)) << std::endl;
+    std::cout << "Sheer-XZ: " << shear(45 *(M_PI/180), 'x', 'z') << std::endl;
+    std::cout << "Prod of translation * scale: " << prod(translate(1,2,3), scale(1,2,3)) << std::endl;
+    std::cout << "Prod of scale * translation: " << prod(scale(1,2,3), translate(1,2,3)) << std::endl;
+    return 0;
 }
 
 matrix<float> translate(float dx, float dy, float dz) {
@@ -75,4 +71,37 @@ matrix<float> rotatex(float a) {
         0, sin(a), cos(a), 0,
         0, 0, 0, 1;
     return r_matrix;
+}
+
+matrix<float> shear(float a, char on, char from) {
+    matrix<float> sh_matrix (4,4);
+    sh_matrix <<=
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1;
+    switch (on) {
+        case 'x':
+            if(from == 'y') {
+                sh_matrix.insert_element(0, 1, tan(a));
+            } else if(from =='z') {
+                sh_matrix.insert_element(0, 2, tan(a));
+            }
+        break;
+        case 'y':
+            if(from == 'x') {
+                sh_matrix.insert_element(1, 0, tan(a));
+            } else if(from =='z') {
+                sh_matrix.insert_element(1, 2, tan(a));
+            }
+        break;
+        case 'z':
+            if(from == 'x') {
+                sh_matrix.insert_element(2, 0, tan(a));
+            } else if(from =='y') {
+                sh_matrix.insert_element(2, 1, tan(a));
+            }
+        break;
+    }
+    return sh_matrix;
 }
