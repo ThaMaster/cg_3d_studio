@@ -1,13 +1,16 @@
 #include <cmath>
 
+#define TINYOBJLOADER_IMPLEMENTATION // Defined exactly once!
+#include "tiny_obj_loader.h"
+
 //          Copyright Joe Coder 2004 - 2006.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          https://www.boost.org/LICENSE_1_0.txt)
-
 #include <boost/numeric/ublas/assignment.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
+
 
 using namespace boost::numeric::ublas;
 
@@ -27,6 +30,30 @@ int main () {
     std::cout << "Sheer-XZ: " << shear(45 *(M_PI/180), 'x', 'z') << std::endl;
     std::cout << "Prod of translation * scale: " << prod(translate(1,2,3), scale(1,2,3)) << std::endl;
     std::cout << "Prod of scale * translation: " << prod(scale(1,2,3), translate(1,2,3)) << std::endl;
+
+    // Create a Loader Object
+    std::string inputFile = "teddy.obj";
+    tinyobj::ObjReaderConfig reader_config;
+    reader_config.mtl_search_path = "./";
+    tinyobj::ObjReader reader;
+
+    if(!reader.ParseFromFile(inputFile, reader_config)) {
+        if(!reader.Error().empty()) {
+            std::cerr << "TinyObjReader: " << reader.Error();
+        }
+        exit(EXIT_FAILURE);
+    }
+    
+    if (!reader.Warning().empty()) {
+        std::cout << "TinyObjReader: " << reader.Warning();
+    }
+
+    auto& attrib = reader.GetAttrib();
+    auto& shapes = reader.GetShapes();
+    for(size_t i = 0; i < shapes[0].mesh.num_face_vertices.size(); i++) {
+        std::cout << attrib.vertices[0] << std::endl;
+    }
+    
     return 0;
 }
 

@@ -6,3 +6,4 @@
 #VS Code folder files.
 .vscode/c_cpp_properties.json
 .vscode/cg_3d_studio.code-workspace
+.vscode/settings.json
