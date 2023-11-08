@@ -233,7 +233,7 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
                     scVal = SCA_DEC_SPEED;
             break;
             case GLFW_KEY_O:
-                loadObject();
+                // Reset and prompt the user to write filename.
             break;
         } 
     } else if (action == GLFW_RELEASE) {

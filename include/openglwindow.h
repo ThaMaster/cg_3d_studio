@@ -29,13 +29,8 @@ public:
     void start();
     virtual void initialize() = 0;
     virtual void display() = 0;
-    virtual void rotate(float, glm::vec3) = 0;
-    virtual void translate(glm::vec3) = 0;
-    virtual void scale(float) = 0;
-    virtual void reset() = 0;
     virtual void transform(glm::vec3, glm::vec3, float) = 0;
     void displayNow();
-    void loadObject();
 
     const float ROT_SPEED = 10.0f;
     const float TRA_SPEED = 0.1f;

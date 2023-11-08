@@ -130,41 +130,21 @@ void GeometryRender::display()
 
 }
 
-void GeometryRender::rotate(float degree, glm::vec3 axis)
-{
-    matModel = glm::rotate(matModel, glm::radians(degree), axis);
-}
-
-void GeometryRender::translate(glm::vec3 axis)
-{
-    matModel = glm::translate(matModel, axis);
-}
-
-void GeometryRender::scale(float scVal)
-{
-    matModel = glm::scale(matModel, glm::vec3(scVal));
-}
-
-void GeometryRender::reset() 
-{
-    matModel = glm::mat4(1.0f);
-}
-
 void GeometryRender::transform(glm::vec3 rVals, glm::vec3 tVals, float scVal) 
 {
     glUseProgram(program);
     glBindVertexArray(vao);
 
     if(glm::compMax(tVals) != 0 || glm::compMin(tVals) != 0 ) {
-        translate(tVals);
+        matModel = glm::translate(matModel, tVals);
     }
 
     if(scVal != 0) {
-        scale(scVal);
+        matModel = glm::scale(matModel, glm::vec3(scVal));
     }
 
     if(glm::compMax(rVals) != 0 || glm::compMin(rVals) != 0 ) {
-        rotate(ROT_SPEED, rVals);
+        matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), rVals);
     }
 
     GLuint locModel;

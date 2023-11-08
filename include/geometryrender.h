@@ -17,10 +17,6 @@ public:
 
     void initialize();
     virtual void display() override;
-    void rotate(float, glm::vec3) override;
-    void translate(glm::vec3) override;
-    void scale(float) override;
-    void reset() override;
     void transform(glm::vec3, glm::vec3, float) override;
 
 private:
