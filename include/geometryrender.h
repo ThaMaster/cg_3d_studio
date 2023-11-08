@@ -8,8 +8,6 @@
 
 #include "openglwindow.h"
 
-typedef float Mat4x4[16];
-
 class GeometryRender : public OpenGLWindow
 {
 public:
@@ -19,6 +17,7 @@ public:
 
     void initialize();
     virtual void display() override;
+    float i = 0;
 
 private:
     GLuint program;
@@ -32,11 +31,11 @@ private:
     GLuint locVertices;
 
     // Geometry data
-    std::vector<Vec3> vertices;
+    std::vector<glm::vec3> vertices;
     std::vector<unsigned int> indices;
 
     // Model matrix
-    Mat4x4 matModel =  {1.0, 0.0, 0.0, 0.0, 
+    glm::mat4x4 matModel = {1.0, 0.0, 0.0, 0.0, 
                         0.0, 1.0, 0.0, 0.0,
                         0.0, 0.0, 1.0, 0.0,
                         0.0, 0.0, 0.0, 1.0};

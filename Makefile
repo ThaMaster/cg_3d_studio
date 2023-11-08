@@ -5,7 +5,7 @@
 #  Stefan Johansson, stefanj@cs.umu.se
 # 
 #
-SRC = ./
+SRC = ./source
 TARGET = workshop1
 BUILD_DIR = ./
 
@@ -25,7 +25,7 @@ DBFLAGS = -O0 -g3 -ggdb3 -fno-inline
 WFLAGS  = -Wall -std=c++11
 
 # Uncomment if you have local libraries or headers in subfolders lib and include
-#IFLAGS = #-Iinclude
+IFLAGS = -Iinclude
 #LFLAGS = #-Llib 
 
 ifeq ($(OS), Windows_NT)

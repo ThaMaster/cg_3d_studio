@@ -5,6 +5,7 @@
  */
 #pragma once
 
+#include <glm/glm.hpp>
 #include <iostream>
 #include <fstream>
 #include <memory>
@@ -14,19 +15,6 @@
 // Macro for index to buffer pointer conversion
 #define BUFFER_OFFSET(i) (reinterpret_cast<char*>(0 + (i)))
 
-// Vector and matrix operations
-struct Vec2 {
-    float values[2];
-public:
-    Vec2 (const float x, const float y){ this->values[0] = x; this->values[1] = y;}
-};
-
-// Vector and matrix operations
-struct Vec3 {
-    float values[3];
-public:
-    Vec3 (const float x, const float y, const float z){ this->values[0] = x; this->values[1] = y; this->values[2] = z;}
-};
 // *************
 // Debug macros
 

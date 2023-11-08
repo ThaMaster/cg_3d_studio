@@ -196,6 +196,14 @@ OpenGLWindow::resizeCallback(GLFWwindow* window, int width, int height)
     reshape(width, height);
 }
 
+void
+OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if(key == GLFW_KEY_K && action == GLFW_PRESS)
+        cout << "K KEY PRESS" << endl;
+        
+}
+
 // GLFW error callback function
 void 
 OpenGLWindow::errorCallback(int error, const char* description)

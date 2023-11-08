@@ -6,6 +6,7 @@
  */
 
 #include "geometryrender.h"
+#include <tiny_obj_loader.h>
 
 using namespace std;
 
@@ -16,7 +17,7 @@ void GeometryRender::initialize()
     glEnable(GL_DEPTH_TEST);
 
     // Create and initialize a program object with shaders
-    program = initProgram("vshader.glsl", "fshader.glsl");
+    program = initProgram("./source/shaders/vshader.glsl", "./source/shaders/fshader.glsl");
     // Installs the program object as part of current rendering state
     glUseProgram(program);
 
@@ -37,9 +38,14 @@ void GeometryRender::initialize()
     // Get locations of the attributes in the shader
     locVertices = glGetAttribLocation( program, "vPosition");
 
+    //matModel = glm::rotate(matModel, glm::radians(20.0f), glm::vec3(1,1,0));
+    // matModel = glm::translate(matModel, glm::vec3(1.0f, 0.0f, 0.0f));
+
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
-    glUniformMatrix4fv(locModel, 1, GL_TRUE, matModel);
+    // GLM already orders the arrays in column major, this means that we do not need to 
+    // transpose the given matrix. Therefore GLboolean transpose = GL_FALSE.
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
 
     glBindVertexArray(0);
     glUseProgram(0);
@@ -51,10 +57,10 @@ void GeometryRender::initialize()
 void GeometryRender::loadGeometry(void)
 {
     // Define vertices in array
-    vertices.push_back(Vec3(-0.5f, -0.75f, 0.0f));
-    vertices.push_back(Vec3( 0.0f,  0.75f, 0.0f));
-    vertices.push_back(Vec3( 0.5f, -0.75f, 0.0f));
-    vertices.push_back(Vec3( 0.0f, -0.0f, 1.0f));
+    vertices.push_back(glm::vec3(-0.5f, -0.75f, 0.0f));
+    vertices.push_back(glm::vec3( 0.0f,  0.75f, 0.0f));
+    vertices.push_back(glm::vec3( 0.5f, -0.75f, 0.0f));
+    vertices.push_back(glm::vec3( 0.0f, -0.0f, 1.0f));
 
     indices.push_back(0);
     indices.push_back(1);
@@ -82,7 +88,7 @@ void GeometryRender::loadGeometry(void)
     glEnableVertexAttribArray(locVertices);
 
     // Load object data to the array buffer and index array
-    size_t vSize = vertices.size()*sizeof(Vec3);
+    size_t vSize = vertices.size()*sizeof(glm::vec3);
     size_t iSize = indices.size()*sizeof(unsigned int);
     glBufferData( GL_ARRAY_BUFFER, vSize, vertices.data(), GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, indices.data(), GL_STATIC_DRAW );
@@ -111,8 +117,12 @@ void GeometryRender::display()
     glUseProgram(program);
     glBindVertexArray(vao);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    matModel = glm::rotate(matModel, glm::radians(1.0f), glm::vec3(0,1,0));
+    GLuint locModel;
+    locModel = glGetUniformLocation( program, "M");
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Call OpenGL to draw the triangle
     glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 

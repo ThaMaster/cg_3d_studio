@@ -6,9 +6,11 @@
  */
 #pragma once
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 #include "3dstudio.h"
 
 class OpenGLWindow
@@ -20,6 +22,7 @@ public:
     GLFWwindow* window() const;
     virtual void errorCallback(int error, const char* desc);
     virtual void resizeCallback(GLFWwindow* window, int width, int height);
+    virtual void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
     void start();
     virtual void initialize() = 0;
