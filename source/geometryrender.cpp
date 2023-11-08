@@ -7,6 +7,7 @@
 
 #include "geometryrender.h"
 #include <tiny_obj_loader.h>
+#include <glm/gtx/string_cast.hpp>
 
 using namespace std;
 
@@ -57,10 +58,10 @@ void GeometryRender::initialize()
 void GeometryRender::loadGeometry(void)
 {
     // Define vertices in array
-    vertices.push_back(glm::vec3(-0.5f, -0.75f, 0.0f));
-    vertices.push_back(glm::vec3( 0.0f,  0.75f, 0.0f));
-    vertices.push_back(glm::vec3( 0.5f, -0.75f, 0.0f));
-    vertices.push_back(glm::vec3( 0.0f, -0.0f, 1.0f));
+    vertices.push_back(glm::vec3( 0.5f,  0.0f, -0.75f));
+    vertices.push_back(glm::vec3( -0.5f,  0.0f, -0.75f));
+    vertices.push_back(glm::vec3( 0.0f, 0.0f, 0.75f));
+    vertices.push_back(glm::vec3( 0.0f, 0.75f, 1.0f));
 
     indices.push_back(0);
     indices.push_back(1);
@@ -117,11 +118,6 @@ void GeometryRender::display()
     glUseProgram(program);
     glBindVertexArray(vao);
 
-    matModel = glm::rotate(matModel, glm::radians(1.0f), glm::vec3(0,1,0));
-    GLuint locModel;
-    locModel = glGetUniformLocation( program, "M");
-    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Call OpenGL to draw the triangle
     glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
@@ -132,4 +128,48 @@ void GeometryRender::display()
     glBindVertexArray(0);
     glUseProgram(0);
 
+}
+
+void GeometryRender::rotate(float degree, glm::vec3 axis)
+{
+    matModel = glm::rotate(matModel, glm::radians(degree), axis);
+}
+
+void GeometryRender::translate(glm::vec3 axis)
+{
+    matModel = glm::translate(matModel, axis);
+}
+
+void GeometryRender::scale(float scVal)
+{
+    matModel = glm::scale(matModel, glm::vec3(scVal));
+}
+
+void GeometryRender::reset() 
+{
+    matModel = glm::mat4(1.0f);
+}
+
+void GeometryRender::transform(glm::vec3 rVals, glm::vec3 tVals, float scVal) 
+{
+    glUseProgram(program);
+    glBindVertexArray(vao);
+
+    if(glm::compMax(tVals) != 0 || glm::compMin(tVals) != 0 ) {
+        translate(tVals);
+    }
+
+    if(scVal != 0) {
+        scale(scVal);
+    }
+
+    if(glm::compMax(rVals) != 0 || glm::compMin(rVals) != 0 ) {
+        rotate(ROT_SPEED, rVals);
+    }
+
+    GLuint locModel;
+    locModel = glGetUniformLocation( program, "M");
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
+    glBindVertexArray(0);
+    glUseProgram(0);   
 }

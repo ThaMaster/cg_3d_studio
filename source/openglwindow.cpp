@@ -4,7 +4,6 @@
  *  Dept Computing Science, Umea University
  *  Stefan Johansson, stefanj@cs.umu.se
  */
-
 #include "openglwindow.h"
 
 using namespace std;
@@ -199,9 +198,51 @@ OpenGLWindow::resizeCallback(GLFWwindow* window, int width, int height)
 void
 OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if(key == GLFW_KEY_K && action == GLFW_PRESS)
-        cout << "K KEY PRESS" << endl;
-        
+
+    if(action == GLFW_PRESS) {
+        switch(key)
+        {
+            case GLFW_KEY_UP:
+                    rVals[0] = -1.0f;
+            break;
+            case GLFW_KEY_DOWN:
+                    rVals[0] = 1.0f;
+            break;
+            case GLFW_KEY_LEFT:
+                    rVals[1] = -1.0f;
+            break;
+            case GLFW_KEY_RIGHT:
+                    rVals[1] = 1.0f;
+            break;
+            case GLFW_KEY_J:
+                    tVals[0] = -TRA_SPEED;
+            break;
+            case GLFW_KEY_L:
+                    tVals[0] = TRA_SPEED;
+            break;
+            case GLFW_KEY_I:
+                    tVals[1] = TRA_SPEED;
+            break;
+            case GLFW_KEY_K:
+                    tVals[1] = -TRA_SPEED;
+            break;
+            case GLFW_KEY_KP_ADD:
+                    scVal = SCA_INC_SPEED;
+            break;
+            case GLFW_KEY_KP_SUBTRACT:
+                    scVal = SCA_DEC_SPEED;
+            break;
+            case GLFW_KEY_O:
+                loadObject();
+            break;
+        } 
+    } else if (action == GLFW_RELEASE) {
+        if(key == GLFW_KEY_J || key == GLFW_KEY_L) tVals[0] = 0.0f;
+        if(key == GLFW_KEY_K || key == GLFW_KEY_I) tVals[1] = 0.0f;
+        if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) rVals[0] = 0.0f;
+        if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) rVals[1] = 0.0f;
+        if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) scVal = 0.0f;
+    }
 }
 
 // GLFW error callback function
@@ -217,6 +258,7 @@ OpenGLWindow::start()
 {
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(glfwWindow)) {
+        transform(rVals, tVals, scVal);
         // Call display in geomentryRender to render the scene
         display();
         

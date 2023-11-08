@@ -9,9 +9,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/component_wise.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "3dstudio.h"
+
 
 class OpenGLWindow
 {
@@ -27,12 +29,28 @@ public:
     void start();
     virtual void initialize() = 0;
     virtual void display() = 0;
+    virtual void rotate(float, glm::vec3) = 0;
+    virtual void translate(glm::vec3) = 0;
+    virtual void scale(float) = 0;
+    virtual void reset() = 0;
+    virtual void transform(glm::vec3, glm::vec3, float) = 0;
     void displayNow();
+    void loadObject();
+
+    const float ROT_SPEED = 10.0f;
+    const float TRA_SPEED = 0.1f;
+    const float SCA_INC_SPEED = 1.1f;
+    const float SCA_DEC_SPEED = 0.9f;
+
 
 protected:
     bool checkOpenGLError() const;
     int width() const;
     int height() const;
+
+    glm::vec3 rVals = glm::vec3(0.0f,0.0f,0.0f);
+    glm::vec3 tVals = glm::vec3(0.0f,0.0f,0.0f);
+    float scVal = 0.0f;
 
     std::string readShaderSource(const std::string shaderFile) const;
     GLuint initProgram(const std::string vShaderFile, const std::string fShaderFile) const;
