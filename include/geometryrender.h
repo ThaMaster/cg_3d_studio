@@ -18,6 +18,7 @@ public:
     void initialize();
     virtual void display() override;
     void transform(glm::vec3, glm::vec3, float) override;
+    void reset() override;
 
 private:
     GLuint program;

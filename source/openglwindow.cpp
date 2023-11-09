@@ -203,34 +203,37 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
         switch(key)
         {
             case GLFW_KEY_UP:
-                    rVals[0] = -1.0f;
+                rVals[0] = -1.0f;
             break;
             case GLFW_KEY_DOWN:
-                    rVals[0] = 1.0f;
+                rVals[0] = 1.0f;
             break;
             case GLFW_KEY_LEFT:
-                    rVals[1] = -1.0f;
+                rVals[1] = -1.0f;
             break;
             case GLFW_KEY_RIGHT:
-                    rVals[1] = 1.0f;
+                rVals[1] = 1.0f;
             break;
             case GLFW_KEY_J:
-                    tVals[0] = -TRA_SPEED;
+                tVals[0] = -TRA_SPEED;
             break;
             case GLFW_KEY_L:
-                    tVals[0] = TRA_SPEED;
+                tVals[0] = TRA_SPEED;
             break;
             case GLFW_KEY_I:
-                    tVals[1] = TRA_SPEED;
+                tVals[1] = TRA_SPEED;
             break;
             case GLFW_KEY_K:
-                    tVals[1] = -TRA_SPEED;
+                tVals[1] = -TRA_SPEED;
             break;
             case GLFW_KEY_KP_ADD:
-                    scVal = SCA_INC_SPEED;
+                scVal = SCA_INC_SPEED;
             break;
             case GLFW_KEY_KP_SUBTRACT:
-                    scVal = SCA_DEC_SPEED;
+                scVal = SCA_DEC_SPEED;
+            break;
+            case GLFW_KEY_R:
+                resetObject = true;
             break;
             case GLFW_KEY_O:
                 // Reset and prompt the user to write filename.
@@ -242,6 +245,7 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
         if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) rVals[0] = 0.0f;
         if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) rVals[1] = 0.0f;
         if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) scVal = 0.0f;
+        if(key == GLFW_KEY_R) resetObject = false;
     }
 }
 

@@ -147,9 +147,25 @@ void GeometryRender::transform(glm::vec3 rVals, glm::vec3 tVals, float scVal)
         matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), rVals);
     }
 
+    if(resetObject) reset();
+
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
     glBindVertexArray(0);
     glUseProgram(0);   
+}
+
+void GeometryRender::reset()
+{
+    glUseProgram(program);
+    glBindVertexArray(vao);
+
+    matModel = glm::mat4(1.0f);
+
+    GLuint locModel;
+    locModel = glGetUniformLocation( program, "M");
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
+    glBindVertexArray(0);
+    glUseProgram(0);  
 }

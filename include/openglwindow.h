@@ -30,6 +30,7 @@ public:
     virtual void initialize() = 0;
     virtual void display() = 0;
     virtual void transform(glm::vec3, glm::vec3, float) = 0;
+    virtual void reset() = 0;
     void displayNow();
 
     const float ROT_SPEED = 10.0f;
@@ -46,6 +47,7 @@ protected:
     glm::vec3 rVals = glm::vec3(0.0f,0.0f,0.0f);
     glm::vec3 tVals = glm::vec3(0.0f,0.0f,0.0f);
     float scVal = 0.0f;
+    bool resetObject = false;
 
     std::string readShaderSource(const std::string shaderFile) const;
     GLuint initProgram(const std::string vShaderFile, const std::string fShaderFile) const;
