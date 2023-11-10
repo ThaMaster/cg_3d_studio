@@ -6,7 +6,6 @@
  */
 
 #include "geometryrender.h"
-#include <tiny_obj_loader.h>
 #include <glm/gtx/string_cast.hpp>
 
 using namespace std;
@@ -51,33 +50,15 @@ void GeometryRender::initialize()
     glBindVertexArray(0);
     glUseProgram(0);
 
+    Loader loader;
+
     loadGeometry();
 
 }
 
 void GeometryRender::loadGeometry(void)
 {
-    // Define vertices in array
-    vertices.push_back(glm::vec3( 0.5f,  0.0f, -0.75f));
-    vertices.push_back(glm::vec3( -0.5f,  0.0f, -0.75f));
-    vertices.push_back(glm::vec3( 0.0f, 0.0f, 0.75f));
-    vertices.push_back(glm::vec3( 0.0f, 0.75f, 0.0f));
-
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
-    
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(3);
-
-    indices.push_back(0);
-    indices.push_back(2);
-    indices.push_back(3);
-
-    indices.push_back(1);
-    indices.push_back(2);
-    indices.push_back(3);
+    loader.parseFile("./object_files/suzanne.obj");
 
     glUseProgram(program);
     glBindVertexArray(vao);
@@ -89,10 +70,10 @@ void GeometryRender::loadGeometry(void)
     glEnableVertexAttribArray(locVertices);
 
     // Load object data to the array buffer and index array
-    size_t vSize = vertices.size()*sizeof(glm::vec3);
-    size_t iSize = indices.size()*sizeof(unsigned int);
-    glBufferData( GL_ARRAY_BUFFER, vSize, vertices.data(), GL_STATIC_DRAW );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, indices.data(), GL_STATIC_DRAW );
+    size_t vSize = loader.vertexCoords[0].size()*sizeof(glm::vec3);
+    size_t iSize = loader.indices[0].size()*sizeof(unsigned int);
+    glBufferData( GL_ARRAY_BUFFER, vSize, loader.vertexCoords[0].data(), GL_STATIC_DRAW );
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, loader.indices[0].data(), GL_STATIC_DRAW );
 
     glBindVertexArray(0);
     glUseProgram(0);
@@ -120,7 +101,7 @@ void GeometryRender::display()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Call OpenGL to draw the triangle
-    glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+    glDrawElements(GL_TRIANGLES, static_cast<int>(loader.indices[0].size()), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
     // Not to be called in release...
     debugShader();
