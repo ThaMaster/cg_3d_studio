@@ -14,7 +14,6 @@
 #include <GLFW/glfw3.h>
 #include "3dstudio.h"
 
-
 class OpenGLWindow
 {
 public:
@@ -23,6 +22,8 @@ public:
         glm::vec3 tVals = glm::vec3(0.0f,0.0f,0.0f);
         float scVal = 0.0f;
         bool reset = false;
+        bool loadObject = false;
+        std::string objectName = "";
     } tInfo;
 
     OpenGLWindow(std::string title, int width, int height);
@@ -44,7 +45,6 @@ public:
     const float TRA_SPEED = 0.1f;
     const float SCA_INC_SPEED = 1.1f;
     const float SCA_DEC_SPEED = 0.9f;
-
 
 protected:
     bool checkOpenGLError() const;

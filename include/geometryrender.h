@@ -42,5 +42,5 @@ private:
 
     void debugShader(void) const;
 
-    void loadGeometry(void);
+    void loadGeometry(string fileName);
 };

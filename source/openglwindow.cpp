@@ -237,6 +237,8 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
             break;
             case GLFW_KEY_O:
                 // Reset and prompt the user to write filename.
+                tInfo.reset= true;
+                tInfo.loadObject = true;
             break;
         } 
     } else if (action == GLFW_RELEASE) {

@@ -1,5 +1,4 @@
 #define TINYOBJLOADER_IMPLEMENTATION
-
 #include "loader.h"
 #include <iostream>
 
@@ -89,14 +88,9 @@ void Loader::parseFile(string fileName)
 
 void Loader::normalizeCoords()
 {
+    float scale = 0;
     for(size_t s = 0; s < vertexCoords.size(); s++)
     {
-        for(size_t v = 0; v < vertexCoords[s].size(); v++)
-        {
-            // Normalze by dividing components wth vector length.
-            float len = glm::length(vertexCoords[s][v]);
-            glm::vec3 scaledVec = glm::vec3(vertexCoords[s][v].x/len, vertexCoords[s][v].y/len, vertexCoords[s][v].z/len);
-            vertexCoords[s][v] = scaledVec;
-        }
+        // NORMALIZE ALL SHAPES SOMEHOW!        
     }
 }

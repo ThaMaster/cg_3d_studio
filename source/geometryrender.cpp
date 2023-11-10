@@ -52,13 +52,14 @@ void GeometryRender::initialize()
 
     Loader loader;
 
-    loadGeometry();
-
+    loadGeometry("workshop_pyramid.obj");
 }
 
-void GeometryRender::loadGeometry(void)
+void GeometryRender::loadGeometry(string fileName)
 {
-    loader.parseFile("./object_files/suzanne.obj");
+    loader.parseFile("./object_files/" + fileName);
+    // Does nothing atm.
+    loader.normalizeCoords();
 
     glUseProgram(program);
     glBindVertexArray(vao);
@@ -129,6 +130,10 @@ void GeometryRender::transform(transformInfo tInfo)
     }
 
     if(tInfo.reset) reset();
+
+    if(tInfo.loadObject) {
+        loadGeometry("pyramid.obj");
+    }
 
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
