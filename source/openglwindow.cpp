@@ -203,49 +203,49 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
         switch(key)
         {
             case GLFW_KEY_UP:
-                rVals[0] = -1.0f;
+                tInfo.rVals[0] = -1.0f;
             break;
             case GLFW_KEY_DOWN:
-                rVals[0] = 1.0f;
+                tInfo.rVals[0] = 1.0f;
             break;
             case GLFW_KEY_LEFT:
-                rVals[1] = -1.0f;
+                tInfo.rVals[1] = -1.0f;
             break;
             case GLFW_KEY_RIGHT:
-                rVals[1] = 1.0f;
+                tInfo.rVals[1] = 1.0f;
             break;
             case GLFW_KEY_J:
-                tVals[0] = -TRA_SPEED;
+                tInfo.tVals[0] = -TRA_SPEED;
             break;
             case GLFW_KEY_L:
-                tVals[0] = TRA_SPEED;
+                tInfo.tVals[0] = TRA_SPEED;
             break;
             case GLFW_KEY_I:
-                tVals[1] = TRA_SPEED;
+                tInfo.tVals[1] = TRA_SPEED;
             break;
             case GLFW_KEY_K:
-                tVals[1] = -TRA_SPEED;
+                tInfo.tVals[1] = -TRA_SPEED;
             break;
             case GLFW_KEY_KP_ADD:
-                scVal = SCA_INC_SPEED;
+                tInfo.scVal = SCA_INC_SPEED;
             break;
             case GLFW_KEY_KP_SUBTRACT:
-                scVal = SCA_DEC_SPEED;
+                tInfo.scVal = SCA_DEC_SPEED;
             break;
             case GLFW_KEY_R:
-                resetObject = true;
+                tInfo.reset= true;
             break;
             case GLFW_KEY_O:
                 // Reset and prompt the user to write filename.
             break;
         } 
     } else if (action == GLFW_RELEASE) {
-        if(key == GLFW_KEY_J || key == GLFW_KEY_L) tVals[0] = 0.0f;
-        if(key == GLFW_KEY_K || key == GLFW_KEY_I) tVals[1] = 0.0f;
-        if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) rVals[0] = 0.0f;
-        if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) rVals[1] = 0.0f;
-        if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) scVal = 0.0f;
-        if(key == GLFW_KEY_R) resetObject = false;
+        if(key == GLFW_KEY_J || key == GLFW_KEY_L) tInfo.tVals[0] = 0.0f;
+        if(key == GLFW_KEY_K || key == GLFW_KEY_I) tInfo.tVals[1] = 0.0f;
+        if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) tInfo.rVals[0] = 0.0f;
+        if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) tInfo.rVals[1] = 0.0f;
+        if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) tInfo.scVal = 0.0f;
+        if(key == GLFW_KEY_R) tInfo.reset = false;
     }
 }
 
@@ -262,7 +262,7 @@ OpenGLWindow::start()
 {
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(glfwWindow)) {
-        transform(rVals, tVals, scVal);
+        transform(tInfo);
         // Call display in geomentryRender to render the scene
         display();
         

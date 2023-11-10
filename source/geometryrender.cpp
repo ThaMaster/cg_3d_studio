@@ -61,7 +61,7 @@ void GeometryRender::loadGeometry(void)
     vertices.push_back(glm::vec3( 0.5f,  0.0f, -0.75f));
     vertices.push_back(glm::vec3( -0.5f,  0.0f, -0.75f));
     vertices.push_back(glm::vec3( 0.0f, 0.0f, 0.75f));
-    vertices.push_back(glm::vec3( 0.0f, 0.75f, 1.0f));
+    vertices.push_back(glm::vec3( 0.0f, 0.75f, 0.0f));
 
     indices.push_back(0);
     indices.push_back(1);
@@ -130,24 +130,24 @@ void GeometryRender::display()
 
 }
 
-void GeometryRender::transform(glm::vec3 rVals, glm::vec3 tVals, float scVal) 
+void GeometryRender::transform(transformInfo tInfo) 
 {
     glUseProgram(program);
     glBindVertexArray(vao);
 
-    if(glm::compMax(tVals) != 0 || glm::compMin(tVals) != 0 ) {
-        matModel = glm::translate(matModel, tVals);
+    if(glm::compMax(tInfo.tVals) != 0 || glm::compMin(tInfo.tVals) != 0 ) {
+        matModel = glm::translate(matModel, tInfo.tVals);
     }
 
-    if(scVal != 0) {
-        matModel = glm::scale(matModel, glm::vec3(scVal));
+    if(tInfo.scVal != 0) {
+        matModel = glm::scale(matModel, glm::vec3(tInfo.scVal));
     }
 
-    if(glm::compMax(rVals) != 0 || glm::compMin(rVals) != 0 ) {
-        matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), rVals);
+    if(glm::compMax(tInfo.rVals) != 0 || glm::compMin(tInfo.rVals) != 0 ) {
+        matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), tInfo.rVals);
     }
 
-    if(resetObject) reset();
+    if(tInfo.reset) reset();
 
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");

@@ -6,7 +6,7 @@
 # 
 #
 SRC = ./source
-TARGET = workshop1
+TARGET = 3d_studio
 BUILD_DIR = ./
 
 # All source files (they can be listed explicitly if needed)
