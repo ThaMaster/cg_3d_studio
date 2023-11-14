@@ -13,7 +13,7 @@ class Loader
         void clearLoader();
         
         int numberOfObjects = 0;
-        string loadedFile;
+        string loadedFileName;
         bool objectLoadError = false;
         vector<vector<glm::vec3>> vertexCoords;
         vector<vector<unsigned int>> indices;

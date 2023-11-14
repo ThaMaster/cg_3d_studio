@@ -22,6 +22,7 @@ public:
     void reset() override;
     void loadObject();
     bool objectLoadError = false;
+    bool viewLines = false;
 
 private:
     GLuint program;

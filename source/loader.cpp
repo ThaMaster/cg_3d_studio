@@ -24,9 +24,8 @@ void Loader::parseFile(string fileName)
         cout << "\nWarning: \n";
         cout << "\tTinyObjReader: " << reader.Warning();
     }
-    
+
     objectLoadError = false;
-    loadedFile = fileName;
     auto& attrib = reader.GetAttrib();
     auto& shapes = reader.GetShapes();
     //auto& materials = reader.GetMaterials();

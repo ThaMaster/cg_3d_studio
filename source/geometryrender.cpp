@@ -51,6 +51,7 @@ void GeometryRender::initialize()
     glUseProgram(0);
 
     Loader loader;
+    loader.loadedFileName = "teddy.obj";
 
     loadGeometry("teddy.obj");
 }
@@ -65,9 +66,9 @@ void GeometryRender::loadGeometry(string fileName)
 
     glUseProgram(program);
     glBindVertexArray(vao);
-
+    
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+    
     // Set the pointers of locVertices to the right places
     glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(locVertices);
@@ -170,11 +171,12 @@ void GeometryRender::loadObject()
             loadGeometry(fileName);
             if(!objectLoadError) {
                 reset();
-                cout << "\nSuccessfully loaded \"" << fileName << "\"\n";
+                loader.loadedFileName = fileName;
+                cout << "\nSuccessfully loaded \"" << fileName << "\"\n\n";
             } else {
-                cout << "\nFailed to load \"" << fileName << ", returning.\"\n";
+                cout << "\nFailed to load \"" << fileName << "\", returning.\n\n";
             }
         } else {
-            cout << "\nNo file specified, returning.\n";
+            cout << "\nNo file specified, returning.\n\n";
         }
 }

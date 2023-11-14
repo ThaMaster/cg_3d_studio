@@ -203,16 +203,22 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
         switch(key)
         {
             case GLFW_KEY_UP:
-                tInfo.rVals[0] = -1.0f;
+                tInfo.rVals[0] = -ROT_SPEED;
             break;
             case GLFW_KEY_DOWN:
-                tInfo.rVals[0] = 1.0f;
+                tInfo.rVals[0] = ROT_SPEED;
             break;
             case GLFW_KEY_LEFT:
-                tInfo.rVals[1] = -1.0f;
+                tInfo.rVals[1] = -ROT_SPEED;
             break;
             case GLFW_KEY_RIGHT:
-                tInfo.rVals[1] = 1.0f;
+                tInfo.rVals[1] = ROT_SPEED;
+            break;
+            case GLFW_KEY_COMMA:
+                tInfo.rVals[2] = ROT_SPEED;
+            break;
+            case GLFW_KEY_PERIOD:
+                tInfo.rVals[2] = -ROT_SPEED;
             break;
             case GLFW_KEY_J:
                 tInfo.tVals[0] = -TRA_SPEED;
@@ -225,6 +231,12 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
             break;
             case GLFW_KEY_K:
                 tInfo.tVals[1] = -TRA_SPEED;
+            break;
+            case GLFW_KEY_Y:
+                tInfo.tVals[2] = TRA_SPEED;
+            break;
+            case GLFW_KEY_H:
+                tInfo.tVals[2] = -TRA_SPEED;
             break;
             case GLFW_KEY_KP_ADD:
                 tInfo.scVal = SCA_INC_SPEED;
@@ -243,11 +255,13 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
     } else if (action == GLFW_RELEASE) {
         if(key == GLFW_KEY_J || key == GLFW_KEY_L) tInfo.tVals[0] = 0.0f;
         if(key == GLFW_KEY_K || key == GLFW_KEY_I) tInfo.tVals[1] = 0.0f;
+        if(key == GLFW_KEY_Y || key == GLFW_KEY_H) tInfo.tVals[2] = 0.0f;
         if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) tInfo.rVals[0] = 0.0f;
         if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) tInfo.rVals[1] = 0.0f;
+        if(key == GLFW_KEY_COMMA || key == GLFW_KEY_PERIOD) tInfo.rVals[2] = 0.0f;
         if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) tInfo.scVal = 0.0f;
         if(key == GLFW_KEY_R) tInfo.reset = false; 
-        if(key == GLFW_KEY_O) tInfo.loadObject = false; 
+        if(key == GLFW_KEY_O) tInfo.loadObject = false;
     }
 }
 
