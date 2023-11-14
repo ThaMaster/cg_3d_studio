@@ -52,7 +52,7 @@ void GeometryRender::initialize()
 
     Loader loader;
 
-    loadGeometry("workshop_pyramid.obj");
+    loadGeometry("pokeball.obj");
 }
 
 void GeometryRender::loadGeometry(string fileName)

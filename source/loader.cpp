@@ -88,9 +88,19 @@ void Loader::parseFile(string fileName)
 
 void Loader::normalizeCoords()
 {
-    float scale = 0;
-    for(size_t s = 0; s < vertexCoords.size(); s++)
+    float largest_length = 0;
+    float new_length;
+    for(size_t s = 0; s < vertexCoords[0].size(); s++)
     {
-        // NORMALIZE ALL SHAPES SOMEHOW!        
+        new_length = sqrt(pow(vertexCoords[0][s].x, 2.0) + pow(vertexCoords[0][s].y, 2.0) + pow(vertexCoords[0][s].z, 2.0));
+        if(largest_length < new_length) {
+            largest_length = new_length; 
+        }    
     }
+
+    for(size_t s = 0; s < vertexCoords[0].size(); s++)
+    {
+        vertexCoords[0][s] /= largest_length;    
+    }
+
 }
