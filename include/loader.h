@@ -22,7 +22,6 @@ class Loader
 
     protected:
 
-
     private:
         float getLargestVertexLength(size_t);
 };
