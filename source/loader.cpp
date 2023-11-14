@@ -2,7 +2,25 @@
 #include "loader.h"
 #include <iostream>
 
-void Loader::parseFile(string fileName) 
+/**
+ * Parses a given object file and stores the different values in the loader class.
+ * 
+ * The function uses the tiny_obj_loader.h (https://github.com/tinyobjloader/tinyobjloader) 
+ * to handle the inital parsing of the file.
+ * 
+ * Attributes effected by method:
+ *      vertexCoords    - The all vertex coordinates for a shape.
+ *      indices         - The index of vertex coordinates for each face of a shape.
+ *      textureCoords   - The texture coordinates for each face of a shape.
+ *      colorValues     - The color values for each face of a shape.
+ *      vertexNormals   - The vertex normals for each face of a shape.
+ *      objectLoadError - Returns a true/false if a error has occured when trying to parse the file.
+ *  
+ * If any errors occur corresponding output will be sent without crashing the program.
+ * 
+ * @returns 
+ */
+bool Loader::parseFile(string fileName) 
 {
     tinyobj::ObjReaderConfig readerConfig;
     readerConfig.mtl_search_path = "./object_files";
@@ -14,18 +32,15 @@ void Loader::parseFile(string fileName)
         if (!reader.Error().empty()) {
             cout << "\nError: \n";
             cout << "\tTinyObjReader: " << reader.Error();
-            objectLoadError = true;
         }
         // If reader is unable to parse the file.
-        return;
+        return false;
     }
 
     if (!reader.Warning().empty()) {
         cout << "\nWarning: \n";
         cout << "\tTinyObjReader: " << reader.Warning();
     }
-
-    objectLoadError = false;
     auto& attrib = reader.GetAttrib();
     auto& shapes = reader.GetShapes();
     //auto& materials = reader.GetMaterials();
@@ -36,6 +51,7 @@ void Loader::parseFile(string fileName)
     textureCoords.resize(shapes.size());
     colorVals.resize(shapes.size());
     vertexNormals.resize(shapes.size());
+
     // Loop over shapes
     for (size_t s = 0; s < shapes.size(); s++) {
 
@@ -88,27 +104,53 @@ void Loader::parseFile(string fileName)
             shapes[s].mesh.material_ids[f];
         }
     }
+    return true;
 }
 
-void Loader::normalizeCoords()
+/**
+ * Normalizes all the shapes coordinates to fit inside the NDC cube.
+ * This will change the vertexCoords value in the loader class.
+ */
+void Loader::normalizeVertexCoords()
+{
+    for(size_t s = 0; s < vertexCoords.size(); s++) {
+
+        float largest_length = getLargestVertexLength(s);
+
+        for(size_t v = 0; v < vertexCoords[s].size(); v++)
+        {
+            vertexCoords[s][v] /= largest_length;    
+        }
+    }
+}
+
+/**
+ * Gets the largest length of a vector in a selected shape.
+ * 
+ * @param s The shape that is examined.
+ * @returns largest length of vertex in the selected shape.
+ */
+float Loader::getLargestVertexLength(size_t s)
 {
     float largest_length = 0;
     float new_length;
-    for(size_t s = 0; s < vertexCoords[0].size(); s++)
+
+    for(size_t v = 0; v < vertexCoords[s].size(); v++)
     {
-        new_length = sqrt(pow(vertexCoords[0][s].x, 2.0) + pow(vertexCoords[0][s].y, 2.0) + pow(vertexCoords[0][s].z, 2.0));
+        // Calculate the length of the current vector.
+        new_length = sqrt(pow(vertexCoords[s][v].x, 2.0) + pow(vertexCoords[s][v].y, 2.0) + pow(vertexCoords[s][v].z, 2.0));
+
         if(largest_length < new_length) {
             largest_length = new_length; 
         }    
     }
 
-    for(size_t s = 0; s < vertexCoords[0].size(); s++)
-    {
-        vertexCoords[0][s] /= largest_length;    
-    }
-
+    return largest_length;
 }
 
+/**
+ * Clears the object data in the loader object.
+ */
 void Loader::clearLoader()
 {
     vertexCoords.clear();

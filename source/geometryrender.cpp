@@ -59,28 +59,28 @@ void GeometryRender::initialize()
 void GeometryRender::loadGeometry(string fileName)
 {
     loader.clearLoader();
-    loader.parseFile("./object_files/" + fileName);
-    // Does nothing atm.
-    loader.normalizeCoords();
-    objectLoadError = loader.objectLoadError;
+    objectLoadSuccess = loader.parseFile("./object_files/" + fileName);
+    if(objectLoadSuccess) {
+        loader.normalizeVertexCoords();
 
-    glUseProgram(program);
-    glBindVertexArray(vao);
-    
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    
-    // Set the pointers of locVertices to the right places
-    glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-    glEnableVertexAttribArray(locVertices);
+        glUseProgram(program);
+        glBindVertexArray(vao);
+        
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        
+        // Set the pointers of locVertices to the right places
+        glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+        glEnableVertexAttribArray(locVertices);
 
-    // Load object data to the array buffer and index array
-    size_t vSize = loader.vertexCoords[0].size()*sizeof(glm::vec3);
-    size_t iSize = loader.indices[0].size()*sizeof(unsigned int);
-    glBufferData( GL_ARRAY_BUFFER, vSize, loader.vertexCoords[0].data(), GL_STATIC_DRAW );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, loader.indices[0].data(), GL_STATIC_DRAW );
+        // Load object data to the array buffer and index array
+        size_t vSize = loader.vertexCoords[0].size()*sizeof(glm::vec3);
+        size_t iSize = loader.indices[0].size()*sizeof(unsigned int);
+        glBufferData( GL_ARRAY_BUFFER, vSize, loader.vertexCoords[0].data(), GL_STATIC_DRAW );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, loader.indices[0].data(), GL_STATIC_DRAW );
 
-    glBindVertexArray(0);
-    glUseProgram(0);
+        glBindVertexArray(0);
+        glUseProgram(0);
+    }
 }
 
 // Check if any error has been reported from the shader
@@ -115,28 +115,29 @@ void GeometryRender::display()
 
 }
 
+/**
+ * 
+ * 
+ * @param tInfo 
+ */
 void GeometryRender::transform(transformInfo tInfo) 
 {
     glUseProgram(program);
     glBindVertexArray(vao);
 
-    if(glm::compMax(tInfo.tVals) != 0 || glm::compMin(tInfo.tVals) != 0 ) {
+    if(glm::compMax(tInfo.tVals) != 0 || glm::compMin(tInfo.tVals) != 0 )
         matModel = glm::translate(matModel, tInfo.tVals);
-    }
 
-    if(tInfo.scVal != 0) {
+    if(tInfo.scVal != 0)
         matModel = glm::scale(matModel, glm::vec3(tInfo.scVal));
-    }
 
-    if(glm::compMax(tInfo.rVals) != 0 || glm::compMin(tInfo.rVals) != 0 ) {
+    if(glm::compMax(tInfo.rVals) != 0 || glm::compMin(tInfo.rVals) != 0 )
         matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), tInfo.rVals);
-    }
 
     if(tInfo.reset) reset();
 
-    if(tInfo.loadObject) {
-        loadObject();
-    }
+    if(tInfo.loadObject)
+        loadObjectFromTerminal();
 
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
@@ -145,6 +146,10 @@ void GeometryRender::transform(transformInfo tInfo)
     glUseProgram(0);   
 }
 
+/**
+ * Resets the model matrix to the identity matrix. This resets the position of
+ * all the transformations done to the object in the program.
+ */
 void GeometryRender::reset()
 {
     glUseProgram(program);
@@ -159,7 +164,17 @@ void GeometryRender::reset()
     glUseProgram(0);  
 }
 
-void GeometryRender::loadObject() 
+/**
+ * Prompts the user to write the name of the object file that is to be loaded into the program.
+ * The search path for the files starts in the object_files directory.
+ * 
+ * The function handles if the input string is empty and gives correct feedback if other 
+ * errors have occurd. If there are any warnings these will be displayed but the object will
+ * still load into the program.
+ * 
+ * If no problems prasing errors are present, load the geometry of the object into the program.
+ */
+void GeometryRender::loadObjectFromTerminal() 
 {
     string fileName;
         cout << "Write the name of the file: ";
@@ -169,7 +184,7 @@ void GeometryRender::loadObject()
         if(!fileName.empty()) {
             cout << "\nLoading " << fileName << "...\n";
             loadGeometry(fileName);
-            if(!objectLoadError) {
+            if(objectLoadSuccess) {
                 reset();
                 loader.loadedFileName = fileName;
                 cout << "\nSuccessfully loaded \"" << fileName << "\"\n\n";

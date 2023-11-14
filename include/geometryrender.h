@@ -20,9 +20,8 @@ public:
     virtual void display() override;
     void transform(transformInfo) override;
     void reset() override;
-    void loadObject();
-    bool objectLoadError = false;
-    bool viewLines = false;
+    void loadObjectFromTerminal();
+    bool objectLoadSuccess;
 
 private:
     GLuint program;

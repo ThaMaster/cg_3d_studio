@@ -8,13 +8,12 @@ using namespace std;
 class Loader 
 {   
     public:
-        void parseFile(string);
-        void normalizeCoords();
+        bool parseFile(string);
+        void normalizeVertexCoords();
         void clearLoader();
-        
-        int numberOfObjects = 0;
+
         string loadedFileName;
-        bool objectLoadError = false;
+
         vector<vector<glm::vec3>> vertexCoords;
         vector<vector<unsigned int>> indices;
         vector<vector<glm::vec3>> vertexNormals;
@@ -22,5 +21,8 @@ class Loader
         vector<vector<glm::vec3>> colorVals;
 
     protected:
+
+
     private:
+        float getLargestVertexLength(size_t);
 };
