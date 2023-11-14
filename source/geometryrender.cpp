@@ -52,14 +52,16 @@ void GeometryRender::initialize()
 
     Loader loader;
 
-    loadGeometry("pokeball.obj");
+    loadGeometry("teddy.obj");
 }
 
 void GeometryRender::loadGeometry(string fileName)
 {
+    loader.clearLoader();
     loader.parseFile("./object_files/" + fileName);
     // Does nothing atm.
     loader.normalizeCoords();
+    objectLoadError = loader.objectLoadError;
 
     glUseProgram(program);
     glBindVertexArray(vao);
@@ -132,7 +134,7 @@ void GeometryRender::transform(transformInfo tInfo)
     if(tInfo.reset) reset();
 
     if(tInfo.loadObject) {
-        loadGeometry("pyramid.obj");
+        loadObject();
     }
 
     GLuint locModel;
@@ -154,4 +156,25 @@ void GeometryRender::reset()
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
     glBindVertexArray(0);
     glUseProgram(0);  
+}
+
+void GeometryRender::loadObject() 
+{
+    string fileName;
+        cout << "Write the name of the file: ";
+
+        getline(cin, fileName);
+
+        if(!fileName.empty()) {
+            cout << "\nLoading " << fileName << "...\n";
+            loadGeometry(fileName);
+            if(!objectLoadError) {
+                reset();
+                cout << "\nSuccessfully loaded \"" << fileName << "\"\n";
+            } else {
+                cout << "\nFailed to load \"" << fileName << ", returning.\"\n";
+            }
+        } else {
+            cout << "\nNo file specified, returning.\n";
+        }
 }

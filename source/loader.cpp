@@ -12,16 +12,21 @@ void Loader::parseFile(string fileName)
     if(!reader.ParseFromFile(fileName, readerConfig)) {
         // If reader detects known error.
         if (!reader.Error().empty()) {
-            cerr << "TinyObjReader: " << reader.Error();
+            cout << "\nError: \n";
+            cout << "\tTinyObjReader: " << reader.Error();
+            objectLoadError = true;
         }
         // If reader is unable to parse the file.
-        exit(1);
+        return;
     }
 
     if (!reader.Warning().empty()) {
-        cout << "TinyObjReader: " << reader.Warning();
+        cout << "\nWarning: \n";
+        cout << "\tTinyObjReader: " << reader.Warning();
     }
-
+    
+    objectLoadError = false;
+    loadedFile = fileName;
     auto& attrib = reader.GetAttrib();
     auto& shapes = reader.GetShapes();
     //auto& materials = reader.GetMaterials();
@@ -103,4 +108,13 @@ void Loader::normalizeCoords()
         vertexCoords[0][s] /= largest_length;    
     }
 
+}
+
+void Loader::clearLoader()
+{
+    vertexCoords.clear();
+    indices.clear();
+    vertexNormals.clear();
+    textureCoords.clear();
+    colorVals.clear();
 }

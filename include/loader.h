@@ -10,9 +10,11 @@ class Loader
     public:
         void parseFile(string);
         void normalizeCoords();
+        void clearLoader();
         
         int numberOfObjects = 0;
-
+        string loadedFile;
+        bool objectLoadError = false;
         vector<vector<glm::vec3>> vertexCoords;
         vector<vector<unsigned int>> indices;
         vector<vector<glm::vec3>> vertexNormals;
