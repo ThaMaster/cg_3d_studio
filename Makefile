@@ -6,7 +6,7 @@
 # 
 #
 SRC = ./source
-TARGET = 3d_studio
+TARGET = 3d_studio.exe
 BUILD_DIR = ./
 
 # All source files (they can be listed explicitly if needed)
