@@ -43,6 +43,7 @@ void GeometryRender::initialize()
 
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
+
     // GLM already orders the arrays in column major, this means that we do not need to 
     // transpose the given matrix. Therefore GLboolean transpose = GL_FALSE.
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
@@ -51,16 +52,23 @@ void GeometryRender::initialize()
     glUseProgram(0);
 
     Loader loader;
-    loader.loadedFileName = "teddy.obj";
-
+    // Load inital object on startup.
     loadGeometry("teddy.obj");
 }
 
+/**
+ * Loads the object data to the arraybuffer and indices to the index array
+ * to prepare the object to be shown.
+ * 
+ * @param fileName The name of the *.obj file to load the geometry from.
+ */
 void GeometryRender::loadGeometry(string fileName)
 {
     loader.clearLoader();
-    objectLoadSuccess = loader.parseFile("./object_files/" + fileName);
-    if(objectLoadSuccess) {
+    objectParseSuccess = loader.parseFile("./object_files/" + fileName);
+    // Only load the object if it successfully parsed the object file.
+    if(objectParseSuccess) {
+        loader.loadedFileName = fileName;
         loader.normalizeVertexCoords();
 
         glUseProgram(program);
@@ -73,11 +81,13 @@ void GeometryRender::loadGeometry(string fileName)
         glEnableVertexAttribArray(locVertices);
 
         // Load object data to the array buffer and index array
+        
         size_t vSize = loader.vertexCoords[0].size()*sizeof(glm::vec3);
         size_t iSize = loader.indices[0].size()*sizeof(unsigned int);
         glBufferData( GL_ARRAY_BUFFER, vSize, loader.vertexCoords[0].data(), GL_STATIC_DRAW );
         glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, loader.indices[0].data(), GL_STATIC_DRAW );
-
+        
+        
         glBindVertexArray(0);
         glUseProgram(0);
     }
@@ -94,7 +104,6 @@ void GeometryRender::debugShader(void) const
         glGetProgramInfoLog( program, logSize, nullptr, &(logMsg[0]) );
         std::cerr << "Shader info log: " << logMsg << std::endl;
     }
-
 }
 
 // Render object
@@ -104,40 +113,56 @@ void GeometryRender::display()
     glBindVertexArray(vao);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    
     // Call OpenGL to draw the triangle
     glDrawElements(GL_TRIANGLES, static_cast<int>(loader.indices[0].size()), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+    
 
     // Not to be called in release...
     debugShader();
 
     glBindVertexArray(0);
     glUseProgram(0);
-
 }
 
 /**
+ * Updates the information regarding the object in the program. 
  * 
+ * The information includes:
+ *      - Translations
+ *      - Scaling
+ *      - Rotations
+ *      - Resetting the model matrix
+ *      - Load a new object in the program
  * 
- * @param tInfo 
+ * This function runs each time a callback is detected to avoid unnecessary updates.
+ * 
+ * @param oInfo Struct containing the different flags and values to 
+ *              update the object in the program.
  */
-void GeometryRender::transform(transformInfo tInfo) 
+void GeometryRender::updateObject(objectInfo oInfo) 
 {
     glUseProgram(program);
     glBindVertexArray(vao);
 
-    if(glm::compMax(tInfo.tVals) != 0 || glm::compMin(tInfo.tVals) != 0 )
-        matModel = glm::translate(matModel, tInfo.tVals);
+    // Check translation.
+    if(glm::compMax(oInfo.tVals) != 0 || glm::compMin(oInfo.tVals) != 0 )
+        matModel = glm::translate(matModel, oInfo.tVals);
 
-    if(tInfo.scVal != 0)
-        matModel = glm::scale(matModel, glm::vec3(tInfo.scVal));
+    // Check scaling.
+    if(oInfo.scVal != 0)
+        matModel = glm::scale(matModel, glm::vec3(oInfo.scVal));
 
-    if(glm::compMax(tInfo.rVals) != 0 || glm::compMin(tInfo.rVals) != 0 )
-        matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), tInfo.rVals);
+    // Check rotation.
+    if(glm::compMax(oInfo.rVals) != 0 || glm::compMin(oInfo.rVals) != 0 )
+        matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), oInfo.rVals);
 
-    if(tInfo.reset) reset();
+    // Check if object should be reset.
+    if(oInfo.reset) reset();
 
-    if(tInfo.loadObject)
-        loadObjectFromTerminal();
+    // Check if new object should be loaded.
+    if(oInfo.loadObject) loadObjectFromTerminal();
 
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
@@ -155,6 +180,7 @@ void GeometryRender::reset()
     glUseProgram(program);
     glBindVertexArray(vao);
 
+    // Reset the model matrix to the identity matrix.
     matModel = glm::mat4(1.0f);
 
     GLuint locModel;
@@ -177,21 +203,18 @@ void GeometryRender::reset()
 void GeometryRender::loadObjectFromTerminal() 
 {
     string fileName;
-        cout << "Write the name of the file: ";
-
-        getline(cin, fileName);
-
-        if(!fileName.empty()) {
-            cout << "\nLoading " << fileName << "...\n";
-            loadGeometry(fileName);
-            if(objectLoadSuccess) {
-                reset();
-                loader.loadedFileName = fileName;
-                cout << "\nSuccessfully loaded \"" << fileName << "\"\n\n";
-            } else {
-                cout << "\nFailed to load \"" << fileName << "\", returning.\n\n";
-            }
+    cout << "Write the name of the file: ";
+    getline(cin, fileName);
+    if(!fileName.empty()) {
+        cout << "\nLoading " << fileName << "...\n";
+        loadGeometry(fileName);
+        if(objectParseSuccess) {
+            reset();
+            cout << "\nSuccessfully loaded \"" << fileName << "\"\n\n";
         } else {
-            cout << "\nNo file specified, returning.\n\n";
+            cout << "\nFailed to load \"" << fileName << "\", returning.\n\n";
         }
+    } else {
+        cout << "\nNo file specified, returning.\n\n";
+    }
 }

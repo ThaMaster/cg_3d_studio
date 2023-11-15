@@ -18,10 +18,9 @@ public:
 
     void initialize();
     virtual void display() override;
-    void transform(transformInfo) override;
+    void updateObject(objectInfo) override;
     void reset() override;
     void loadObjectFromTerminal();
-    bool objectLoadSuccess;
 
 private:
     GLuint program;
@@ -41,6 +40,8 @@ private:
                         0.0, 1.0, 0.0, 0.0,
                         0.0, 0.0, 1.0, 0.0,
                         0.0, 0.0, 0.0, 1.0};
+
+    bool objectParseSuccess;
 
     void debugShader(void) const;
 

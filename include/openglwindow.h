@@ -17,14 +17,14 @@
 class OpenGLWindow
 {
 public:
-    struct transformInfo {
+    struct objectInfo {
         glm::vec3 rVals = glm::vec3(0.0f,0.0f,0.0f);
         glm::vec3 tVals = glm::vec3(0.0f,0.0f,0.0f);
         float scVal = 0.0f;
         bool reset = false;
         bool loadObject = false;
         std::string objectName = "";
-    } tInfo;
+    } oInfo;
 
     OpenGLWindow(std::string title, int width, int height);
     ~OpenGLWindow();
@@ -37,7 +37,7 @@ public:
     void start();
     virtual void initialize() = 0;
     virtual void display() = 0;
-    virtual void transform(transformInfo) = 0;
+    virtual void updateObject(objectInfo) = 0;
     virtual void reset() = 0;
     void displayNow();
 

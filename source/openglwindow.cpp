@@ -198,70 +198,44 @@ OpenGLWindow::resizeCallback(GLFWwindow* window, int width, int height)
 void
 OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-
-    if(action == GLFW_PRESS) {
+    if(action == GLFW_PRESS) 
+    {
+        // Detect which key has been pressed.
         switch(key)
         {
-            case GLFW_KEY_UP:
-                tInfo.rVals[0] = -ROT_SPEED;
-            break;
-            case GLFW_KEY_DOWN:
-                tInfo.rVals[0] = ROT_SPEED;
-            break;
-            case GLFW_KEY_LEFT:
-                tInfo.rVals[1] = -ROT_SPEED;
-            break;
-            case GLFW_KEY_RIGHT:
-                tInfo.rVals[1] = ROT_SPEED;
-            break;
-            case GLFW_KEY_COMMA:
-                tInfo.rVals[2] = ROT_SPEED;
-            break;
-            case GLFW_KEY_PERIOD:
-                tInfo.rVals[2] = -ROT_SPEED;
-            break;
-            case GLFW_KEY_J:
-                tInfo.tVals[0] = -TRA_SPEED;
-            break;
-            case GLFW_KEY_L:
-                tInfo.tVals[0] = TRA_SPEED;
-            break;
-            case GLFW_KEY_I:
-                tInfo.tVals[1] = TRA_SPEED;
-            break;
-            case GLFW_KEY_K:
-                tInfo.tVals[1] = -TRA_SPEED;
-            break;
-            case GLFW_KEY_Y:
-                tInfo.tVals[2] = TRA_SPEED;
-            break;
-            case GLFW_KEY_H:
-                tInfo.tVals[2] = -TRA_SPEED;
-            break;
-            case GLFW_KEY_KP_ADD:
-                tInfo.scVal = SCA_INC_SPEED;
-            break;
-            case GLFW_KEY_KP_SUBTRACT:
-                tInfo.scVal = SCA_DEC_SPEED;
-            break;
-            case GLFW_KEY_R:
-                tInfo.reset= true;
-            break;
-            case GLFW_KEY_O:
-                // Reset and prompt the user to write filename.
-                tInfo.loadObject = true;
-            break;
+            // Detect Rotation keys.
+            case GLFW_KEY_UP: oInfo.rVals[0] = -ROT_SPEED; break;
+            case GLFW_KEY_DOWN:oInfo.rVals[0] = ROT_SPEED; break; 
+            case GLFW_KEY_LEFT: oInfo.rVals[1] = -ROT_SPEED; break;
+            case GLFW_KEY_RIGHT: oInfo.rVals[1] = ROT_SPEED; break;
+            case GLFW_KEY_COMMA: oInfo.rVals[2] = ROT_SPEED; break;
+            case GLFW_KEY_PERIOD: oInfo.rVals[2] = -ROT_SPEED; break;
+            // Detect Translation keys.
+            case GLFW_KEY_J: oInfo.tVals[0] = -TRA_SPEED; break;
+            case GLFW_KEY_L: oInfo.tVals[0] = TRA_SPEED; break;
+            case GLFW_KEY_I: oInfo.tVals[1] = TRA_SPEED; break;
+            case GLFW_KEY_K: oInfo.tVals[1] = -TRA_SPEED; break; 
+            case GLFW_KEY_Y: oInfo.tVals[2] = TRA_SPEED; break;
+            case GLFW_KEY_H: oInfo.tVals[2] = -TRA_SPEED; break;
+            // Detect Scaling keys.
+            case GLFW_KEY_KP_ADD: oInfo.scVal = SCA_INC_SPEED; break;
+            case GLFW_KEY_KP_SUBTRACT: oInfo.scVal = SCA_DEC_SPEED; break;
+            // Detect reset key.
+            case GLFW_KEY_R: oInfo.reset= true; break;
+            // Detect load key.
+            case GLFW_KEY_O: oInfo.loadObject = true; break;
         } 
     } else if (action == GLFW_RELEASE) {
-        if(key == GLFW_KEY_J || key == GLFW_KEY_L) tInfo.tVals[0] = 0.0f;
-        if(key == GLFW_KEY_K || key == GLFW_KEY_I) tInfo.tVals[1] = 0.0f;
-        if(key == GLFW_KEY_Y || key == GLFW_KEY_H) tInfo.tVals[2] = 0.0f;
-        if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) tInfo.rVals[0] = 0.0f;
-        if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) tInfo.rVals[1] = 0.0f;
-        if(key == GLFW_KEY_COMMA || key == GLFW_KEY_PERIOD) tInfo.rVals[2] = 0.0f;
-        if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) tInfo.scVal = 0.0f;
-        if(key == GLFW_KEY_R) tInfo.reset = false; 
-        if(key == GLFW_KEY_O) tInfo.loadObject = false;
+        // Reset values if key is released.
+        if(key == GLFW_KEY_J || key == GLFW_KEY_L) oInfo.tVals[0] = 0.0f;
+        if(key == GLFW_KEY_K || key == GLFW_KEY_I) oInfo.tVals[1] = 0.0f;
+        if(key == GLFW_KEY_Y || key == GLFW_KEY_H) oInfo.tVals[2] = 0.0f;
+        if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) oInfo.rVals[0] = 0.0f;
+        if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) oInfo.rVals[1] = 0.0f;
+        if(key == GLFW_KEY_COMMA || key == GLFW_KEY_PERIOD) oInfo.rVals[2] = 0.0f;
+        if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) oInfo.scVal = 0.0f;
+        if(key == GLFW_KEY_R) oInfo.reset = false; 
+        if(key == GLFW_KEY_O) oInfo.loadObject = false;
     }
 }
 
@@ -278,7 +252,7 @@ OpenGLWindow::start()
 {
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(glfwWindow)) {
-        transform(tInfo);
+        updateObject(oInfo);
         // Call display in geomentryRender to render the scene
         display();
         
@@ -300,6 +274,13 @@ void OpenGLWindow::displayNow()
     display();
 }
 
+/**
+ * Reshape the GLFW window if the window is resized.
+ * 
+ * @param width The new width to reshape the window to.
+ * @param height The new height to reshape the window to.
+ * 
+ */
 void OpenGLWindow::reshape(const int width, const int height) const
 {
     if (glfwGetCurrentContext() == nullptr) 

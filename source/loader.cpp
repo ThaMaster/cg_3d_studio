@@ -18,13 +18,12 @@
  *  
  * If any errors occur corresponding output will be sent without crashing the program.
  * 
- * @returns 
+ * @returns true/false if the given object file could be parsed.
  */
 bool Loader::parseFile(string fileName) 
 {
     tinyobj::ObjReaderConfig readerConfig;
     readerConfig.mtl_search_path = "./object_files";
-
     tinyobj::ObjReader reader;
 
     if(!reader.ParseFromFile(fileName, readerConfig)) {
@@ -45,14 +44,14 @@ bool Loader::parseFile(string fileName)
     auto& shapes = reader.GetShapes();
     //auto& materials = reader.GetMaterials();
     
-    // Allocate the number of shapes.
+    // Allocate the number of shapes for the data vectors.
     vertexCoords.resize(shapes.size());
     indices.resize(shapes.size());
     textureCoords.resize(shapes.size());
     colorVals.resize(shapes.size());
     vertexNormals.resize(shapes.size());
 
-    // Loop over shapes
+    // Loop over object shapes
     for (size_t s = 0; s < shapes.size(); s++) {
 
         size_t index_offset = 0;
@@ -61,7 +60,10 @@ bool Loader::parseFile(string fileName)
 
         // Store all vertex coordinates
         for (size_t i = 0; i < attrib.vertices.size(); i+=3) {
-                vertexCoords[s].push_back(glm::vec3(attrib.vertices[i], attrib.vertices[i+1], attrib.vertices[i+2]));
+                vertexCoords[s].push_back(glm::vec3(
+                    attrib.vertices[i], 
+                    attrib.vertices[i+1], 
+                    attrib.vertices[i+2]));
         }
 
         // Loop over faces(polygon)
@@ -79,7 +81,10 @@ bool Loader::parseFile(string fileName)
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
                 if (idx.normal_index >= 0) {
                     vOffset = 3*size_t(idx.normal_index);
-                    vertexNormals[s].push_back(glm::vec3(attrib.normals[vOffset], attrib.normals[vOffset+1], attrib.normals[vOffset+2]));
+                    vertexNormals[s].push_back(glm::vec3(
+                        attrib.normals[vOffset], 
+                        attrib.normals[vOffset+1], 
+                        attrib.normals[vOffset+2]));
                 }
             }
 
@@ -88,14 +93,20 @@ bool Loader::parseFile(string fileName)
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
                 if (idx.texcoord_index >= 0) {
                     vOffset = 2*size_t(idx.texcoord_index);
-                    textureCoords[s].push_back(glm::vec3(attrib.texcoords[vOffset], attrib.texcoords[vOffset+1], attrib.texcoords[vOffset+2]));
+                    textureCoords[s].push_back(glm::vec3(
+                        attrib.texcoords[vOffset], 
+                        attrib.texcoords[vOffset+1], 
+                        attrib.texcoords[vOffset+2]));
                 }
             }
 
             for (size_t v = 0; v < fv; v++) {
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
                 vOffset = 3*size_t(idx.vertex_index);
-                colorVals[s].push_back(glm::vec3(attrib.colors[vOffset], attrib.colors[vOffset+1], attrib.colors[vOffset+2]));
+                colorVals[s].push_back(glm::vec3(
+                    attrib.colors[vOffset], 
+                    attrib.colors[vOffset+1], 
+                    attrib.colors[vOffset+2]));
             }
 
             index_offset += fv;
@@ -103,6 +114,7 @@ bool Loader::parseFile(string fileName)
             // per-face material
             shapes[s].mesh.material_ids[f];
         }
+        numberOfObjects++;
     }
     return true;
 }

@@ -12,7 +12,6 @@ OpenGLWindow* glfwCallbackManager::app = nullptr;
 
 int main(int argc, char **argv)
 {
-
     GeometryRender app("Workshop 1", 1024, 768);
     glfwCallbackManager::initCallbacks(&app);
     app.initialize();
