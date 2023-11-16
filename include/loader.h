@@ -48,12 +48,11 @@ class Loader
         vector<vector<glm::vec3>> colorVals;
 
         // Number of objects that are stored in the loader.
-        size_t numberOfObjects = 0;
+        size_t numberOfShapes = 0;
 
     protected:
 
-    private:
-
+    private:        
         // Searches a shapes vertices and finds the longest vector lenght
         float getLargestVertexLength(size_t);
 };

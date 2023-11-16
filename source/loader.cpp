@@ -22,6 +22,7 @@
  */
 bool Loader::parseFile(string fileName) 
 {
+    numberOfShapes = 0;
     tinyobj::ObjReaderConfig readerConfig;
     readerConfig.mtl_search_path = "./object_files";
     tinyobj::ObjReader reader;
@@ -114,7 +115,7 @@ bool Loader::parseFile(string fileName)
             // per-face material
             shapes[s].mesh.material_ids[f];
         }
-        numberOfObjects++;
+        numberOfShapes++;
     }
     return true;
 }

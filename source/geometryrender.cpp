@@ -80,14 +80,31 @@ void GeometryRender::loadGeometry(string fileName)
         glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
         glEnableVertexAttribArray(locVertices);
 
-        // Load object data to the array buffer and index array
+        size_t vSize = 0;
+        size_t iSize = 0;
         
-        size_t vSize = loader.vertexCoords[0].size()*sizeof(glm::vec3);
-        size_t iSize = loader.indices[0].size()*sizeof(unsigned int);
-        glBufferData( GL_ARRAY_BUFFER, vSize, loader.vertexCoords[0].data(), GL_STATIC_DRAW );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, loader.indices[0].data(), GL_STATIC_DRAW );
+        // Calculate the total size needed for vertices and indices.
+        for(size_t s = 0; s < loader.numberOfShapes; s++) {
+            vSize += loader.vertexCoords[s].size()*sizeof(glm::vec3);
+            iSize += loader.indices[s].size()*sizeof(unsigned int);
+        }
         
-        
+        // Allocate memory for both buffers without inserting data.
+        glBufferData( GL_ARRAY_BUFFER, vSize, 0, GL_STATIC_DRAW );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, 0, GL_STATIC_DRAW );
+
+        // Fill both buffers with the data.
+        size_t vbOffset = 0;
+        size_t ebOffset = 0;
+        for(size_t s = 0; s < loader.numberOfShapes; s++) {
+            vSize = loader.vertexCoords[s].size()*sizeof(glm::vec3);
+            iSize = loader.indices[s].size()*sizeof(unsigned int);
+            glBufferSubData( GL_ARRAY_BUFFER, vbOffset, vSize, loader.vertexCoords[s].data());
+            glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, ebOffset, iSize, loader.indices[s].data());
+            vbOffset += vSize;
+            ebOffset += iSize;
+        }
+
         glBindVertexArray(0);
         glUseProgram(0);
     }
@@ -113,10 +130,13 @@ void GeometryRender::display()
     glBindVertexArray(vao);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     
     // Call OpenGL to draw the triangle
-    glDrawElements(GL_TRIANGLES, static_cast<int>(loader.indices[0].size()), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+    size_t nIndices = 0;
+    for(size_t s = 0; s < loader.numberOfShapes; s++) {
+        nIndices += loader.indices[s].size();
+    }
+    glDrawElements(GL_TRIANGLES, static_cast<int>(nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
     
 
     // Not to be called in release...
