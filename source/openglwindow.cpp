@@ -47,6 +47,21 @@ OpenGLWindow::OpenGLWindow(string title, int width, int height)
         cout << "Decreace supported OpenGL version if needed." << endl;
     }
 
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    // Enable Gamepad Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsClassic();
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
+    ImGui_ImplOpenGL3_Init(NULL);
+
     // Set graphics attributes
     glPointSize(5.0); // Unsupported in OpenGL ES 2.0
     glLineWidth(1.0);
@@ -57,6 +72,9 @@ OpenGLWindow::OpenGLWindow(string title, int width, int height)
 
 OpenGLWindow::~OpenGLWindow()
 {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     glfwDestroyWindow(glfwWindow);
     glfwTerminate();
 }
@@ -252,9 +270,24 @@ OpenGLWindow::start()
 {
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(glfwWindow)) {
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // ImGui example gui
+        //ImGui::ShowDemoWindow(&show_demo_window);
+
+        // Draw the gui
+        DrawGui();
+
         updateObject(oInfo);
+
         // Call display in geomentryRender to render the scene
         display();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         
         // Swap buffers
         glfwSwapBuffers(glfwWindow);
@@ -286,4 +319,60 @@ void OpenGLWindow::reshape(const int width, const int height) const
     if (glfwGetCurrentContext() == nullptr) 
         return;
     glViewport(-1,-1, width, height);
+}
+
+void
+OpenGLWindow::DrawGui()
+{
+    IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
+
+    // Change these variables to be class variables instead of static
+    // and delete the static declarations below
+    static string objFileName;
+    static string objFilePath;
+
+    static float fov = 60.0f;
+    static float farplane = 500.0f;
+    static float top = 1.0f;
+    static float obliqueScale = 0.0f;
+    static float obliqueAngleRad = pi_f/4.0f;
+    // ...until here
+
+    static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
+    static ImGuiFileDialog fileDialog;
+    
+    ImGui::Begin("3D Studio");
+
+    if (ImGui::CollapsingHeader("OBJ File")) {
+        ImGui::Text("OBJ file: %s", objFileName.c_str());
+        if (ImGui::Button("Open File"))
+            fileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", ".");
+        
+        if (fileDialog.Display("ChooseFileDlgKey")) {
+            if (fileDialog.IsOk() == true) {
+                objFileName = fileDialog.GetCurrentFileName();
+                objFilePath = fileDialog.GetCurrentPath();
+                cout << "OBJ file: " << objFileName << endl << "Path: " << objFilePath << endl;
+            }
+            fileDialog.Close();
+        }
+    }
+    
+    if (ImGui::CollapsingHeader("Projection")) {
+        const char* items[] = {"Perspective", "Parallel" };
+        static int proj_current_idx = 0;
+        if (ImGui::Combo("projektion", &proj_current_idx, items, IM_ARRAYSIZE(items), IM_ARRAYSIZE(items)));
+        if (proj_current_idx == 0) {
+            ImGui::SliderFloat("Field of view",&fov, 20.0f, 160.0f, "%1.0f", flags);
+            ImGui::SliderFloat("Far",&farplane, 1.0f, 1000.0f, "%1.0f", flags);
+        }
+        if (proj_current_idx == 1) {
+            ImGui::SliderFloat("Top",&top, 1.0f, 100.0f, "%.1f", flags);
+            ImGui::SliderFloat("Far",&farplane, 1.0f, 1000.0f, "%1.0f", flags);
+            ImGui::SliderFloat("Oblique scale",&obliqueScale, 0.0f, 1.0f, "%.1f", flags);
+            ImGui::SliderAngle("Oblique angle",&obliqueAngleRad, 15, 75, "%1.0f", flags);
+        }
+    }
+
+    ImGui::End();
 }

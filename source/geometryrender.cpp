@@ -51,9 +51,7 @@ void GeometryRender::initialize()
     glBindVertexArray(0);
     glUseProgram(0);
 
-    Loader loader;
-    // Load inital object on startup.
-    loadGeometry("teddy.obj");
+    Loader loader;   
 }
 
 /**
