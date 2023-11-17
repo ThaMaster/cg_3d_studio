@@ -63,7 +63,7 @@ void GeometryRender::initialize()
 void GeometryRender::loadGeometry(string fileName)
 {
     loader.clearLoader();
-    objectParseSuccess = loader.parseFile("./object_files/" + fileName);
+    objectParseSuccess = loader.parseFile("./object_files/" + fileName, "./object_files/");
     // Only load the object if it successfully parsed the object file.
     if(objectParseSuccess) {
         loader.loadedFileName = fileName;

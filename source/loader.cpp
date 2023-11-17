@@ -20,14 +20,14 @@
  * 
  * @returns true/false if the given object file could be parsed.
  */
-bool Loader::parseFile(string fileName) 
+bool Loader::parseFile(string filePath, string mFolder) 
 {
     numberOfShapes = 0;
     tinyobj::ObjReaderConfig readerConfig;
-    readerConfig.mtl_search_path = "./object_files";
+    readerConfig.mtl_search_path = mFolder;
     tinyobj::ObjReader reader;
 
-    if(!reader.ParseFromFile(fileName, readerConfig)) {
+    if(!reader.ParseFromFile(filePath, readerConfig)) {
         // If reader detects known error.
         if (!reader.Error().empty()) {
             cout << "\nError: \n";

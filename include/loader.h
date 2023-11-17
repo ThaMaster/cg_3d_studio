@@ -25,7 +25,7 @@ using namespace std;
 class Loader 
 {   
     public:
-        bool parseFile(string);
+        bool parseFile(string, string);
         void normalizeVertexCoords();
         void clearLoader();
 
