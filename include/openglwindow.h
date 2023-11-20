@@ -26,6 +26,7 @@ class OpenGLWindow
 {
 public:
     struct objectInfo {
+        glm::vec3 cVals = glm::vec3(0.0f,0.0f,0.0f);
         glm::vec3 rVals = glm::vec3(0.0f,0.0f,0.0f);
         glm::vec3 tVals = glm::vec3(0.0f,0.0f,0.0f);
         float scVal = 0.0f;

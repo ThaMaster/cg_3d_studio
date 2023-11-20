@@ -221,6 +221,13 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
         // Detect which key has been pressed.
         switch(key)
         {
+            // Detect Camera keys.
+            case GLFW_KEY_W: break;
+            case GLFW_KEY_S: break; 
+            case GLFW_KEY_A: break;
+            case GLFW_KEY_D: break;
+            case GLFW_KEY_Q: break;
+            case GLFW_KEY_E: break;
             // Detect Rotation keys.
             case GLFW_KEY_UP: oInfo.rVals[0] = -ROT_SPEED; break;
             case GLFW_KEY_DOWN:oInfo.rVals[0] = ROT_SPEED; break; 
@@ -243,6 +250,9 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
         } 
     } else if (action == GLFW_RELEASE) {
         // Reset values if key is released.
+        if(key == GLFW_KEY_W || key == GLFW_KEY_S);
+        if(key == GLFW_KEY_A || key == GLFW_KEY_D);
+        if(key == GLFW_KEY_Q || key == GLFW_KEY_E);
         if(key == GLFW_KEY_J || key == GLFW_KEY_L) oInfo.tVals[0] = 0.0f;
         if(key == GLFW_KEY_K || key == GLFW_KEY_I) oInfo.tVals[1] = 0.0f;
         if(key == GLFW_KEY_Y || key == GLFW_KEY_H) oInfo.tVals[2] = 0.0f;
@@ -349,7 +359,6 @@ OpenGLWindow::DrawGui()
             if (fileDialog.IsOk() == true) {
                 objFileName = fileDialog.GetCurrentFileName();
                 objFilePath = fileDialog.GetCurrentPath();
-                cout << "OBJ file: " << objFileName << endl << "Path: " << objFilePath << endl;
                 loadObjectFromGui(objFileName);
             }
             fileDialog.Close();

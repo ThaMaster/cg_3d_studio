@@ -47,6 +47,10 @@ void GeometryRender::initialize()
     // GLM already orders the arrays in column major, this means that we do not need to 
     // transpose the given matrix. Therefore GLboolean transpose = GL_FALSE.
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
+    locModel = glGetUniformLocation( program, "V");
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matView));
+    locModel = glGetUniformLocation( program, "P");
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matProj));
 
     glBindVertexArray(0);
     glUseProgram(0);
