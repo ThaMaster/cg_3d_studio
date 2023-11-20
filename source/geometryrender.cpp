@@ -209,6 +209,12 @@ void GeometryRender::reset()
     glUseProgram(0);  
 }
 
+/**
+ * Prompts the user to write the name of the object file that is to be loaded into the program.
+ * The search path for the files starts in the object_files directory.
+ * 
+ * If no problems prasing errors are present, load the geometry of the object into the program.
+ */
 void GeometryRender::loadObjectFromGui(string fileName)
 {
     if(!fileName.empty()) {
@@ -252,4 +258,14 @@ void GeometryRender::loadObjectFromTerminal()
     } else {
         cout << "\nNo file specified, returning.\n\n";
     }
+}
+
+void GeometryRender::updateMatView() 
+{
+    //glm::vec3 n = (cInfo.pZero - cInfo.pRef) / calcVectorLength(cInfo.pZero - cInfo.pRef);
+    //glm::vec3 u = glm::cross(cInfo.upVec, n) / glm::cross((cInfo.upVec, n));
+}
+
+float GeometryRender::calcVectorLength(glm::vec3 v) {
+    return sqrt(pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0));
 }

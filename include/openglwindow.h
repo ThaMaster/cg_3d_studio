@@ -33,6 +33,17 @@ public:
         bool reset = false;
     } oInfo;
 
+    struct cameraInfo {
+        glm::vec4 pZero = {0.0f, 0.0f, 2.0f, 1.0f};
+        glm::vec4 pRef = {0.0f, 0.0f, 0.0f, 1.0f};
+        glm::vec4 upVec = {0.0f, 1.0f, 0.0f, 0.0f};
+        float fov = 60.0f;
+        float farplane = 500.0f;
+        float top = 1.0f;
+        float obliqueScale = 0.0f;
+        float obliqueAngleRad = pi_f/4.0f;
+    } cInfo;
+
     OpenGLWindow(std::string title, int width, int height);
     ~OpenGLWindow();
 

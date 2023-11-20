@@ -22,6 +22,8 @@ public:
     void reset() override;
     void loadObjectFromGui(string) override;
     void loadObjectFromTerminal();
+    void updateMatView();
+    void updateMatProj();
 
 private:
     GLuint program;
@@ -57,4 +59,5 @@ private:
     void debugShader(void) const;
 
     void loadGeometry(string fileName);
+    float calcVectorLength(glm::vec3);
 };

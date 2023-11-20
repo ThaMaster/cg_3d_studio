@@ -338,11 +338,6 @@ OpenGLWindow::DrawGui()
     static string objFileName;
     static string objFilePath;
 
-    static float fov = 60.0f;
-    static float farplane = 500.0f;
-    static float top = 1.0f;
-    static float obliqueScale = 0.0f;
-    static float obliqueAngleRad = pi_f/4.0f;
     // ...until here
 
     static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
@@ -370,14 +365,14 @@ OpenGLWindow::DrawGui()
         static int proj_current_idx = 0;
         if (ImGui::Combo("projektion", &proj_current_idx, items, IM_ARRAYSIZE(items), IM_ARRAYSIZE(items)));
         if (proj_current_idx == 0) {
-            ImGui::SliderFloat("Field of view",&fov, 20.0f, 160.0f, "%1.0f", flags);
-            ImGui::SliderFloat("Far",&farplane, 1.0f, 1000.0f, "%1.0f", flags);
+            ImGui::SliderFloat("Field of view",&cInfo.fov, 20.0f, 160.0f, "%1.0f", flags);
+            ImGui::SliderFloat("Far",&cInfo.farplane, 1.0f, 1000.0f, "%1.0f", flags);
         }
         if (proj_current_idx == 1) {
-            ImGui::SliderFloat("Top",&top, 1.0f, 100.0f, "%.1f", flags);
-            ImGui::SliderFloat("Far",&farplane, 1.0f, 1000.0f, "%1.0f", flags);
-            ImGui::SliderFloat("Oblique scale",&obliqueScale, 0.0f, 1.0f, "%.1f", flags);
-            ImGui::SliderAngle("Oblique angle",&obliqueAngleRad, 15, 75, "%1.0f", flags);
+            ImGui::SliderFloat("Top",&cInfo.top, 1.0f, 100.0f, "%.1f", flags);
+            ImGui::SliderFloat("Far",&cInfo.farplane, 1.0f, 1000.0f, "%1.0f", flags);
+            ImGui::SliderFloat("Oblique scale",&cInfo.obliqueScale, 0.0f, 1.0f, "%.1f", flags);
+            ImGui::SliderAngle("Oblique angle",&cInfo.obliqueAngleRad, 15, 75, "%1.0f", flags);
         }
     }
 
