@@ -30,8 +30,6 @@ public:
         glm::vec3 tVals = glm::vec3(0.0f,0.0f,0.0f);
         float scVal = 0.0f;
         bool reset = false;
-        bool loadObject = false;
-        std::string objectName = "";
     } oInfo;
 
     OpenGLWindow(std::string title, int width, int height);
@@ -46,6 +44,7 @@ public:
     virtual void initialize() = 0;
     virtual void display() = 0;
     virtual void updateObject(objectInfo) = 0;
+    virtual void loadObjectFromGui(std::string) = 0;
     virtual void reset() = 0;
     void displayNow();
 

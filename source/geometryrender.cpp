@@ -179,9 +179,6 @@ void GeometryRender::updateObject(objectInfo oInfo)
     // Check if object should be reset.
     if(oInfo.reset) reset();
 
-    // Check if new object should be loaded.
-    if(oInfo.loadObject) loadObjectFromTerminal();
-
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
@@ -206,6 +203,22 @@ void GeometryRender::reset()
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
     glBindVertexArray(0);
     glUseProgram(0);  
+}
+
+void GeometryRender::loadObjectFromGui(string fileName)
+{
+    if(!fileName.empty()) {
+        cout << "\nLoading " << fileName << "...\n";
+        loadGeometry(fileName);
+        if(objectParseSuccess) {
+            reset();
+            cout << "\nSuccessfully loaded \"" << fileName << "\"\n\n";
+        } else {
+            cout << "\nFailed to load \"" << fileName << "\", returning.\n\n";
+        }
+    } else {
+        cout << "\nNo file specified, returning.\n\n";
+    }
 }
 
 /**

@@ -20,6 +20,7 @@ public:
     virtual void display() override;
     void updateObject(objectInfo) override;
     void reset() override;
+    void loadObjectFromGui(string) override;
     void loadObjectFromTerminal();
 
 private:

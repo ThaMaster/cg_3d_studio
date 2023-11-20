@@ -240,8 +240,6 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
             case GLFW_KEY_KP_SUBTRACT: oInfo.scVal = SCA_DEC_SPEED; break;
             // Detect reset key.
             case GLFW_KEY_R: oInfo.reset= true; break;
-            // Detect load key.
-            case GLFW_KEY_O: oInfo.loadObject = true; break;
         } 
     } else if (action == GLFW_RELEASE) {
         // Reset values if key is released.
@@ -252,8 +250,7 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
         if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) oInfo.rVals[1] = 0.0f;
         if(key == GLFW_KEY_COMMA || key == GLFW_KEY_PERIOD) oInfo.rVals[2] = 0.0f;
         if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) oInfo.scVal = 0.0f;
-        if(key == GLFW_KEY_R) oInfo.reset = false; 
-        if(key == GLFW_KEY_O) oInfo.loadObject = false;
+        if(key == GLFW_KEY_R) oInfo.reset = false;
     }
 }
 
@@ -275,7 +272,7 @@ OpenGLWindow::start()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // ImGui example gui
+        //ImGui example gui
         //ImGui::ShowDemoWindow(&show_demo_window);
 
         // Draw the gui
@@ -353,6 +350,7 @@ OpenGLWindow::DrawGui()
                 objFileName = fileDialog.GetCurrentFileName();
                 objFilePath = fileDialog.GetCurrentPath();
                 cout << "OBJ file: " << objFileName << endl << "Path: " << objFilePath << endl;
+                loadObjectFromGui(objFileName);
             }
             fileDialog.Close();
         }
