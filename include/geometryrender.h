@@ -18,12 +18,10 @@ public:
 
     void initialize();
     virtual void display() override;
-    void updateObject(objectInfo) override;
+    void updateObject(objectInfo, cameraInfo) override;
     void reset() override;
     void loadObjectFromGui(string) override;
     void loadObjectFromTerminal();
-    void updateMatView();
-    void updateMatProj();
 
 private:
     GLuint program;
@@ -39,17 +37,20 @@ private:
     GLuint locVertices;
 
     // Model matrix
-    glm::mat4x4 matModel = {1.0, 0.0, 0.0, 0.0, 
+    glm::mat4x4 matModel = {
+                        1.0, 0.0, 0.0, 0.0, 
                         0.0, 1.0, 0.0, 0.0,
                         0.0, 0.0, 1.0, 0.0,
                         0.0, 0.0, 0.0, 1.0};
     // View matrix
-    glm::mat4x4 matView = {1.0, 0.0, 0.0, 0.0, 
+    glm::mat4x4 matView = {
+                        1.0, 0.0, 0.0, 0.0, 
                         0.0, 1.0, 0.0, 0.0,
                         0.0, 0.0, 1.0, 0.0,
                         0.0, 0.0, 0.0, 1.0};
     // Projection matrix
-    glm::mat4x4 matProj = {1.0, 0.0, 0.0, 0.0, 
+    glm::mat4x4 matProj = {
+                        1.0, 0.0, 0.0, 0.0, 
                         0.0, 1.0, 0.0, 0.0,
                         0.0, 0.0, 1.0, 0.0,
                         0.0, 0.0, 0.0, 1.0};
@@ -60,4 +61,5 @@ private:
 
     void loadGeometry(string fileName);
     float calcVectorLength(glm::vec3);
+    glm::mat4x4 obliqueProjection(glm::mat4x4, float, float);
 };

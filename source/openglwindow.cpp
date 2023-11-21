@@ -112,6 +112,12 @@ OpenGLWindow::window() const
     return glfwWindow;
 }
 
+float
+OpenGLWindow::getAspectRatio()
+{
+    return (float)windowWidth / (float) windowHeight;
+}
+
 // Read shader source files
 string
 OpenGLWindow::readShaderSource(const string shaderFile) const
@@ -222,15 +228,15 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
         switch(key)
         {
             // Detect Camera keys.
-            case GLFW_KEY_W: break;
-            case GLFW_KEY_S: break; 
-            case GLFW_KEY_A: break;
-            case GLFW_KEY_D: break;
-            case GLFW_KEY_Q: break;
-            case GLFW_KEY_E: break;
+            case GLFW_KEY_W: cInfo.pZero[2] += -CAM_SPEED; cInfo.pRef[2] += -CAM_SPEED; break;
+            case GLFW_KEY_S: cInfo.pZero[2] += CAM_SPEED; cInfo.pRef[2] += CAM_SPEED; break;
+            case GLFW_KEY_A: cInfo.pZero[0] += CAM_SPEED; cInfo.pRef[0] += CAM_SPEED; break;
+            case GLFW_KEY_D: cInfo.pZero[0] += -CAM_SPEED; cInfo.pRef[0] += -CAM_SPEED; break;
+            case GLFW_KEY_Q: cInfo.pZero[1] += CAM_SPEED; cInfo.pRef[1] += CAM_SPEED; break;
+            case GLFW_KEY_E: cInfo.pZero[1] += -CAM_SPEED; cInfo.pRef[1] += -CAM_SPEED; break;
             // Detect Rotation keys.
             case GLFW_KEY_UP: oInfo.rVals[0] = -ROT_SPEED; break;
-            case GLFW_KEY_DOWN:oInfo.rVals[0] = ROT_SPEED; break; 
+            case GLFW_KEY_DOWN: oInfo.rVals[0] = ROT_SPEED; break; 
             case GLFW_KEY_LEFT: oInfo.rVals[1] = -ROT_SPEED; break;
             case GLFW_KEY_RIGHT: oInfo.rVals[1] = ROT_SPEED; break;
             case GLFW_KEY_COMMA: oInfo.rVals[2] = ROT_SPEED; break;
@@ -288,7 +294,7 @@ OpenGLWindow::start()
         // Draw the gui
         DrawGui();
 
-        updateObject(oInfo);
+        updateObject(oInfo, cInfo);
 
         // Call display in geomentryRender to render the scene
         display();
@@ -365,12 +371,14 @@ OpenGLWindow::DrawGui()
         static int proj_current_idx = 0;
         if (ImGui::Combo("projektion", &proj_current_idx, items, IM_ARRAYSIZE(items), IM_ARRAYSIZE(items)));
         if (proj_current_idx == 0) {
+            cInfo.perspProj = true;
             ImGui::SliderFloat("Field of view",&cInfo.fov, 20.0f, 160.0f, "%1.0f", flags);
-            ImGui::SliderFloat("Far",&cInfo.farplane, 1.0f, 1000.0f, "%1.0f", flags);
+            ImGui::SliderFloat("Far",&cInfo.farPlane, 1.0f, 1000.0f, "%1.0f", flags);
         }
         if (proj_current_idx == 1) {
+            cInfo.perspProj = false;
             ImGui::SliderFloat("Top",&cInfo.top, 1.0f, 100.0f, "%.1f", flags);
-            ImGui::SliderFloat("Far",&cInfo.farplane, 1.0f, 1000.0f, "%1.0f", flags);
+            ImGui::SliderFloat("Far",&cInfo.farPlane, 1.0f, 1000.0f, "%1.0f", flags);
             ImGui::SliderFloat("Oblique scale",&cInfo.obliqueScale, 0.0f, 1.0f, "%.1f", flags);
             ImGui::SliderAngle("Oblique angle",&cInfo.obliqueAngleRad, 15, 75, "%1.0f", flags);
         }

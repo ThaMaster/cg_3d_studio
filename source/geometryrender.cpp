@@ -55,7 +55,8 @@ void GeometryRender::initialize()
     glBindVertexArray(0);
     glUseProgram(0);
 
-    Loader loader;   
+    Loader loader;  
+    loadGeometry("cessna.obj"); 
 }
 
 /**
@@ -163,13 +164,13 @@ void GeometryRender::display()
  * @param oInfo Struct containing the different flags and values to 
  *              update the object in the program.
  */
-void GeometryRender::updateObject(objectInfo oInfo) 
+void GeometryRender::updateObject(objectInfo oInfo, cameraInfo cInfo) 
 {
     glUseProgram(program);
     glBindVertexArray(vao);
 
     // Check translation.
-    if(glm::compMax(oInfo.tVals) != 0 || glm::compMin(oInfo.tVals) != 0 )
+    if(glm::compMax(oInfo.tVals) != 0 || glm::compMin(oInfo.tVals) != 0)
         matModel = glm::translate(matModel, oInfo.tVals);
 
     // Check scaling.
@@ -177,17 +178,42 @@ void GeometryRender::updateObject(objectInfo oInfo)
         matModel = glm::scale(matModel, glm::vec3(oInfo.scVal));
 
     // Check rotation.
-    if(glm::compMax(oInfo.rVals) != 0 || glm::compMin(oInfo.rVals) != 0 )
+    if(glm::compMax(oInfo.rVals) != 0 || glm::compMin(oInfo.rVals) != 0)
         matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), oInfo.rVals);
-
+    
     // Check if object should be reset.
     if(oInfo.reset) reset();
-
+    
+    matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
+    
+    if(cInfo.perspProj) {
+        matProj = glm::perspective(glm::radians(cInfo.fov), getAspectRatio(), cInfo.nearPlane, cInfo.farPlane);
+    } else {
+        matProj = glm::ortho(-cInfo.top, cInfo.top, -cInfo.top, cInfo.top, cInfo.nearPlane, cInfo.farPlane);
+        if(cInfo.obliqueScale != 0.0f)
+            matProj = obliqueProjection(matProj, cInfo.obliqueScale, cInfo.obliqueAngleRad);
+    }
+    
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
+    locModel = glGetUniformLocation( program, "V");
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matView));
+    locModel = glGetUniformLocation( program, "P");
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matProj));
+
     glBindVertexArray(0);
-    glUseProgram(0);   
+    glUseProgram(0);    
+}
+
+glm::mat4x4 GeometryRender::obliqueProjection(glm::mat4x4 m, float a, float angle)
+{
+    glm::mat4x4 shearMat = glm::mat4x4(1.0f);
+    // Column major order, first index is the column, second row.
+    shearMat[2].x = a*cos(angle);
+    shearMat[2].y = a*sin(angle);
+
+    return m*shearMat;
 }
 
 /**
@@ -258,12 +284,6 @@ void GeometryRender::loadObjectFromTerminal()
     } else {
         cout << "\nNo file specified, returning.\n\n";
     }
-}
-
-void GeometryRender::updateMatView() 
-{
-    //glm::vec3 n = (cInfo.pZero - cInfo.pRef) / calcVectorLength(cInfo.pZero - cInfo.pRef);
-    //glm::vec3 u = glm::cross(cInfo.upVec, n) / glm::cross((cInfo.upVec, n));
 }
 
 float GeometryRender::calcVectorLength(glm::vec3 v) {
