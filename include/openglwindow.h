@@ -37,6 +37,7 @@ class OpenGLWindow
             glm::vec3 pZero = glm::vec3(0.0f, 0.0f, 2.0f);
             glm::vec3 pRef = glm::vec3(0.0f, 0.0f, 0.0f);
             glm::vec3 upVec = glm::vec3(0.0f, 1.0f, 0.0f);
+            glm::vec3 camOffset = glm::vec3(0.0f, 0.0f, 0.0f);
             float fov = 60.0f;
             float farPlane = 500.0f;
             float nearPlane = 0.1f;
@@ -57,7 +58,7 @@ class OpenGLWindow
         void start();
         virtual void initialize() = 0;
         virtual void display() = 0;
-        virtual void updateObject(objectInfo, cameraInfo) = 0;
+        virtual void updateObject(objectInfo, cameraInfo&) = 0;
         virtual void loadObjectFromGui(std::string) = 0;
         virtual void reset() = 0;
         void displayNow();

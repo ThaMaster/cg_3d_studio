@@ -164,7 +164,7 @@ void GeometryRender::display()
  * @param oInfo Struct containing the different flags and values to 
  *              update the object in the program.
  */
-void GeometryRender::updateObject(objectInfo oInfo, cameraInfo cInfo) 
+void GeometryRender::updateObject(objectInfo oInfo, cameraInfo &cInfo) 
 {
     glUseProgram(program);
     glBindVertexArray(vao);
@@ -180,12 +180,14 @@ void GeometryRender::updateObject(objectInfo oInfo, cameraInfo cInfo)
     // Check rotation.
     if(glm::compMax(oInfo.rVals) != 0 || glm::compMin(oInfo.rVals) != 0)
         matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), oInfo.rVals);
-    
+
     // Check if object should be reset.
     if(oInfo.reset) reset();
     
+    cInfo.pRef += cInfo.camOffset;
+    cInfo.pZero += cInfo.camOffset;
     matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
-    
+
     if(cInfo.perspProj) {
         matProj = glm::perspective(glm::radians(cInfo.fov), getAspectRatio(), cInfo.nearPlane, cInfo.farPlane);
     } else {

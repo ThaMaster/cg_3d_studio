@@ -228,12 +228,12 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
         switch(key)
         {
             // Detect Camera keys.
-            case GLFW_KEY_W: cInfo.pZero[2] += -CAM_SPEED; cInfo.pRef[2] += -CAM_SPEED; break;
-            case GLFW_KEY_S: cInfo.pZero[2] += CAM_SPEED; cInfo.pRef[2] += CAM_SPEED; break;
-            case GLFW_KEY_A: cInfo.pZero[0] += CAM_SPEED; cInfo.pRef[0] += CAM_SPEED; break;
-            case GLFW_KEY_D: cInfo.pZero[0] += -CAM_SPEED; cInfo.pRef[0] += -CAM_SPEED; break;
-            case GLFW_KEY_Q: cInfo.pZero[1] += CAM_SPEED; cInfo.pRef[1] += CAM_SPEED; break;
-            case GLFW_KEY_E: cInfo.pZero[1] += -CAM_SPEED; cInfo.pRef[1] += -CAM_SPEED; break;
+            case GLFW_KEY_A: cInfo.camOffset[0] = -CAM_SPEED; break;
+            case GLFW_KEY_D: cInfo.camOffset[0] = CAM_SPEED; break;
+            case GLFW_KEY_Q: cInfo.camOffset[1] = CAM_SPEED; break;
+            case GLFW_KEY_E: cInfo.camOffset[1] = -CAM_SPEED; break;
+            case GLFW_KEY_W: cInfo.camOffset[2] = -CAM_SPEED; break;
+            case GLFW_KEY_S: cInfo.camOffset[2] = CAM_SPEED; break;
             // Detect Rotation keys.
             case GLFW_KEY_UP: oInfo.rVals[0] = -ROT_SPEED; break;
             case GLFW_KEY_DOWN: oInfo.rVals[0] = ROT_SPEED; break; 
@@ -256,9 +256,9 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
         } 
     } else if (action == GLFW_RELEASE) {
         // Reset values if key is released.
-        if(key == GLFW_KEY_W || key == GLFW_KEY_S);
-        if(key == GLFW_KEY_A || key == GLFW_KEY_D);
-        if(key == GLFW_KEY_Q || key == GLFW_KEY_E);
+        if(key == GLFW_KEY_A || key == GLFW_KEY_D) cInfo.camOffset[0] = 0.0f;
+        if(key == GLFW_KEY_Q || key == GLFW_KEY_E) cInfo.camOffset[1] = 0.0f;
+        if(key == GLFW_KEY_W || key == GLFW_KEY_S) cInfo.camOffset[2] = 0.0f;
         if(key == GLFW_KEY_J || key == GLFW_KEY_L) oInfo.tVals[0] = 0.0f;
         if(key == GLFW_KEY_K || key == GLFW_KEY_I) oInfo.tVals[1] = 0.0f;
         if(key == GLFW_KEY_Y || key == GLFW_KEY_H) oInfo.tVals[2] = 0.0f;

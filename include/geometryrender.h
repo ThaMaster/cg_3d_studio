@@ -18,7 +18,7 @@ public:
 
     void initialize();
     virtual void display() override;
-    void updateObject(objectInfo, cameraInfo) override;
+    void updateObject(objectInfo, cameraInfo&) override;
     void reset() override;
     void loadObjectFromGui(string) override;
     void loadObjectFromTerminal();
@@ -43,11 +43,8 @@ private:
                         0.0, 0.0, 1.0, 0.0,
                         0.0, 0.0, 0.0, 1.0};
     // View matrix
-    glm::mat4x4 matView = {
-                        1.0, 0.0, 0.0, 0.0, 
-                        0.0, 1.0, 0.0, 0.0,
-                        0.0, 0.0, 1.0, 0.0,
-                        0.0, 0.0, 0.0, 1.0};
+    glm::mat4x4 matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
+    
     // Projection matrix
     glm::mat4x4 matProj = {
                         1.0, 0.0, 0.0, 0.0, 
