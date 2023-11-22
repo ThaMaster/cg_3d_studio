@@ -25,12 +25,22 @@ const float pi_f = 3.1415926f;
 class OpenGLWindow
 {
     public:
-        struct objectInfo {
-            glm::vec3 cVals = glm::vec3(0.0f, 0.0f, 0.0f);
+        struct transformInfo {
             glm::vec3 rVals = glm::vec3(0.0f, 0.0f, 0.0f);
             glm::vec3 tVals = glm::vec3(0.0f, 0.0f, 0.0f);
             float scVal = 0.0f;
             bool reset = false;
+        } tInfo;
+
+        struct objectInfo {
+            int nShapes = 0;
+            int nVertices = 0;
+            int nFaces = 0;
+            int nIndices = 0;
+            int nNormals = 0;
+            int nTexCoords = 0;
+            int nColors = 0;
+            bool objectLoaded = false;
         } oInfo;
 
         struct cameraInfo {
@@ -48,6 +58,8 @@ class OpenGLWindow
             bool perspProj = true;
         } cInfo;
 
+        const glm::vec3 pZeroDefault = glm::vec3(0.0f, 0.0f, 2.0f);
+        const glm::vec3 pRefDefault = glm::vec3(0.0f, 0.0f, 0.0f);
         OpenGLWindow(std::string title, int width, int height);
         ~OpenGLWindow();
 
@@ -82,12 +94,18 @@ class OpenGLWindow
         void reshape(const int width, const int height) const;
 
     private:
+
+        std::string objFileName;
+        std::string objFilePath;
+
         bool aboutOpen = false;
         bool showOverlay = true;
 
         bool showObjTransWindow = false;
         bool showObjInfWindow = false;
-        bool showCamWindow = true;
+        bool showCamWindow = false;
+
+        bool showKeyRefWindow = false;
 
         void DrawGui();
         void handleMouseInput(); 
@@ -101,4 +119,6 @@ class OpenGLWindow
         void objTransWindow();
         void objInfWindow();
         void camWindow();
+
+        void keyRefWindow();
 };

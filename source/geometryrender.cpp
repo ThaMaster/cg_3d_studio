@@ -55,8 +55,7 @@ void GeometryRender::initialize()
     glBindVertexArray(0);
     glUseProgram(0);
 
-    Loader loader;  
-    loadGeometry("cessna.obj"); 
+    Loader loader;
 }
 
 /**
@@ -73,7 +72,7 @@ void GeometryRender::loadGeometry(string fileName)
     if(objectParseSuccess) {
         loader.loadedFileName = fileName;
         loader.normalizeVertexCoords();
-
+        setObjInfo();
         glUseProgram(program);
         glBindVertexArray(vao);
         
@@ -204,6 +203,7 @@ void GeometryRender::reset()
 
     // Reset the model matrix to the identity matrix.
     matModel = glm::mat4(1.0f);
+    tInfo.reset = false;
 
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
@@ -266,33 +266,36 @@ void GeometryRender::loadObjectFromTerminal()
 void GeometryRender::updateModelMatrix()
 {
     // Check translation.
-    if(glm::compMax(oInfo.tVals) != 0 || glm::compMin(oInfo.tVals) != 0)
-        matModel = glm::translate(matModel, oInfo.tVals);
+    if(glm::compMax(tInfo.tVals) != 0 || glm::compMin(tInfo.tVals) != 0)
+        matModel = glm::translate(matModel, tInfo.tVals);
 
     // Check scaling.
-    if(oInfo.scVal != 0)
-        matModel = glm::scale(matModel, glm::vec3(oInfo.scVal));
+    if(tInfo.scVal != 0)
+        matModel = glm::scale(matModel, glm::vec3(tInfo.scVal));
 
     // Check rotation.
-    if(glm::compMax(oInfo.rVals) != 0 || glm::compMin(oInfo.rVals) != 0)
-        matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), oInfo.rVals);
+    if(glm::compMax(tInfo.rVals) != 0 || glm::compMin(tInfo.rVals) != 0)
+        matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), tInfo.rVals);
 
     // Check if object should be reset.
-    if(oInfo.reset) reset();
+    if(tInfo.reset) reset();
 }
 
 void GeometryRender::updateViewMatrix()
 {
     cInfo.pZero += cInfo.camOffset;
     cInfo.pRef += cInfo.camOffset;
+    glm::mat4x4 rotMat = glm::mat4(1.0f);
 
+    if(cInfo.camRotOffset.x != 0 || cInfo.camRotOffset.y != 0 || cInfo.camRotOffset.z != 0) {
+        glm::vec3 dVector = cInfo.pRef - cInfo.pZero;
+        if(cInfo.camRotOffset.x != 0) rotMat = glm::rotate(rotMat, glm::radians(cInfo.camRotOffset.x), glm::vec3(0,1,0));
+        if(cInfo.camRotOffset.y != 0) rotMat = glm::rotate(rotMat, glm::radians(cInfo.camRotOffset.y), glm::vec3(1,0,0));
+        if(cInfo.camRotOffset.z != 0) rotMat = glm::rotate(rotMat, glm::radians(cInfo.camRotOffset.z), glm::vec3(0,0,1));
+        glm::vec4 newRef; newRef = rotMat*glm::vec4(dVector, 1.0f);
+        cInfo.pRef = glm::vec3(newRef.x, newRef.y, newRef.z);
+    }
     matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
-
-    if(cInfo.camRotOffset.x != 0)
-        matView = glm::rotate(matView, glm::radians(cInfo.camRotOffset.x), glm::vec3(0,1,0));
-
-    if(cInfo.camRotOffset.y != 0)
-        matView = glm::rotate(matView, glm::radians(cInfo.camRotOffset.y), glm::vec3(1,0,0));
 }
 
 void GeometryRender::updateProjMatrix()
@@ -304,4 +307,28 @@ void GeometryRender::updateProjMatrix()
         if(cInfo.obliqueScale != 0.0f)
             matProj = obliqueProjection(matProj, cInfo.obliqueScale, cInfo.obliqueAngleRad);
     }
+}
+
+void GeometryRender::setObjInfo()
+{
+    oInfo.objectLoaded = true;
+    oInfo.nShapes = loader.numberOfShapes;
+    oInfo.nVertices = loader.numberOfVertices;
+    oInfo.nFaces = loader.numberOfFaces;
+    oInfo.nIndices = loader.numberOfIndices;
+    oInfo.nNormals = loader.numberOfNormals;
+    oInfo.nTexCoords = loader.numberOfTexCoords;
+    oInfo.nColors = loader.numberOfColors;
+}
+
+void GeometryRender::clearObjInfo()
+{
+    oInfo.objectLoaded = false;
+    oInfo.nShapes = 0;
+    oInfo.nVertices = 0;
+    oInfo.nFaces = 0;
+    oInfo.nIndices = 0;
+    oInfo.nNormals = 0;
+    oInfo.nTexCoords = 0;
+    oInfo.nColors = 0;
 }

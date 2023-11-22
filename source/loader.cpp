@@ -58,6 +58,8 @@ bool Loader::parseFile(string filePath, string mFolder)
         size_t index_offset = 0;
         size_t vOffset = 0;
         std::vector<unsigned char> faceVertices = shapes[s].mesh.num_face_vertices;
+        numberOfVertices += attrib.vertices.size();
+        numberOfFaces += faceVertices.size();
 
         // Store all vertex coordinates
         for (size_t i = 0; i < attrib.vertices.size(); i+=3) {
@@ -70,11 +72,11 @@ bool Loader::parseFile(string filePath, string mFolder)
         // Loop over faces(polygon)
         for (size_t f = 0; f < faceVertices.size(); f++) {
             size_t fv = size_t(faceVertices[f]);
-
             // Store all indices for each face
             for (size_t v = 0; v < fv; v++) {
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
                 indices[s].push_back(idx.vertex_index);
+                numberOfIndices++;
             }
             
             // Check if `normal_index` is zero or positive. negative = no normal data
@@ -86,6 +88,7 @@ bool Loader::parseFile(string filePath, string mFolder)
                         attrib.normals[vOffset], 
                         attrib.normals[vOffset+1], 
                         attrib.normals[vOffset+2]));
+                    numberOfNormals++;
                 }
             }
 
@@ -98,6 +101,7 @@ bool Loader::parseFile(string filePath, string mFolder)
                         attrib.texcoords[vOffset], 
                         attrib.texcoords[vOffset+1], 
                         attrib.texcoords[vOffset+2]));
+                    numberOfTexCoords++;
                 }
             }
 
@@ -108,6 +112,7 @@ bool Loader::parseFile(string filePath, string mFolder)
                     attrib.colors[vOffset], 
                     attrib.colors[vOffset+1], 
                     attrib.colors[vOffset+2]));
+                numberOfColors++;
             }
 
             index_offset += fv;

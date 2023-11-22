@@ -80,8 +80,7 @@ OpenGLWindow::~OpenGLWindow()
 }
 
 // OpenGL error handler
-bool 
-OpenGLWindow::checkOpenGLError() const
+bool OpenGLWindow::checkOpenGLError() const
 {
     bool foundError = false;
     GLenum glError = glGetError();
@@ -94,33 +93,28 @@ OpenGLWindow::checkOpenGLError() const
     return foundError;
 }
 
-int 
-OpenGLWindow::width() const
+int OpenGLWindow::width() const
 {
     return windowWidth;
 }
 
-int 
-OpenGLWindow::height() const
+int OpenGLWindow::height() const
 {
     return windowHeight;
 }
 
-GLFWwindow* 
-OpenGLWindow::window() const
+GLFWwindow* OpenGLWindow::window() const
 {
     return glfwWindow;
 }
 
-float
-OpenGLWindow::getAspectRatio()
+float OpenGLWindow::getAspectRatio()
 {
     return (float)windowWidth / (float) windowHeight;
 }
 
 // Read shader source files
-string
-OpenGLWindow::readShaderSource(const string shaderFile) const
+string OpenGLWindow::readShaderSource(const string shaderFile) const
 {
     string shaderSource;
     string line;
@@ -139,8 +133,7 @@ OpenGLWindow::readShaderSource(const string shaderFile) const
 
 
 // Initialize OpenGL shader program
-GLuint 
-OpenGLWindow::initProgram(const string vShaderFile, const string fShaderFile) const
+GLuint OpenGLWindow::initProgram(const string vShaderFile, const string fShaderFile) const
 {
     GLuint program;
     int i;
@@ -212,14 +205,12 @@ OpenGLWindow::initProgram(const string vShaderFile, const string fShaderFile) co
 }
 
 // The window resize callback function
-void 
-OpenGLWindow::resizeCallback(GLFWwindow* window, int width, int height)
+void OpenGLWindow::resizeCallback(GLFWwindow* window, int width, int height)
 {
     reshape(width, height);
 }
 
-void
-OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if(action == GLFW_PRESS) 
     {
@@ -234,51 +225,48 @@ OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action,
             case GLFW_KEY_W: cInfo.camOffset[2] = -CAM_SPEED; break;
             case GLFW_KEY_S: cInfo.camOffset[2] = CAM_SPEED; break;
             // Detect Rotation keys.
-            case GLFW_KEY_UP: oInfo.rVals[0] = -ROT_SPEED; break;
-            case GLFW_KEY_DOWN: oInfo.rVals[0] = ROT_SPEED; break; 
-            case GLFW_KEY_LEFT: oInfo.rVals[1] = -ROT_SPEED; break;
-            case GLFW_KEY_RIGHT: oInfo.rVals[1] = ROT_SPEED; break;
-            case GLFW_KEY_COMMA: oInfo.rVals[2] = ROT_SPEED; break;
-            case GLFW_KEY_PERIOD: oInfo.rVals[2] = -ROT_SPEED; break;
+            case GLFW_KEY_UP: tInfo.rVals[0] = -ROT_SPEED; break;
+            case GLFW_KEY_DOWN: tInfo.rVals[0] = ROT_SPEED; break; 
+            case GLFW_KEY_LEFT: tInfo.rVals[1] = -ROT_SPEED; break;
+            case GLFW_KEY_RIGHT: tInfo.rVals[1] = ROT_SPEED; break;
+            case GLFW_KEY_COMMA: tInfo.rVals[2] = ROT_SPEED; break;
+            case GLFW_KEY_PERIOD: tInfo.rVals[2] = -ROT_SPEED; break;
             // Detect Translation keys.
-            case GLFW_KEY_J: oInfo.tVals[0] = -TRA_SPEED; break;
-            case GLFW_KEY_L: oInfo.tVals[0] = TRA_SPEED; break;
-            case GLFW_KEY_I: oInfo.tVals[1] = TRA_SPEED; break;
-            case GLFW_KEY_K: oInfo.tVals[1] = -TRA_SPEED; break; 
-            case GLFW_KEY_Y: oInfo.tVals[2] = TRA_SPEED; break;
-            case GLFW_KEY_H: oInfo.tVals[2] = -TRA_SPEED; break;
+            case GLFW_KEY_J: tInfo.tVals[0] = -TRA_SPEED; break;
+            case GLFW_KEY_L: tInfo.tVals[0] = TRA_SPEED; break;
+            case GLFW_KEY_I: tInfo.tVals[1] = TRA_SPEED; break;
+            case GLFW_KEY_K: tInfo.tVals[1] = -TRA_SPEED; break; 
+            case GLFW_KEY_Y: tInfo.tVals[2] = TRA_SPEED; break;
+            case GLFW_KEY_H: tInfo.tVals[2] = -TRA_SPEED; break;
             // Detect Scaling keys.
-            case GLFW_KEY_KP_ADD: oInfo.scVal = SCA_INC_SPEED; break;
-            case GLFW_KEY_KP_SUBTRACT: oInfo.scVal = SCA_DEC_SPEED; break;
+            case GLFW_KEY_KP_ADD: tInfo.scVal = SCA_INC_SPEED; break;
+            case GLFW_KEY_KP_SUBTRACT: tInfo.scVal = SCA_DEC_SPEED; break;
             // Detect reset key.
-            case GLFW_KEY_R: oInfo.reset= true; break;
+            case GLFW_KEY_R: tInfo.reset= true; break;
         } 
     } else if (action == GLFW_RELEASE) {
         // Reset values if key is released.
         if(key == GLFW_KEY_A || key == GLFW_KEY_D) cInfo.camOffset[0] = 0.0f;
         if(key == GLFW_KEY_Q || key == GLFW_KEY_E) cInfo.camOffset[1] = 0.0f;
         if(key == GLFW_KEY_W || key == GLFW_KEY_S) cInfo.camOffset[2] = 0.0f;
-        if(key == GLFW_KEY_J || key == GLFW_KEY_L) oInfo.tVals[0] = 0.0f;
-        if(key == GLFW_KEY_K || key == GLFW_KEY_I) oInfo.tVals[1] = 0.0f;
-        if(key == GLFW_KEY_Y || key == GLFW_KEY_H) oInfo.tVals[2] = 0.0f;
-        if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) oInfo.rVals[0] = 0.0f;
-        if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) oInfo.rVals[1] = 0.0f;
-        if(key == GLFW_KEY_COMMA || key == GLFW_KEY_PERIOD) oInfo.rVals[2] = 0.0f;
-        if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) oInfo.scVal = 0.0f;
-        if(key == GLFW_KEY_R) oInfo.reset = false;
+        if(key == GLFW_KEY_J || key == GLFW_KEY_L) tInfo.tVals[0] = 0.0f;
+        if(key == GLFW_KEY_K || key == GLFW_KEY_I) tInfo.tVals[1] = 0.0f;
+        if(key == GLFW_KEY_Y || key == GLFW_KEY_H) tInfo.tVals[2] = 0.0f;
+        if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) tInfo.rVals[0] = 0.0f;
+        if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) tInfo.rVals[1] = 0.0f;
+        if(key == GLFW_KEY_COMMA || key == GLFW_KEY_PERIOD) tInfo.rVals[2] = 0.0f;
+        if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) tInfo.scVal = 0.0f;
     }
 }
 
 // GLFW error callback function
-void 
-OpenGLWindow::errorCallback(int error, const char* description)
+void OpenGLWindow::errorCallback(int error, const char* description)
 {
     cerr << "GLFW error: " << description << endl;
 }
 
 // Start the GLFW loop
-void 
-OpenGLWindow::start()
+void OpenGLWindow::start()
 {
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(glfwWindow)) {
@@ -333,14 +321,15 @@ void OpenGLWindow::reshape(const int width, const int height) const
     glViewport(-1,-1, width, height);
 }
 
-void
-OpenGLWindow::DrawGui()
+void OpenGLWindow::DrawGui()
 {
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
     
     if(showObjTransWindow) objTransWindow();
     if(showObjInfWindow) objInfWindow();
     if(showCamWindow) camWindow();
+    
+    if(showKeyRefWindow) keyRefWindow();
 
     mainMenuBar();
 
@@ -349,19 +338,24 @@ OpenGLWindow::DrawGui()
     if(showOverlay) showStudioOverlay(&showOverlay);
 }
 
-void OpenGLWindow::handleMouseInput() {
-    if(ImGui::IsMouseDragging(ImGuiMouseButton_Left, -1.0f) && !ImGui::IsWindowHovered(ImGuiFocusedFlags_AnyWindow)) {
-        cInfo.camRotOffset += glm::vec3(ImGui::GetIO().MouseDelta.x, ImGui::GetIO().MouseDelta.y, 0.0f);
+void OpenGLWindow::handleMouseInput() 
+{
+    if(ImGui::IsMouseDragging(ImGuiMouseButton_Left, -1.0f) && !ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow)) {
+        cInfo.camRotOffset = glm::vec3(ImGui::GetIO().MouseDelta.x, ImGui::GetIO().MouseDelta.y, 0.0f);
+    } else {
+        cInfo.camRotOffset = glm::vec3(0.0f,0.0f,0.0f);
     }
 }
 
 void OpenGLWindow::showStudioOverlay(bool *open) 
 {
+    char fileName[objFileName.length()+1];
+    strcpy(fileName, objFileName.c_str());
     static int location = 0;
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
     const float PAD = 10.0f;
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
-    ImVec2 work_pos = viewport->WorkPos; // Use work area to avoid menu-bar/task-bar, if any!
+    ImVec2 work_pos = viewport->WorkPos;
     ImVec2 work_size = viewport->WorkSize;
     ImVec2 window_pos, window_pos_pivot;
     window_pos.x = (location & 1) ? (work_pos.x + work_size.x - PAD) : (work_pos.x + PAD);
@@ -374,10 +368,15 @@ void OpenGLWindow::showStudioOverlay(bool *open)
     ImGui::SetNextWindowBgAlpha(0.35f);
     if(ImGui::Begin("Overlay", open, window_flags))
     {
-        ImGui::Text("3D studio overlay");
-        ImGui::Separator();
+        ImGui::SeparatorText("3D Studio v0.0.1");
+        if(oInfo.objectLoaded) ImGui::Text("Loaded object: %s", fileName);
+
         if (ImGui::BeginPopupContextWindow())
         {
+            if (ImGui::MenuItem("Top-left (default)",     NULL, location == 0)) location = 0;
+            if (ImGui::MenuItem("Top-right",    NULL, location == 1)) location = 1;
+            if (ImGui::MenuItem("Bottom-left",  NULL, location == 2)) location = 2;
+            if (ImGui::MenuItem("Bottom-right", NULL, location == 3)) location = 3;
             if (open && ImGui::MenuItem("Close")) *open = false;
             ImGui::EndPopup();
         }
@@ -386,10 +385,7 @@ void OpenGLWindow::showStudioOverlay(bool *open)
 }
 
 void OpenGLWindow::mainMenuBar()
-{
-    static string objFileName;
-    static string objFilePath;
-    
+{    
     static ImGuiFileDialog fileDialog;
 
     if (ImGui::BeginMainMenuBar())
@@ -404,10 +400,12 @@ void OpenGLWindow::mainMenuBar()
         }
         if(ImGui::BeginMenu("View"))
         {
+            ImGui::BeginDisabled(!oInfo.objectLoaded);
             if(ImGui::MenuItem("Object Transformation", "F1", showObjTransWindow)) { showObjTransWindow = !showObjTransWindow; }
             if(ImGui::MenuItem("Object Information", "F2", showObjInfWindow)) { showObjInfWindow = !showObjInfWindow; }
             ImGui::Separator();  
             if(ImGui::MenuItem("Camera", "F3", showCamWindow)) { showCamWindow = !showCamWindow; }
+            ImGui::EndDisabled();
             ImGui::Separator();
             if(ImGui::MenuItem("Studio Overlay", NULL, showOverlay)) { showOverlay = !showOverlay; }
             ImGui::EndMenu();
@@ -415,7 +413,7 @@ void OpenGLWindow::mainMenuBar()
         if(ImGui::BeginMenu("Help")) 
         {
             if(ImGui::MenuItem("Introduction")) {}
-            if(ImGui::MenuItem("Keyboard Shortcuts Reference")) {}
+            if(ImGui::MenuItem("Keyboard Shortcuts Reference", "F9", showKeyRefWindow)) { showKeyRefWindow = !showKeyRefWindow; }
             ImGui::Separator();   
             if(ImGui::MenuItem("About")) aboutOpen = true;
             ImGui::EndMenu();
@@ -435,6 +433,7 @@ void OpenGLWindow::mainMenuBar()
     aboutPopupModal();
 }
 
+// Contains only PLACEHOLDER for now.
 void OpenGLWindow::aboutPopupModal() {
     if(aboutOpen) {
         ImGui::OpenPopup("About");    
@@ -461,6 +460,7 @@ void OpenGLWindow::aboutPopupModal() {
     }    
 }
 
+// Contains only PLACEHOLDER for now.
 void OpenGLWindow::objTransWindow()
 {
     ImGui::Begin("Object Transformation", &showObjTransWindow, ImGuiWindowFlags_AlwaysAutoResize);
@@ -472,18 +472,36 @@ void OpenGLWindow::objTransWindow()
     ImGui::Text("--placeholder--");
     ImGui::SeparatorText("Shearing");
     ImGui::Text("--placeholder--");
+    ImGui::SeparatorText("Reset");
+    if(ImGui::Button("Reset Object Transformations")) { tInfo.reset = true; }
     ImGui::End();
 }
 
 void OpenGLWindow::objInfWindow()
 {
+    char fileName[objFileName.length()+1];
+    char filePath[objFilePath.length()+objFileName.length()+2];
+    strcpy(fileName, objFileName.c_str());
+    strcpy(filePath, (objFilePath+"/"+objFileName).c_str());
     ImGui::Begin("Object Information", &showObjInfWindow, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::SeparatorText("Shape Info");
-    ImGui::Text("--placeholder--");
-    ImGui::SeparatorText("Vertex Info");
-    ImGui::Text("--placeholder--");
-    ImGui::SeparatorText("More...");
-    ImGui::Text("--placeholder--");
+    ImGui::SeparatorText("Object Information");
+    ImGui::Text("Object File Name: %s", fileName);
+    ImGui::Text("File Path: %s", filePath);
+    ImGui::Separator();
+    ImGui::Text("Shapes:");
+    ImGui::SameLine(200); ImGui::Text("%d", oInfo.nShapes);
+    ImGui::Text("Vertices:");
+    ImGui::SameLine(200); ImGui::Text("%d", oInfo.nVertices);
+    ImGui::Text("Indices:");
+    ImGui::SameLine(200); ImGui::Text("%d", oInfo.nIndices);
+    ImGui::Text("Faces:");
+    ImGui::SameLine(200); ImGui::Text("%d", oInfo.nFaces);
+    ImGui::Text("Normals:");
+    ImGui::SameLine(200); ImGui::Text("%d", oInfo.nNormals);
+    ImGui::Text("Texture Coordinates:");
+    ImGui::SameLine(200); ImGui::Text("%d", oInfo.nTexCoords);
+    ImGui::Text("Color Values:");
+    ImGui::SameLine(200); ImGui::Text("%d", oInfo.nColors);
     ImGui::End();
 }
 
@@ -492,8 +510,21 @@ void OpenGLWindow::camWindow()
     static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
 
     ImGui::Begin("Camera", &showCamWindow, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::SeparatorText("Camera Position");
-    ImGui::Text("--placeholder--");
+    ImGui::SeparatorText("View");
+    ImGui::Text("Camera Position (pZero): ");
+    ImGui::PushItemWidth(100);
+    ImGui::SliderFloat("X##zero", &cInfo.pZero.x, -50.0f, 50.0f); ImGui::SameLine(); 
+    ImGui::SliderFloat("Y##zero", &cInfo.pZero.y, -50.0f, 50.0f); ImGui::SameLine(); 
+    ImGui::SliderFloat("Z##zero", &cInfo.pZero.z, -50.0f, 50.0f);
+    ImGui::PopItemWidth();
+    if(ImGui::Button("Reset Camera Position")) { cInfo.pZero = pZeroDefault; }
+    ImGui::Text("Reference Point (pRef): ");
+    ImGui::PushItemWidth(100);
+    ImGui::SliderFloat("X##ref", &cInfo.pRef.x, -500.0f, 500.0f); ImGui::SameLine();
+    ImGui::SliderFloat("Y##ref", &cInfo.pRef.y, -500.0f, 500.0f); ImGui::SameLine();
+    ImGui::SliderFloat("Z##ref", &cInfo.pRef.z, -500.0f, 500.0f);
+    ImGui::PopItemWidth();
+    if(ImGui::Button("Reset Reference Point")) { cInfo.pRef = pRefDefault; }
     ImGui::SeparatorText("Projection");
     const char* items[] = {"Perspective", "Parallel" };
     static int proj_current_idx = 0;
@@ -511,5 +542,14 @@ void OpenGLWindow::camWindow()
         ImGui::SliderAngle("Oblique angle",&cInfo.obliqueAngleRad, 15, 75, "%1.0f", flags);
     }
     
+    ImGui::End();
+}
+
+// Contains only PLACEHOLDER for now.
+void OpenGLWindow::keyRefWindow()
+{
+    ImGui::Begin("Keyboard Shortcut Reference", &showKeyRefWindow, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::SeparatorText("Shortcuts");
+    ImGui::Text("--placeholder");
     ImGui::End();
 }

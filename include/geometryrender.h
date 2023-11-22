@@ -54,7 +54,10 @@ private:
 
     void loadGeometry(string fileName);
     glm::mat4x4 obliqueProjection(glm::mat4x4, float, float);
+    glm::mat3x3 getFinalRotMat();
     void updateModelMatrix();
     void updateViewMatrix();
     void updateProjMatrix();
+    void setObjInfo();
+    void clearObjInfo();
 };
