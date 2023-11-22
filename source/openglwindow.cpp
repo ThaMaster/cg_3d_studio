@@ -294,7 +294,7 @@ OpenGLWindow::start()
         // Draw the gui
         DrawGui();
 
-        updateObject(oInfo, cInfo);
+        updateObject();
 
         // Call display in geomentryRender to render the scene
         display();
@@ -351,6 +351,8 @@ OpenGLWindow::DrawGui()
     
     ImGui::Begin("3D Studio");
 
+    handleMouseInput();
+
     if (ImGui::CollapsingHeader("OBJ File")) {
         ImGui::Text("OBJ file: %s", objFileName.c_str());
         if (ImGui::Button("Open File"))
@@ -385,4 +387,10 @@ OpenGLWindow::DrawGui()
     }
 
     ImGui::End();
+}
+
+void OpenGLWindow::handleMouseInput() {
+    if(ImGui::IsMouseDragging(ImGuiMouseButton_Left, -1.0f)) {
+        cInfo.camRotOffset += glm::vec3(ImGui::GetIO().MouseDelta.x, ImGui::GetIO().MouseDelta.y, 0.0f);
+    }
 }

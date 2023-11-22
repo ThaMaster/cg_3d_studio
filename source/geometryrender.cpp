@@ -164,37 +164,14 @@ void GeometryRender::display()
  * @param oInfo Struct containing the different flags and values to 
  *              update the object in the program.
  */
-void GeometryRender::updateObject(objectInfo oInfo, cameraInfo &cInfo) 
+void GeometryRender::updateObject()
 {
     glUseProgram(program);
     glBindVertexArray(vao);
 
-    // Check translation.
-    if(glm::compMax(oInfo.tVals) != 0 || glm::compMin(oInfo.tVals) != 0)
-        matModel = glm::translate(matModel, oInfo.tVals);
-
-    // Check scaling.
-    if(oInfo.scVal != 0)
-        matModel = glm::scale(matModel, glm::vec3(oInfo.scVal));
-
-    // Check rotation.
-    if(glm::compMax(oInfo.rVals) != 0 || glm::compMin(oInfo.rVals) != 0)
-        matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), oInfo.rVals);
-
-    // Check if object should be reset.
-    if(oInfo.reset) reset();
-    
-    cInfo.pRef += cInfo.camOffset;
-    cInfo.pZero += cInfo.camOffset;
-    matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
-
-    if(cInfo.perspProj) {
-        matProj = glm::perspective(glm::radians(cInfo.fov), getAspectRatio(), cInfo.nearPlane, cInfo.farPlane);
-    } else {
-        matProj = glm::ortho(-cInfo.top, cInfo.top, -cInfo.top, cInfo.top, cInfo.nearPlane, cInfo.farPlane);
-        if(cInfo.obliqueScale != 0.0f)
-            matProj = obliqueProjection(matProj, cInfo.obliqueScale, cInfo.obliqueAngleRad);
-    }
+    updateModelMatrix();
+    updateViewMatrix();
+    updateProjMatrix();
     
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
@@ -288,6 +265,52 @@ void GeometryRender::loadObjectFromTerminal()
     }
 }
 
-float GeometryRender::calcVectorLength(glm::vec3 v) {
+float GeometryRender::calcVectorLength(glm::vec3 v) 
+{
     return sqrt(pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0));
+}
+
+void GeometryRender::updateModelMatrix()
+{
+    // Check translation.
+    if(glm::compMax(oInfo.tVals) != 0 || glm::compMin(oInfo.tVals) != 0)
+        matModel = glm::translate(matModel, oInfo.tVals);
+
+    // Check scaling.
+    if(oInfo.scVal != 0)
+        matModel = glm::scale(matModel, glm::vec3(oInfo.scVal));
+
+    // Check rotation.
+    if(glm::compMax(oInfo.rVals) != 0 || glm::compMin(oInfo.rVals) != 0)
+        matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), oInfo.rVals);
+
+    // Check if object should be reset.
+    if(oInfo.reset) reset();
+}
+
+void GeometryRender::updateViewMatrix()
+{
+    cInfo.pZero += cInfo.camOffset;
+    cInfo.pRef += cInfo.camOffset;
+
+    matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
+
+    if(cInfo.camRotOffset.x != 0)
+        matView = glm::rotate(matView, glm::radians(cInfo.camRotOffset.x), glm::vec3(0,1,0));
+
+    if(cInfo.camRotOffset.y != 0)
+        matView = glm::rotate(matView, glm::radians(cInfo.camRotOffset.y), glm::vec3(1,0,0));
+
+    
+}
+
+void GeometryRender::updateProjMatrix()
+{
+    if(cInfo.perspProj) {
+        matProj = glm::perspective(glm::radians(cInfo.fov), getAspectRatio(), cInfo.nearPlane, cInfo.farPlane);
+    } else {
+        matProj = glm::ortho(-cInfo.top, cInfo.top, -cInfo.top, cInfo.top, cInfo.nearPlane, cInfo.farPlane);
+        if(cInfo.obliqueScale != 0.0f)
+            matProj = obliqueProjection(matProj, cInfo.obliqueScale, cInfo.obliqueAngleRad);
+    }
 }

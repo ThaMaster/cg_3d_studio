@@ -18,7 +18,7 @@ public:
 
     void initialize();
     virtual void display() override;
-    void updateObject(objectInfo, cameraInfo&) override;
+    void updateObject() override;
     void reset() override;
     void loadObjectFromGui(string) override;
     void loadObjectFromTerminal();
@@ -59,4 +59,7 @@ private:
     void loadGeometry(string fileName);
     float calcVectorLength(glm::vec3);
     glm::mat4x4 obliqueProjection(glm::mat4x4, float, float);
+    void updateModelMatrix();
+    void updateViewMatrix();
+    void updateProjMatrix();
 };
