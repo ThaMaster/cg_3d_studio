@@ -151,7 +151,7 @@ float Loader::getLargestVertexLength(size_t s)
     for(size_t v = 0; v < vertexCoords[s].size(); v++)
     {
         // Calculate the length of the current vector.
-        new_length = sqrt(pow(vertexCoords[s][v].x, 2.0) + pow(vertexCoords[s][v].y, 2.0) + pow(vertexCoords[s][v].z, 2.0));
+        new_length = calcVectorLength(vertexCoords[s][v]);
 
         if(largest_length < new_length) {
             largest_length = new_length; 
@@ -159,6 +159,11 @@ float Loader::getLargestVertexLength(size_t s)
     }
 
     return largest_length;
+}
+
+float Loader::calcVectorLength(glm::vec3 v) 
+{
+    return sqrt(pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0));
 }
 
 /**

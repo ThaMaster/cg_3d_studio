@@ -161,8 +161,6 @@ void GeometryRender::display()
  * 
  * This function runs each time a callback is detected to avoid unnecessary updates.
  * 
- * @param oInfo Struct containing the different flags and values to 
- *              update the object in the program.
  */
 void GeometryRender::updateObject()
 {
@@ -188,7 +186,7 @@ void GeometryRender::updateObject()
 glm::mat4x4 GeometryRender::obliqueProjection(glm::mat4x4 m, float a, float angle)
 {
     glm::mat4x4 shearMat = glm::mat4x4(1.0f);
-    // Column major order, first index is the column, second row.
+    // Column major order, first index is the column, second index is the row.
     shearMat[2].x = a*cos(angle);
     shearMat[2].y = a*sin(angle);
 
@@ -263,11 +261,6 @@ void GeometryRender::loadObjectFromTerminal()
     } else {
         cout << "\nNo file specified, returning.\n\n";
     }
-}
-
-float GeometryRender::calcVectorLength(glm::vec3 v) 
-{
-    return sqrt(pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0));
 }
 
 void GeometryRender::updateModelMatrix()

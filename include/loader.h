@@ -55,4 +55,5 @@ class Loader
     private:        
         // Searches a shapes vertices and finds the longest vector lenght
         float getLargestVertexLength(size_t);
+        float calcVectorLength(glm::vec3 v);
 };

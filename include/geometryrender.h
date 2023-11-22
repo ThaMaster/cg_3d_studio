@@ -57,7 +57,6 @@ private:
     void debugShader(void) const;
 
     void loadGeometry(string fileName);
-    float calcVectorLength(glm::vec3);
     glm::mat4x4 obliqueProjection(glm::mat4x4, float, float);
     void updateModelMatrix();
     void updateViewMatrix();
