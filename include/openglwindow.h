@@ -82,9 +82,23 @@ class OpenGLWindow
         void reshape(const int width, const int height) const;
 
     private:
+        bool aboutOpen = false;
+        bool showOverlay = true;
+
+        bool showObjTransWindow = false;
+        bool showObjInfWindow = false;
+        bool showCamWindow = true;
+
         void DrawGui();
         void handleMouseInput(); 
         GLFWwindow* glfwWindow;
         int windowWidth = 0;
         int windowHeight = 0;
+
+        void showStudioOverlay(bool *);
+        void mainMenuBar();
+        void aboutPopupModal();
+        void objTransWindow();
+        void objInfWindow();
+        void camWindow();
 };

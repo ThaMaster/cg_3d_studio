@@ -293,8 +293,6 @@ void GeometryRender::updateViewMatrix()
 
     if(cInfo.camRotOffset.y != 0)
         matView = glm::rotate(matView, glm::radians(cInfo.camRotOffset.y), glm::vec3(1,0,0));
-
-    
 }
 
 void GeometryRender::updateProjMatrix()

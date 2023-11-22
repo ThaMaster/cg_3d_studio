@@ -211,7 +211,6 @@ OpenGLWindow::initProgram(const string vShaderFile, const string fShaderFile) co
     return program;
 }
 
-
 // The window resize callback function
 void 
 OpenGLWindow::resizeCallback(GLFWwindow* window, int width, int height)
@@ -338,59 +337,179 @@ void
 OpenGLWindow::DrawGui()
 {
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
-
-    // Change these variables to be class variables instead of static
-    // and delete the static declarations below
-    static string objFileName;
-    static string objFilePath;
-
-    // ...until here
-
-    static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
-    static ImGuiFileDialog fileDialog;
     
-    ImGui::Begin("3D Studio");
+    if(showObjTransWindow) objTransWindow();
+    if(showObjInfWindow) objInfWindow();
+    if(showCamWindow) camWindow();
+
+    mainMenuBar();
 
     handleMouseInput();
 
-    if (ImGui::CollapsingHeader("OBJ File")) {
-        ImGui::Text("OBJ file: %s", objFileName.c_str());
-        if (ImGui::Button("Open File"))
-            fileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", ".");
-        
-        if (fileDialog.Display("ChooseFileDlgKey")) {
-            if (fileDialog.IsOk() == true) {
-                objFileName = fileDialog.GetCurrentFileName();
-                objFilePath = fileDialog.GetCurrentPath();
-                loadObjectFromGui(objFileName);
-            }
-            fileDialog.Close();
-        }
-    }
-    
-    if (ImGui::CollapsingHeader("Projection")) {
-        const char* items[] = {"Perspective", "Parallel" };
-        static int proj_current_idx = 0;
-        if (ImGui::Combo("projektion", &proj_current_idx, items, IM_ARRAYSIZE(items), IM_ARRAYSIZE(items)));
-        if (proj_current_idx == 0) {
-            cInfo.perspProj = true;
-            ImGui::SliderFloat("Field of view",&cInfo.fov, 20.0f, 160.0f, "%1.0f", flags);
-            ImGui::SliderFloat("Far",&cInfo.farPlane, 1.0f, 1000.0f, "%1.0f", flags);
-        }
-        if (proj_current_idx == 1) {
-            cInfo.perspProj = false;
-            ImGui::SliderFloat("Top",&cInfo.top, 1.0f, 100.0f, "%.1f", flags);
-            ImGui::SliderFloat("Far",&cInfo.farPlane, 1.0f, 1000.0f, "%1.0f", flags);
-            ImGui::SliderFloat("Oblique scale",&cInfo.obliqueScale, 0.0f, 1.0f, "%.1f", flags);
-            ImGui::SliderAngle("Oblique angle",&cInfo.obliqueAngleRad, 15, 75, "%1.0f", flags);
-        }
-    }
-
-    ImGui::End();
+    if(showOverlay) showStudioOverlay(&showOverlay);
 }
 
 void OpenGLWindow::handleMouseInput() {
-    if(ImGui::IsMouseDragging(ImGuiMouseButton_Left, -1.0f)) {
+    if(ImGui::IsMouseDragging(ImGuiMouseButton_Left, -1.0f) && !ImGui::IsWindowHovered(ImGuiFocusedFlags_AnyWindow)) {
         cInfo.camRotOffset += glm::vec3(ImGui::GetIO().MouseDelta.x, ImGui::GetIO().MouseDelta.y, 0.0f);
     }
+}
+
+void OpenGLWindow::showStudioOverlay(bool *open) 
+{
+    static int location = 0;
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+    const float PAD = 10.0f;
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImVec2 work_pos = viewport->WorkPos; // Use work area to avoid menu-bar/task-bar, if any!
+    ImVec2 work_size = viewport->WorkSize;
+    ImVec2 window_pos, window_pos_pivot;
+    window_pos.x = (location & 1) ? (work_pos.x + work_size.x - PAD) : (work_pos.x + PAD);
+    window_pos.y = (location & 2) ? (work_pos.y + work_size.y - PAD) : (work_pos.y + PAD);
+    window_pos_pivot.x = (location & 1) ? 1.0f : 0.0f;
+    window_pos_pivot.y = (location & 2) ? 1.0f : 0.0f;
+    ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+    window_flags |= ImGuiWindowFlags_NoMove;
+    
+    ImGui::SetNextWindowBgAlpha(0.35f);
+    if(ImGui::Begin("Overlay", open, window_flags))
+    {
+        ImGui::Text("3D studio overlay");
+        ImGui::Separator();
+        if (ImGui::BeginPopupContextWindow())
+        {
+            if (open && ImGui::MenuItem("Close")) *open = false;
+            ImGui::EndPopup();
+        }
+    }
+    ImGui::End();
+}
+
+void OpenGLWindow::mainMenuBar()
+{
+    static string objFileName;
+    static string objFilePath;
+    
+    static ImGuiFileDialog fileDialog;
+
+    if (ImGui::BeginMainMenuBar())
+    {
+        if(ImGui::BeginMenu("File"))
+        {
+            if(ImGui::MenuItem("Open")) fileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", ".");  
+            if(ImGui::MenuItem("Settings")) {} 
+            ImGui::Separator();         
+            if(ImGui::MenuItem("Quit")) { glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE); }
+            ImGui::EndMenu();
+        }
+        if(ImGui::BeginMenu("View"))
+        {
+            if(ImGui::MenuItem("Object Transformation", "F1", showObjTransWindow)) { showObjTransWindow = !showObjTransWindow; }
+            if(ImGui::MenuItem("Object Information", "F2", showObjInfWindow)) { showObjInfWindow = !showObjInfWindow; }
+            ImGui::Separator();  
+            if(ImGui::MenuItem("Camera", "F3", showCamWindow)) { showCamWindow = !showCamWindow; }
+            ImGui::Separator();
+            if(ImGui::MenuItem("Studio Overlay", NULL, showOverlay)) { showOverlay = !showOverlay; }
+            ImGui::EndMenu();
+        }
+        if(ImGui::BeginMenu("Help")) 
+        {
+            if(ImGui::MenuItem("Introduction")) {}
+            if(ImGui::MenuItem("Keyboard Shortcuts Reference")) {}
+            ImGui::Separator();   
+            if(ImGui::MenuItem("About")) aboutOpen = true;
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+
+    if (fileDialog.Display("ChooseFileDlgKey")) {
+        if (fileDialog.IsOk() == true) {
+            objFileName = fileDialog.GetCurrentFileName();
+            objFilePath = fileDialog.GetCurrentPath();
+            loadObjectFromGui(objFileName);
+        }
+        fileDialog.Close();
+    }
+
+    aboutPopupModal();
+}
+
+void OpenGLWindow::aboutPopupModal() {
+    if(aboutOpen) {
+        ImGui::OpenPopup("About");    
+    }
+    // Always center this window when appearing
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    if (ImGui::BeginPopupModal("About", &aboutOpen, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::Text("Placeholder");
+        ImGui::Separator();
+
+        //static int unused_i = 0;
+        //ImGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0")
+
+        if (ImGui::Button("OK", ImVec2(120, 0))) { 
+            aboutOpen = false;
+            ImGui::CloseCurrentPopup(); 
+        }
+        ImGui::SetItemDefaultFocus();
+        
+        ImGui::EndPopup();
+    }    
+}
+
+void OpenGLWindow::objTransWindow()
+{
+    ImGui::Begin("Object Transformation", &showObjTransWindow, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::SeparatorText("Translation");
+    ImGui::Text("--placeholder--");
+    ImGui::SeparatorText("Scaling");
+    ImGui::Text("--placeholder--");
+    ImGui::SeparatorText("Rotation");
+    ImGui::Text("--placeholder--");
+    ImGui::SeparatorText("Shearing");
+    ImGui::Text("--placeholder--");
+    ImGui::End();
+}
+
+void OpenGLWindow::objInfWindow()
+{
+    ImGui::Begin("Object Information", &showObjInfWindow, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::SeparatorText("Shape Info");
+    ImGui::Text("--placeholder--");
+    ImGui::SeparatorText("Vertex Info");
+    ImGui::Text("--placeholder--");
+    ImGui::SeparatorText("More...");
+    ImGui::Text("--placeholder--");
+    ImGui::End();
+}
+
+void OpenGLWindow::camWindow()
+{
+    static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
+
+    ImGui::Begin("Camera", &showCamWindow, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::SeparatorText("Camera Position");
+    ImGui::Text("--placeholder--");
+    ImGui::SeparatorText("Projection");
+    const char* items[] = {"Perspective", "Parallel" };
+    static int proj_current_idx = 0;
+    if (ImGui::Combo("Projection type", &proj_current_idx, items, IM_ARRAYSIZE(items), IM_ARRAYSIZE(items)));
+    if (proj_current_idx == 0) {
+        cInfo.perspProj = true;
+        ImGui::SliderFloat("Field of view",&cInfo.fov, 20.0f, 160.0f, "%1.0f", flags);
+        ImGui::SliderFloat("Far",&cInfo.farPlane, 1.0f, 1000.0f, "%1.0f", flags);
+    }
+    if (proj_current_idx == 1) {
+        cInfo.perspProj = false;
+        ImGui::SliderFloat("Top",&cInfo.top, 1.0f, 100.0f, "%.1f", flags);
+        ImGui::SliderFloat("Far",&cInfo.farPlane, 1.0f, 1000.0f, "%1.0f", flags);
+        ImGui::SliderFloat("Oblique scale",&cInfo.obliqueScale, 0.0f, 1.0f, "%.1f", flags);
+        ImGui::SliderAngle("Oblique angle",&cInfo.obliqueAngleRad, 15, 75, "%1.0f", flags);
+    }
+    
+    ImGui::End();
 }

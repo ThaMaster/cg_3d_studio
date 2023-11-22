@@ -46,11 +46,7 @@ private:
     glm::mat4x4 matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
     
     // Projection matrix
-    glm::mat4x4 matProj = {
-                        1.0, 0.0, 0.0, 0.0, 
-                        0.0, 1.0, 0.0, 0.0,
-                        0.0, 0.0, 1.0, 0.0,
-                        0.0, 0.0, 0.0, 1.0};
+    glm::mat4x4 matProj = glm::perspective(glm::radians(cInfo.fov), getAspectRatio(), cInfo.nearPlane, cInfo.farPlane);
 
     bool objectParseSuccess;
 
