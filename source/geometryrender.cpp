@@ -56,6 +56,7 @@ void GeometryRender::initialize()
     glUseProgram(0);
 
     Loader loader;
+    loadGeometry("cube.obj");
 }
 
 /**
@@ -288,12 +289,13 @@ void GeometryRender::updateViewMatrix()
     glm::mat4x4 rotMat = glm::mat4(1.0f);
 
     if(cInfo.camRotOffset.x != 0 || cInfo.camRotOffset.y != 0 || cInfo.camRotOffset.z != 0) {
-        glm::vec3 dVector = cInfo.pRef - cInfo.pZero;
         if(cInfo.camRotOffset.x != 0) rotMat = glm::rotate(rotMat, glm::radians(cInfo.camRotOffset.x), glm::vec3(0,1,0));
         if(cInfo.camRotOffset.y != 0) rotMat = glm::rotate(rotMat, glm::radians(cInfo.camRotOffset.y), glm::vec3(1,0,0));
         if(cInfo.camRotOffset.z != 0) rotMat = glm::rotate(rotMat, glm::radians(cInfo.camRotOffset.z), glm::vec3(0,0,1));
-        glm::vec4 newRef; newRef = rotMat*glm::vec4(dVector, 1.0f);
-        cInfo.pRef = glm::vec3(newRef.x, newRef.y, newRef.z);
+        // Does not need to update the camera direction, the viewModel resets the camera position when altered.
+        glm::vec4 newCamRef = rotMat*glm::vec4(cInfo.camDir, 1.0f);
+        glm::vec4 worldRef = glm::inverse(matView) * newCamRef;
+        cInfo.pRef = glm::vec3(worldRef.x, worldRef.y, worldRef.z);
     }
     matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
 }

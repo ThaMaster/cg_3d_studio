@@ -270,6 +270,7 @@ void OpenGLWindow::start()
 {
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(glfwWindow)) {
+        glfwPollEvents();
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -293,7 +294,7 @@ void OpenGLWindow::start()
         glfwSwapBuffers(glfwWindow);
 
         // Sleep and wait for an event
-        glfwWaitEvents();
+        //glfwWaitEvents();
     }
     
 }
