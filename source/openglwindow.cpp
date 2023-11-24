@@ -252,6 +252,7 @@ void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int ac
             case GLFW_KEY_F2: wInfo.showObjInfWindow = !wInfo.showObjInfWindow; break;
             case GLFW_KEY_F3: wInfo.showCamWindow = !wInfo.showCamWindow; break;
             case GLFW_KEY_F9: wInfo.showKeyRefWindow = !wInfo.showKeyRefWindow; break;
+            case GLFW_KEY_F10: wInfo.showLogWindow = !wInfo.showLogWindow; break;
         } 
     } else if (action == GLFW_RELEASE) {
         // Reset values if key is released.
@@ -287,7 +288,7 @@ void OpenGLWindow::start()
 
         //ImGui example gui
         //ImGui::ShowDemoWindow(&show_demo_window);
-
+        handleMouseInput();
         // Draw the gui
         DrawGui();
 
@@ -342,26 +343,25 @@ void OpenGLWindow::DrawGui()
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
     StudioGui::showStudioOverlay(wInfo.showOverlay, objFileName, oInfo);
 
-    openFile();
+    if(wInfo.openFileDialog) openFile();
 
-    handleMouseInput();
+    StudioGui::logWindow(wInfo.showLogWindow, log);
 }
 
 void OpenGLWindow::openFile()
     {
         static ImGuiFileDialog fileDialog;
-        if(wInfo.openFileDialog) {
-            fileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", ".");
-            if (fileDialog.Display("ChooseFileDlgKey")) {
-                if (fileDialog.IsOk() == true) {
-                    objFileName = fileDialog.GetCurrentFileName();
-                    objFilePath = fileDialog.GetCurrentPath();
-                    loadObjectFromGui(objFileName);
-                }
-                fileDialog.Close();
-                wInfo.openFileDialog = false;
+        fileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", ".");
+        if (fileDialog.Display("ChooseFileDlgKey")) {
+            if (fileDialog.IsOk() == true) {
+                objFileName = fileDialog.GetCurrentFileName();
+                objFilePath = fileDialog.GetCurrentPath();
+                loadObjectFromGui(objFileName);
             }
+            fileDialog.Close();
+            wInfo.openFileDialog = false;
         }
+        
     }
 
 void OpenGLWindow::handleMouseInput() 

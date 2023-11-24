@@ -1,5 +1,4 @@
 #include "studiogui.h"
-
 namespace StudioGui {
 
     void mainMenuBar(GLFWwindow *glfwWindow, OpenGLWindow::objectInfo oInfo, OpenGLWindow::windowInfo &wInfo)
@@ -95,26 +94,22 @@ namespace StudioGui {
     {
         if(aboutOpen) {
             ImGui::OpenPopup("About");    
-        }
-        // Always center this window when appearing
-        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-        if (ImGui::BeginPopupModal("About", &aboutOpen, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::Text("Placeholder");
-            ImGui::Separator();
-
-            //static int unused_i = 0;
-            //ImGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0")
-
-            if (ImGui::Button("OK", ImVec2(120, 0))) { 
-                aboutOpen = false;
-                ImGui::CloseCurrentPopup(); 
+            // Always center this window when appearing
+            ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+            ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+            if (ImGui::BeginPopupModal("About", &aboutOpen, ImGuiWindowFlags_AlwaysAutoResize))
+            {
+                ImGui::Text("Placeholder");
+                ImGui::Separator();
+                //static int unused_i = 0;
+                //ImGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0")
+                if (ImGui::Button("OK", ImVec2(120, 0))) { 
+                    aboutOpen = false;
+                    ImGui::CloseCurrentPopup(); 
+                }
+                ImGui::SetItemDefaultFocus();
+                ImGui::EndPopup();
             }
-            ImGui::SetItemDefaultFocus();
-            
-            ImGui::EndPopup();
         }
     }
 
@@ -122,7 +117,6 @@ namespace StudioGui {
     {
         if(showWindow) {
             static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
-
             ImGui::Begin("Camera", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
             ImGui::SeparatorText("Positions");
             ImGui::Text("Camera Position (pZero): ");
@@ -208,6 +202,24 @@ namespace StudioGui {
                 }
             }
             ImGui::End();
+        }
+    }
+
+    void logWindow(bool &showWindow, Logger log)
+    {
+        if(showWindow) {
+            ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiCond_FirstUseEver);
+            ImGui::Begin("Example: Log", &showWindow);
+            if (ImGui::SmallButton("[Debug] Add 5 entries"))
+            {
+                for (int n = 0; n < 5; n++) {
+                    log.addLog("Hello\n");
+                }
+            }
+            ImGui::End();
+
+            // Actually call in the regular Log helper (which will Begin() into the same window as we just did)
+            log.draw("Example: Log", showWindow);
         }
     }
 }

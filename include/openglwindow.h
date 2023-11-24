@@ -18,6 +18,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "logger.h"
 #include "3dstudio.h"
 
 const float pi_f = 3.1415926f;
@@ -67,8 +68,8 @@ class OpenGLWindow
             bool showCamWindow = false;
             bool showKeyRefWindow = false;
             bool openFileDialog = false;
-        } wInfo;
-        
+            bool showLogWindow = false;
+        } wInfo;        
 
         const glm::vec3 pZeroDefault = glm::vec3(0.0f, 0.0f, 2.0f);
         const glm::vec3 pRefDefault = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -108,11 +109,9 @@ class OpenGLWindow
         
 
     private:
-
+        Logger log = Logger();
         std::string objFileName;
-        std::string objFilePath;
-
-        
+        std::string objFilePath;     
 
         void DrawGui();
         void handleMouseInput(); 
