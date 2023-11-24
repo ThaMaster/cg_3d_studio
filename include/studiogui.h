@@ -11,7 +11,7 @@ namespace StudioGui {
     void camWindow(bool&, OpenGLWindow::cameraInfo&, glm::vec3, glm::vec3);
     void keyRefWindow(bool&);
     void showStudioOverlay(bool&, std::string, OpenGLWindow::objectInfo);
-    void logWindow(bool&, Logger log);
+    void logWindow(bool&, Logger&);
 }
 
 #endif

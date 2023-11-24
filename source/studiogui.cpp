@@ -205,7 +205,7 @@ namespace StudioGui {
         }
     }
 
-    void logWindow(bool &showWindow, Logger log)
+    void logWindow(bool &showWindow, Logger &log)
     {
         if(showWindow) {
             ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiCond_FirstUseEver);
