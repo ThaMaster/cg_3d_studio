@@ -59,8 +59,20 @@ class OpenGLWindow
             bool perspProj = true;
         } cInfo;
 
+        struct windowInfo {
+            bool aboutOpen = false;
+            bool showOverlay = true;
+            bool showObjTransWindow = false;
+            bool showObjInfWindow = false;
+            bool showCamWindow = false;
+            bool showKeyRefWindow = false;
+            bool openFileDialog = false;
+        } wInfo;
+        
+
         const glm::vec3 pZeroDefault = glm::vec3(0.0f, 0.0f, 2.0f);
         const glm::vec3 pRefDefault = glm::vec3(0.0f, 0.0f, 0.0f);
+
         OpenGLWindow(std::string title, int width, int height);
         ~OpenGLWindow();
 
@@ -93,20 +105,14 @@ class OpenGLWindow
         GLuint initProgram(const std::string vShaderFile, const std::string fShaderFile) const;
 
         void reshape(const int width, const int height) const;
+        
 
     private:
 
         std::string objFileName;
         std::string objFilePath;
 
-        bool aboutOpen = false;
-        bool showOverlay = true;
-
-        bool showObjTransWindow = false;
-        bool showObjInfWindow = false;
-        bool showCamWindow = false;
-
-        bool showKeyRefWindow = false;
+        
 
         void DrawGui();
         void handleMouseInput(); 
@@ -114,12 +120,5 @@ class OpenGLWindow
         int windowWidth = 0;
         int windowHeight = 0;
 
-        void showStudioOverlay(bool *);
-        void mainMenuBar();
-        void aboutPopupModal();
-        void objTransWindow();
-        void objInfWindow();
-        void camWindow();
-
-        void keyRefWindow();
+        void openFile();
 };
