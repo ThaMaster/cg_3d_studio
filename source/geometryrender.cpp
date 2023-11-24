@@ -56,7 +56,6 @@ void GeometryRender::initialize()
     glUseProgram(0);
 
     Loader loader;
-    loadGeometry("cube.obj");
 }
 
 /**
@@ -165,7 +164,6 @@ void GeometryRender::display()
 void GeometryRender::updateObject()
 {
     glUseProgram(program);
-    glBindVertexArray(vao);
 
     updateModelMatrix();
     updateViewMatrix();
@@ -178,8 +176,6 @@ void GeometryRender::updateObject()
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matView));
     locModel = glGetUniformLocation( program, "P");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matProj));
-
-    glBindVertexArray(0);
     glUseProgram(0);    
 }
 
@@ -200,7 +196,6 @@ glm::mat4x4 GeometryRender::obliqueProjection(glm::mat4x4 m, float a, float angl
 void GeometryRender::reset()
 {
     glUseProgram(program);
-    glBindVertexArray(vao);
 
     // Reset the model matrix to the identity matrix.
     matModel = glm::mat4(1.0f);
@@ -209,7 +204,6 @@ void GeometryRender::reset()
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
-    glBindVertexArray(0);
     glUseProgram(0);  
 }
 
@@ -221,35 +215,6 @@ void GeometryRender::reset()
  */
 void GeometryRender::loadObjectFromGui(string fileName)
 {
-    if(!fileName.empty()) {
-        cout << "\nLoading " << fileName << "...\n";
-        loadGeometry(fileName);
-        if(objectParseSuccess) {
-            reset();
-            cout << "\nSuccessfully loaded \"" << fileName << "\"\n\n";
-        } else {
-            cout << "\nFailed to load \"" << fileName << "\", returning.\n\n";
-        }
-    } else {
-        cout << "\nNo file specified, returning.\n\n";
-    }
-}
-
-/**
- * Prompts the user to write the name of the object file that is to be loaded into the program.
- * The search path for the files starts in the object_files directory.
- * 
- * The function handles if the input string is empty and gives correct feedback if other 
- * errors have occurd. If there are any warnings these will be displayed but the object will
- * still load into the program.
- * 
- * If no problems prasing errors are present, load the geometry of the object into the program.
- */
-void GeometryRender::loadObjectFromTerminal() 
-{
-    string fileName;
-    cout << "Write the name of the file: ";
-    getline(cin, fileName);
     if(!fileName.empty()) {
         cout << "\nLoading " << fileName << "...\n";
         loadGeometry(fileName);
@@ -284,18 +249,30 @@ void GeometryRender::updateModelMatrix()
 
 void GeometryRender::updateViewMatrix()
 {
-    cInfo.pZero += cInfo.camOffset;
-    cInfo.pRef += cInfo.camOffset;
+    glm::vec4 newZero;
+    glm::vec4 newRef;
     glm::mat4x4 rotMat = glm::mat4(1.0f);
 
+    // Translate camera and reference in camera axises.
+    if(glm::compMax(cInfo.camOffset) != 0 || glm::compMin(cInfo.camOffset) != 0) {
+        newZero = matView*glm::vec4(cInfo.pZero, 1.0f);
+        newRef = matView*glm::vec4(cInfo.pRef, 1.0f);
+        newZero = glm::translate(glm::mat4(1.0f), cInfo.camOffset) * newZero;
+        newRef = glm::translate(glm::mat4(1.0f), cInfo.camOffset) * newRef;
+        newZero = glm::inverse(matView) * newZero;
+        newRef = glm::inverse(matView) * newRef;
+        cInfo.pZero = glm::vec3(newZero.x, newZero.y, newZero.z);
+        cInfo.pRef = glm::vec3(newRef.x, newRef.y, newRef.z);
+    }
+
+    // Rotate the reference around the camera axises.
     if(cInfo.camRotOffset.x != 0 || cInfo.camRotOffset.y != 0 || cInfo.camRotOffset.z != 0) {
         if(cInfo.camRotOffset.x != 0) rotMat = glm::rotate(rotMat, glm::radians(cInfo.camRotOffset.x), glm::vec3(0,1,0));
         if(cInfo.camRotOffset.y != 0) rotMat = glm::rotate(rotMat, glm::radians(cInfo.camRotOffset.y), glm::vec3(1,0,0));
         if(cInfo.camRotOffset.z != 0) rotMat = glm::rotate(rotMat, glm::radians(cInfo.camRotOffset.z), glm::vec3(0,0,1));
         // Does not need to update the camera direction, the viewModel resets the camera position when altered.
-        glm::vec4 newCamRef = rotMat*glm::vec4(cInfo.camDir, 1.0f);
-        glm::vec4 worldRef = glm::inverse(matView) * newCamRef;
-        cInfo.pRef = glm::vec3(worldRef.x, worldRef.y, worldRef.z);
+        newRef = glm::inverse(matView) * (rotMat * glm::vec4(cInfo.camDir, 1.0f));
+        cInfo.pRef = glm::vec3(newRef.x, newRef.y, newRef.z);
     }
     matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
 }

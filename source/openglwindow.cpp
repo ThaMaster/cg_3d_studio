@@ -212,6 +212,8 @@ void OpenGLWindow::resizeCallback(GLFWwindow* window, int width, int height)
 
 void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    static ImGuiFileDialog fileDialog;
+    
     if(action == GLFW_PRESS) 
     {
         // Detect which key has been pressed.
@@ -243,6 +245,12 @@ void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int ac
             case GLFW_KEY_KP_SUBTRACT: tInfo.scVal = SCA_DEC_SPEED; break;
             // Detect reset key.
             case GLFW_KEY_R: tInfo.reset= true; break;
+            // Detect shortcut keys.
+            case GLFW_KEY_O: /**/ break;
+            case GLFW_KEY_F1: showObjTransWindow = !showObjTransWindow; break;
+            case GLFW_KEY_F2: showObjInfWindow = !showObjInfWindow; break;
+            case GLFW_KEY_F3: showCamWindow = !showCamWindow; break;
+            case GLFW_KEY_F9: showKeyRefWindow = !showKeyRefWindow; break;
         } 
     } else if (action == GLFW_RELEASE) {
         // Reset values if key is released.
@@ -342,7 +350,7 @@ void OpenGLWindow::DrawGui()
 void OpenGLWindow::handleMouseInput() 
 {
     if(ImGui::IsMouseDragging(ImGuiMouseButton_Left, -1.0f) && !ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow)) {
-        cInfo.camRotOffset = glm::vec3(ImGui::GetIO().MouseDelta.x, ImGui::GetIO().MouseDelta.y, 0.0f);
+        cInfo.camRotOffset = glm::vec3(-ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y, 0.0f);
     } else {
         cInfo.camRotOffset = glm::vec3(0.0f,0.0f,0.0f);
     }
