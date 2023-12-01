@@ -349,20 +349,20 @@ void OpenGLWindow::DrawGui()
 }
 
 void OpenGLWindow::openFile()
-    {
-        static ImGuiFileDialog fileDialog;
-        fileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", ".");
-        if (fileDialog.Display("ChooseFileDlgKey")) {
-            if (fileDialog.IsOk() == true) {
-                objFileName = fileDialog.GetCurrentFileName();
-                objFilePath = fileDialog.GetCurrentPath();
-                loadObjectFromGui(objFileName);
-            }
-            fileDialog.Close();
-            wInfo.openFileDialog = false;
+{
+    static ImGuiFileDialog fileDialog;
+    fileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", ".");
+    if (fileDialog.Display("ChooseFileDlgKey")) {
+        if (fileDialog.IsOk() == true) {
+            objFileName = fileDialog.GetCurrentFileName();
+            objFilePath = fileDialog.GetCurrentPath();
+            loadObjectFromGui(objFileName);
         }
-        
+        fileDialog.Close();
+        wInfo.openFileDialog = false;
     }
+    
+}
 
 void OpenGLWindow::handleMouseInput() 
 {
