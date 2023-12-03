@@ -30,16 +30,20 @@ bool Loader::parseFile(string filePath, string mFolder)
     if(!reader.ParseFromFile(filePath, readerConfig)) {
         // If reader detects known error.
         if (!reader.Error().empty()) {
-            cout << "\nError: \n";
-            cout << "\tTinyObjReader: " << reader.Error();
+            appendString("\nError: \n");
+            char output[255] = "\tTinyObjReader: ";
+            strcat(output, reader.Error().c_str());
+            appendString(output);
         }
         // If reader is unable to parse the file.
         return false;
     }
 
     if (!reader.Warning().empty()) {
-        cout << "\nWarning: \n";
-        cout << "\tTinyObjReader: " << reader.Warning();
+        appendString("\nWarning: \n");
+        char output[255] = "\tTinyObjReader: ";
+            strcat(output, reader.Warning().c_str());
+            appendString(output);
     }
     auto& attrib = reader.GetAttrib();
     auto& shapes = reader.GetShapes();

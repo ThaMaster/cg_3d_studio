@@ -205,21 +205,39 @@ namespace StudioGui {
         }
     }
 
-    void logWindow(bool &showWindow, Logger log)
+    void logWindow(bool &showWindow, Logger &log)
     {
         if(showWindow) {
             ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiCond_FirstUseEver);
             ImGui::Begin("Example: Log", &showWindow);
-            if (ImGui::SmallButton("[Debug] Add 5 entries"))
-            {
-                for (int n = 0; n < 5; n++) {
-                    log.addLog("Hello\n");
-                }
-            }
-            ImGui::End();
 
             // Actually call in the regular Log helper (which will Begin() into the same window as we just did)
-            log.draw("Example: Log", showWindow);
+            bool clearBuf = ImGui::Button("Clear"); ImGui::SameLine();
+            bool copyLog = ImGui::Button("Copy");
+
+            ImGui::Separator();
+
+            if (ImGui::BeginChild("scrolling", ImVec2(0, 0), ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
+            {
+                if (clearBuf) log.clear();
+                if (copyLog) ImGui::LogToClipboard();
+
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+                const char* buf_begin = log.textBuffer.begin();
+                const char* buf_end = log.textBuffer.end();
+
+                ImGui::TextUnformatted(buf_begin, buf_end);
+                ImGui::PopStyleVar();
+
+                // Keep up at the bottom of the scroll region if we were already at the bottom at the beginning of the frame.
+                // Using a scrollbar or mouse-wheel will take away from the bottom edge.
+                if (log.autoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+                    ImGui::SetScrollHereY(1.0f);
+            }
+            ImGui::EndChild();
+            ImGui::End();
         }
+        
     }
 }

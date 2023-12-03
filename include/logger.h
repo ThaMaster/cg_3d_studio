@@ -5,12 +5,11 @@ class Logger {
     public:
         Logger();
         void clear();
-        void addLog(std::string, ...);
-        void draw(const char*, bool); 
-
-    protected:
-    private:
+        void addLog(const char *, ...);
         ImGuiTextBuffer textBuffer;
         ImVector<int> lineOffsets;
         bool autoScroll;
+    protected:
+    private:
+        
 };

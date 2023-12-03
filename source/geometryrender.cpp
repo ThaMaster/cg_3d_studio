@@ -57,8 +57,6 @@ void GeometryRender::initialize()
     glUseProgram(0);
 
     Loader loader;
-    Sphere sphere;
-    loadGeometry("bruh");
 }
 
 /**
@@ -69,54 +67,56 @@ void GeometryRender::initialize()
  */
 void GeometryRender::loadGeometry(string fileName)
 {
-    //loader.clearLoader();
-    //objectParseSuccess = loader.parseFile("./object_files/" + fileName, "./object_files/");
+    loader.clearLoader();
+    objectParseSuccess = loader.parseFile("./object_files/" + fileName, "./object_files/");
     // Only load the object if it successfully parsed the object file.
-    //if(objectParseSuccess) {
-        //loader.loadedFileName = fileName;
-        //loader.normalizeVertexCoords();
-        //setObjInfo();
-        sphere.make_sphere(4);
+    if(objectParseSuccess) {
+        loader.loadedFileName = fileName;
+        loader.normalizeVertexCoords();
+        setObjInfo();
+
         glUseProgram(program);
         glBindVertexArray(vao);
-        
-        size_t vSize = sphere.sizeVertices();
-        size_t nSize = sphere.sizeNormals();
-        size_t iSize = sphere.sizeIndices();
 
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        size_t vSize = 0;
+        size_t nSize = 0;
+        size_t iSize = 0;
+
+        for(size_t s = 0; s < loader.numberOfShapes; s++) {
+            vSize += loader.vertexCoords[s].size()*sizeof(glm::vec3);
+            vSize += loader.vertexNormals[s].size()*sizeof(glm::vec3);
+            iSize += loader.indices[s].size()*sizeof(unsigned int);
+        }
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         // Set the pointers of locVertices to the right places
         glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
         glEnableVertexAttribArray(locVertices);
         glVertexAttribPointer(locNormals, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vSize));
         glEnableVertexAttribArray(locNormals);
-
-        // Calculate the total size needed for vertices and indices.
-        /* for(size_t s = 0; s < loader.numberOfShapes; s++) {
-            vSize += loader.vertexCoords[s].size()*sizeof(glm::vec3);
-            iSize += loader.indices[s].size()*sizeof(unsigned int);
-        } */
         
         // Allocate memory for both buffers without inserting data.
-        glBufferData( GL_ARRAY_BUFFER, vSize +nSize, NULL, GL_STATIC_DRAW );
+        glBufferData( GL_ARRAY_BUFFER, vSize + nSize, NULL, GL_STATIC_DRAW );
         glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, 0, GL_STATIC_DRAW );
-        // Fill both buffers with the data.
-        //size_t vbOffset = 0;
-        //size_t ebOffset = 0;
-        //for(size_t s = 0; s < loader.numberOfShapes; s++) {
-            //vSize = loader.vertexCoords[s].size()*sizeof(glm::vec3);
-            //iSize = loader.indices[s].size()*sizeof(unsigned int);
-        glBufferSubData( GL_ARRAY_BUFFER, 0, vSize, sphere.verticesData());
-        glBufferSubData( GL_ARRAY_BUFFER, vSize, nSize, sphere.normalsData());
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, sphere.indicesData(), GL_STATIC_DRAW);
-        //   vbOffset += vSize;
-        //  ebOffset += iSize;
-        //}
+        
+        // Fill buffers with the data.
+        size_t vbOffset = 0;
+        size_t ebOffset = 0;
+        for(size_t s = 0; s < loader.numberOfShapes; s++) {
+            vSize = loader.vertexCoords[s].size()*sizeof(glm::vec3);
+            nSize = loader.vertexNormals[s].size()*sizeof(glm::vec3);
+            iSize = loader.indices[s].size()*sizeof(unsigned int);
+            glBufferSubData( GL_ARRAY_BUFFER, vbOffset, vSize, loader.vertexCoords[s].data());
+            glBufferSubData( GL_ARRAY_BUFFER, vbOffset + vSize, nSize, loader.vertexNormals[s].data());
+            glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, ebOffset, iSize, loader.indices[s].data());
+            vbOffset += vSize + nSize;
+            ebOffset += iSize;
+        }
 
         glBindVertexArray(0);
         glUseProgram(0);
-    //}
+    }
 }
 
 // Check if any error has been reported from the shader
@@ -141,11 +141,10 @@ void GeometryRender::display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     // Call OpenGL to draw the triangle
-    /* size_t nIndices = 0;
+    size_t nIndices = 0;
     for(size_t s = 0; s < loader.numberOfShapes; s++) {
         nIndices += loader.indices[s].size();
-    } */
-    size_t nIndices = sphere.indices().size();
+    }
     glDrawElements(GL_TRIANGLES, static_cast<int>(nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
     
 

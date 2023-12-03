@@ -8,7 +8,6 @@
 
 #include "openglwindow.h"
 #include "loader.h"
-#include "sphere.h"
 
 class GeometryRender : public OpenGLWindow
 {
@@ -28,7 +27,6 @@ private:
     GLuint program;
 
     Loader loader;
-    Sphere sphere;
     
     // OpenGL buffers
     GLuint vao;
