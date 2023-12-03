@@ -1,6 +1,5 @@
 #include "logger.h"
 #include <string>
-
 Logger::Logger() 
 {
     autoScroll = true;
@@ -14,8 +13,9 @@ void Logger::clear()
     lineOffsets.push_back(0);
 }
 
-void Logger::addLog(const char* logEntry, ...) 
+void Logger::addLog(std::string logInput, ...) 
 {
+    char* logEntry = strcpy(logEntry, logInput.c_str());
     int prevSize = textBuffer.size();
     va_list args;
     va_start(args, logEntry);
