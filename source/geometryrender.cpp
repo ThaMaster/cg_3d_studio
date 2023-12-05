@@ -289,7 +289,8 @@ void GeometryRender::updateProjMatrix()
     if(cInfo.perspProj) {
         matProj = glm::perspective(glm::radians(cInfo.fov), getAspectRatio(), cInfo.nearPlane, cInfo.farPlane);
     } else {
-        matProj = glm::ortho(-cInfo.top, cInfo.top, -cInfo.top, cInfo.top, cInfo.nearPlane, cInfo.farPlane);
+        float aspect = width() / height();
+        matProj = glm::ortho(-cInfo.top*aspect, cInfo.top*aspect, -cInfo.top, cInfo.top, cInfo.nearPlane, cInfo.farPlane);
         if(cInfo.obliqueScale != 0.0f)
             matProj = obliqueProjection(matProj, cInfo.obliqueScale, cInfo.obliqueAngleRad);
     }
