@@ -34,6 +34,7 @@ class Object
         vector<vector<glm::vec3>> vNormals;
         vector<vector<glm::vec3>> tCoords;
         vector<vector<glm::vec3>> colorVals;
+        bool isValid = false;
         bool objLoaded = false;
 
         Object(string fileName)

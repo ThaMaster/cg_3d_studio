@@ -67,21 +67,20 @@ void GeometryRender::initialize()
  */
 void GeometryRender::loadGeometry(string fileName)
 {
-    loader.clearLoader();
-    objectParseSuccess = loader.parseFile("./object_files/" + fileName, "./object_files/");
+    Object newObject = loader.parseFile("./object_files/" + fileName, "./object_files/");
     // Only load the object if it successfully parsed the object file.
-    if(objectParseSuccess) {
-        
-        loader.normalizeVertexCoords();
+    if(newObject.isValid) {
+        objects.push_back(newObject);
+        loader.normalizeVertexCoords(objects[0]);
         glUseProgram(program);
         glBindVertexArray(vao);
 
         size_t vSize = 0;
         size_t nSize = 0;
         size_t iSize = 0;
-        vSize += loader.objects[0].oInfo.nVertices*sizeof(glm::vec3);
-        nSize += loader.objects[0].oInfo.nNormals*sizeof(glm::vec3);
-        iSize += loader.objects[0].oInfo.nIndices*sizeof(unsigned int);
+        vSize += objects[0].oInfo.nVertices*sizeof(glm::vec3);
+        nSize += objects[0].oInfo.nNormals*sizeof(glm::vec3);
+        iSize += objects[0].oInfo.nIndices*sizeof(unsigned int);
         
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -98,13 +97,13 @@ void GeometryRender::loadGeometry(string fileName)
         // Fill buffers with the data.
         size_t vbOffset = 0;
         size_t ebOffset = 0;
-        for(size_t s = 0; s < loader.objects[0].oInfo.nShapes; s++) {
-            vSize = loader.objects[0].vCoords[s].size()*sizeof(glm::vec3);
-            nSize = loader.objects[0].vNormals[s].size()*sizeof(glm::vec3);
-            iSize = loader.objects[0].indices[s].size()*sizeof(unsigned int);
-            glBufferSubData( GL_ARRAY_BUFFER, vbOffset, vSize, loader.objects[0].vCoords[s].data());
-            glBufferSubData( GL_ARRAY_BUFFER, vbOffset + vSize, nSize, loader.objects[0].vNormals[s].data());
-            glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, ebOffset, iSize, loader.objects[0].indices[s].data());
+        for(size_t s = 0; s < objects[0].oInfo.nShapes; s++) {
+            vSize = objects[0].vCoords[s].size()*sizeof(glm::vec3);
+            nSize = objects[0].vNormals[s].size()*sizeof(glm::vec3);
+            iSize = objects[0].indices[s].size()*sizeof(unsigned int);
+            glBufferSubData( GL_ARRAY_BUFFER, vbOffset, vSize, objects[0].vCoords[s].data());
+            glBufferSubData( GL_ARRAY_BUFFER, vbOffset + vSize, nSize, objects[0].vNormals[s].data());
+            glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, ebOffset, iSize, objects[0].indices[s].data());
             vbOffset += vSize + nSize;
             ebOffset += iSize;
         }
@@ -134,8 +133,8 @@ void GeometryRender::display()
     glBindVertexArray(vao);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if(loader.objects.size() != 0) {
-        glDrawElements(GL_TRIANGLES, static_cast<int>(loader.objects[0].oInfo.nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+    if(objects.size() != 0) {
+        glDrawElements(GL_TRIANGLES, static_cast<int>(objects[0].oInfo.nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
         // Not to be called in release...
         debugShader();
     }

@@ -26,11 +26,8 @@ using namespace std;
 class Loader 
 {   
     public:
-        bool parseFile(string, string);
-        void normalizeVertexCoords();
-        void clearLoader();
-
-        vector<Object> objects; //STORE ALL LOADED OBJECTS.
+        Object parseFile(string, string);
+        void normalizeVertexCoords(Object&);
 
         char* outputString = new char[255];
 
@@ -56,6 +53,6 @@ class Loader
 
     private:        
         // Searches a shapes vertices and finds the longest vector lenght
-        float getLargestVertexLength(size_t);
+        float getLargestVertexLength(size_t, Object);
         float calcVectorLength(glm::vec3);
 };

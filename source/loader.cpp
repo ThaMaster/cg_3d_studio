@@ -18,15 +18,15 @@
  *  
  * If any errors occur corresponding output will be sent without crashing the program.
  * 
- * @returns true/false if the given object file could be parsed.
+ * @returns New 3D object from the file.
  */
-bool Loader::parseFile(string filePath, string mFolder) 
+Object Loader::parseFile(string filePath, string mFolder) 
 {
     
     tinyobj::ObjReaderConfig readerConfig;
     readerConfig.mtl_search_path = mFolder;
     tinyobj::ObjReader reader;
-
+    Object newObject = Object(filePath);
     if(!reader.ParseFromFile(filePath, readerConfig)) {
         // If reader detects known error.
         if (!reader.Error().empty()) {
@@ -35,7 +35,7 @@ bool Loader::parseFile(string filePath, string mFolder)
             appendString(reader.Error()); */
         }
         // If reader is unable to parse the file.
-        return false;
+        return newObject;
     }
 
     if (!reader.Warning().empty()) {
@@ -55,7 +55,7 @@ bool Loader::parseFile(string filePath, string mFolder)
     vector<vector<glm::vec3>> colorVals(shapes.size());
     vector<vector<glm::vec3>> vertexNormals(shapes.size());
     
-    Object newObject = Object(filePath);
+    
     // Loop over object shapes
     for (size_t s = 0; s < shapes.size(); s++) {
 
@@ -131,24 +131,23 @@ bool Loader::parseFile(string filePath, string mFolder)
     newObject.tCoords = textureCoords;
     newObject.colorVals = colorVals;
     newObject.vNormals = vertexNormals;
-    Loader::objects.push_back(newObject);
-
-    return true;
+    newObject.isValid = true;
+    return newObject;
 }
 
 /**
  * Normalizes all the shapes coordinates to fit inside the NDC cube.
  * This will change the vertexCoords value in the loader class.
  */
-void Loader::normalizeVertexCoords()
+void Loader::normalizeVertexCoords(Object &object)
 {
-    for(size_t s = 0; s < objects[0].vCoords.size(); s++) {
+    for(size_t s = 0; s < object.vCoords.size(); s++) {
 
-        float largest_length = getLargestVertexLength(s);
+        float largest_length = getLargestVertexLength(s, object);
 
-        for(size_t v = 0; v < objects[0].vCoords[s].size(); v++)
+        for(size_t v = 0; v < object.vCoords[s].size(); v++)
         {
-            objects[0].vCoords[s][v] /= largest_length;    
+            object.vCoords[s][v] /= largest_length;    
         }
     }
 }
@@ -159,15 +158,15 @@ void Loader::normalizeVertexCoords()
  * @param s The shape that is examined.
  * @returns largest length of vertex in the selected shape.
  */
-float Loader::getLargestVertexLength(size_t s)
+float Loader::getLargestVertexLength(size_t s, Object object)
 {
     float largest_length = 0;
     float new_length;
 
-    for(size_t v = 0; v < objects[0].vCoords[s].size(); v++)
+    for(size_t v = 0; v < object.vCoords[s].size(); v++)
     {
         // Calculate the length of the current vector.
-        new_length = calcVectorLength(objects[0].vCoords[s][v]);
+        new_length = calcVectorLength(object.vCoords[s][v]);
 
         if(largest_length < new_length) {
             largest_length = new_length; 
@@ -180,8 +179,4 @@ float Loader::getLargestVertexLength(size_t s)
 float Loader::calcVectorLength(glm::vec3 v) 
 {
     return sqrt(pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0));
-}
-
-void Loader::clearLoader() {
-    objects.clear();
 }
