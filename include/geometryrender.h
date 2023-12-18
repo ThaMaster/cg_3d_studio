@@ -20,7 +20,6 @@ public:
     void initialize();
     virtual void display() override;
     void updateObject() override;
-    void reset() override;
     void loadObjectFromGui(string) override;
 
 private:
@@ -37,26 +36,11 @@ private:
     GLuint locVertices;
     GLuint locNormals;
 
-    // Model matrix
-    glm::mat4x4 matModel = {
-                        1.0, 0.0, 0.0, 0.0, 
-                        0.0, 1.0, 0.0, 0.0,
-                        0.0, 0.0, 1.0, 0.0,
-                        0.0, 0.0, 0.0, 1.0};
-    // View matrix
-    glm::mat4x4 matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
-    
-    // Projection matrix
-    glm::mat4x4 matProj = glm::perspective(glm::radians(cInfo.fov), getAspectRatio(), cInfo.nearPlane, cInfo.farPlane);
-
     bool objectParseSuccess;
 
     void debugShader(void) const;
 
     void loadGeometry(string fileName);
 
-    glm::mat4x4 obliqueProjection(glm::mat4x4, float, float);
-    void updateModelMatrix();
-    void updateViewMatrix();
-    void updateProjMatrix();
+    void resetTransformations();
 };

@@ -109,7 +109,7 @@ namespace StudioGui {
         }
     }
 
-    void camWindow(bool &showWindow, OpenGLWindow::cameraInfo &cInfo, glm::vec3 defaultZero, glm::vec3 defaultRef)
+    void camWindow(bool &showWindow, WorldContext::cameraInfo &cInfo, glm::vec3 defaultZero, glm::vec3 defaultRef)
     {
         if(showWindow) {
             static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;

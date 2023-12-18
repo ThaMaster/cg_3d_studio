@@ -6,7 +6,6 @@
  */
 #include "openglwindow.h"
 #include "studiogui.h"
-
 using namespace std;
 
 // Initialize OpenGL context and viewport.
@@ -111,6 +110,7 @@ GLFWwindow* OpenGLWindow::window() const
 
 float OpenGLWindow::getAspectRatio()
 {
+    cout << windowWidth << " : " << windowHeight << endl;
     return (float)windowWidth / (float) windowHeight;
 }
 
@@ -220,31 +220,31 @@ void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int ac
         switch(key)
         {
             // Detect Camera keys.
-            case GLFW_KEY_A: cInfo.camOffset[0] = -CAM_SPEED; break;
-            case GLFW_KEY_D: cInfo.camOffset[0] = CAM_SPEED; break;
-            case GLFW_KEY_Q: cInfo.camOffset[1] = CAM_SPEED; break;
-            case GLFW_KEY_E: cInfo.camOffset[1] = -CAM_SPEED; break;
-            case GLFW_KEY_W: cInfo.camOffset[2] = -CAM_SPEED; break;
-            case GLFW_KEY_S: cInfo.camOffset[2] = CAM_SPEED; break;
+            case GLFW_KEY_A: wContext.cInfo.camOffset[0] = -CAM_SPEED; break;
+            case GLFW_KEY_D: wContext.cInfo.camOffset[0] = CAM_SPEED; break;
+            case GLFW_KEY_Q: wContext.cInfo.camOffset[1] = CAM_SPEED; break;
+            case GLFW_KEY_E: wContext.cInfo.camOffset[1] = -CAM_SPEED; break;
+            case GLFW_KEY_W: wContext.cInfo.camOffset[2] = -CAM_SPEED; break;
+            case GLFW_KEY_S: wContext.cInfo.camOffset[2] = CAM_SPEED; break;
             // Detect Rotation keys.
-            case GLFW_KEY_UP: tInfo.rVals[0] = -ROT_SPEED; break;
-            case GLFW_KEY_DOWN: tInfo.rVals[0] = ROT_SPEED; break; 
-            case GLFW_KEY_LEFT: tInfo.rVals[1] = -ROT_SPEED; break;
-            case GLFW_KEY_RIGHT: tInfo.rVals[1] = ROT_SPEED; break;
-            case GLFW_KEY_COMMA: tInfo.rVals[2] = ROT_SPEED; break;
-            case GLFW_KEY_PERIOD: tInfo.rVals[2] = -ROT_SPEED; break;
+            case GLFW_KEY_UP: wContext.tInfo.rVals[0] = -ROT_SPEED; break;
+            case GLFW_KEY_DOWN: wContext.tInfo.rVals[0] = ROT_SPEED; break; 
+            case GLFW_KEY_LEFT: wContext.tInfo.rVals[1] = -ROT_SPEED; break;
+            case GLFW_KEY_RIGHT: wContext.tInfo.rVals[1] = ROT_SPEED; break;
+            case GLFW_KEY_COMMA: wContext.tInfo.rVals[2] = ROT_SPEED; break;
+            case GLFW_KEY_PERIOD: wContext.tInfo.rVals[2] = -ROT_SPEED; break;
             // Detect Translation keys.
-            case GLFW_KEY_J: tInfo.tVals[0] = -TRA_SPEED; break;
-            case GLFW_KEY_L: tInfo.tVals[0] = TRA_SPEED; break;
-            case GLFW_KEY_I: tInfo.tVals[1] = TRA_SPEED; break;
-            case GLFW_KEY_K: tInfo.tVals[1] = -TRA_SPEED; break; 
-            case GLFW_KEY_Y: tInfo.tVals[2] = TRA_SPEED; break;
-            case GLFW_KEY_H: tInfo.tVals[2] = -TRA_SPEED; break;
+            case GLFW_KEY_J: wContext.tInfo.tVals[0] = -TRA_SPEED; break;
+            case GLFW_KEY_L: wContext.tInfo.tVals[0] = TRA_SPEED; break;
+            case GLFW_KEY_I: wContext.tInfo.tVals[1] = TRA_SPEED; break;
+            case GLFW_KEY_K: wContext.tInfo.tVals[1] = -TRA_SPEED; break; 
+            case GLFW_KEY_Y: wContext.tInfo.tVals[2] = TRA_SPEED; break;
+            case GLFW_KEY_H: wContext.tInfo.tVals[2] = -TRA_SPEED; break;
             // Detect Scaling keys.
-            case GLFW_KEY_KP_ADD: tInfo.scVal = SCA_INC_SPEED; break;
-            case GLFW_KEY_KP_SUBTRACT: tInfo.scVal = SCA_DEC_SPEED; break;
+            case GLFW_KEY_KP_ADD: wContext.tInfo.scVal = SCA_INC_SPEED; break;
+            case GLFW_KEY_KP_SUBTRACT: wContext.tInfo.scVal = SCA_DEC_SPEED; break;
             // Detect reset key.
-            case GLFW_KEY_R: tInfo.reset= true; break;
+            case GLFW_KEY_R: wContext.tInfo.reset= true; break;
             // Detect shortcut keys.
             case GLFW_KEY_O: /**/ break;
             case GLFW_KEY_F1: wInfo.showObjTransWindow = !wInfo.showObjTransWindow; break;
@@ -255,16 +255,16 @@ void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int ac
         } 
     } else if (action == GLFW_RELEASE) {
         // Reset values if key is released.
-        if(key == GLFW_KEY_A || key == GLFW_KEY_D) cInfo.camOffset[0] = 0.0f;
-        if(key == GLFW_KEY_Q || key == GLFW_KEY_E) cInfo.camOffset[1] = 0.0f;
-        if(key == GLFW_KEY_W || key == GLFW_KEY_S) cInfo.camOffset[2] = 0.0f;
-        if(key == GLFW_KEY_J || key == GLFW_KEY_L) tInfo.tVals[0] = 0.0f;
-        if(key == GLFW_KEY_K || key == GLFW_KEY_I) tInfo.tVals[1] = 0.0f;
-        if(key == GLFW_KEY_Y || key == GLFW_KEY_H) tInfo.tVals[2] = 0.0f;
-        if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) tInfo.rVals[0] = 0.0f;
-        if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) tInfo.rVals[1] = 0.0f;
-        if(key == GLFW_KEY_COMMA || key == GLFW_KEY_PERIOD) tInfo.rVals[2] = 0.0f;
-        if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) tInfo.scVal = 0.0f;
+        if(key == GLFW_KEY_A || key == GLFW_KEY_D) wContext.cInfo.camOffset[0] = 0.0f;
+        if(key == GLFW_KEY_Q || key == GLFW_KEY_E) wContext.cInfo.camOffset[1] = 0.0f;
+        if(key == GLFW_KEY_W || key == GLFW_KEY_S) wContext.cInfo.camOffset[2] = 0.0f;
+        if(key == GLFW_KEY_J || key == GLFW_KEY_L) wContext.tInfo.tVals[0] = 0.0f;
+        if(key == GLFW_KEY_K || key == GLFW_KEY_I) wContext.tInfo.tVals[1] = 0.0f;
+        if(key == GLFW_KEY_Y || key == GLFW_KEY_H) wContext.tInfo.tVals[2] = 0.0f;
+        if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) wContext.tInfo.rVals[0] = 0.0f;
+        if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) wContext.tInfo.rVals[1] = 0.0f;
+        if(key == GLFW_KEY_COMMA || key == GLFW_KEY_PERIOD) wContext.tInfo.rVals[2] = 0.0f;
+        if(key == GLFW_KEY_KP_ADD || key == GLFW_KEY_KP_SUBTRACT) wContext.tInfo.scVal = 0.0f;
     }
 }
 
@@ -336,9 +336,9 @@ void OpenGLWindow::DrawGui()
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
     StudioGui::mainMenuBar(glfwWindow, wInfo);
 
-    StudioGui::objTransWindow(wInfo.showObjTransWindow, tInfo.reset);
+    StudioGui::objTransWindow(wInfo.showObjTransWindow, wContext.tInfo.reset);
     //StudioGui::objInfWindow(wInfo.showObjInfWindow, objFileName, objFilePath, oInfo);
-    StudioGui::camWindow(wInfo.showCamWindow, cInfo, pZeroDefault, pRefDefault);
+    StudioGui::camWindow(wInfo.showCamWindow, wContext.cInfo, wContext.pZeroDefault, pRefDefault);
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
     //StudioGui::showStudioOverlay(wInfo.showOverlay, objFileName, oInfo);
 
@@ -365,8 +365,8 @@ void OpenGLWindow::openFile()
 void OpenGLWindow::handleMouseInput() 
 {
     if(ImGui::IsMouseDragging(ImGuiMouseButton_Left, -1.0f) && !ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow)) {
-        cInfo.camRotOffset = glm::vec3(-ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y, 0.0f);
+        wContext.cInfo.camRotOffset = glm::vec3(-ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y, 0.0f);
     } else {
-        cInfo.camRotOffset = glm::vec3(0.0f,0.0f,0.0f);
+        wContext.cInfo.camRotOffset = glm::vec3(0.0f,0.0f,0.0f);
     }
 }
