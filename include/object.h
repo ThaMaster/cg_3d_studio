@@ -16,6 +16,17 @@ using namespace std;
 class Object
 {
     public:
+
+        struct objectInfo {
+            size_t nShapes = 0;
+            int nVertices = 0;
+            int nFaces = 0;
+            int nIndices = 0;
+            int nNormals = 0;
+            int nTexCoords = 0;
+            int nColors = 0;
+            bool objectLoaded = false;
+        } oInfo;
         
         string fileName;
         vector<vector<glm::vec3>> vCoords;

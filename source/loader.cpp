@@ -62,8 +62,8 @@ bool Loader::parseFile(string filePath, string mFolder)
         size_t index_offset = 0;
         size_t vOffset = 0;
         std::vector<unsigned char> faceVertices = shapes[s].mesh.num_face_vertices;
-        oInfo.nVertices += attrib.vertices.size();
-        oInfo.nFaces += faceVertices.size();
+        newObject.oInfo.nVertices += attrib.vertices.size();
+        newObject.oInfo.nFaces += faceVertices.size();
 
         // Store all vertex coordinates
         for (size_t i = 0; i < attrib.vertices.size(); i+=3) {
@@ -80,7 +80,7 @@ bool Loader::parseFile(string filePath, string mFolder)
             for (size_t v = 0; v < fv; v++) {
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
                 indices[s].push_back(idx.vertex_index);
-                oInfo.nIndices++;
+                newObject.oInfo.nIndices++;
             }
             
             // Check if `normal_index` is zero or positive. negative = no normal data
@@ -92,7 +92,7 @@ bool Loader::parseFile(string filePath, string mFolder)
                         attrib.normals[vOffset], 
                         attrib.normals[vOffset+1], 
                         attrib.normals[vOffset+2]));
-                    oInfo.nNormals++;
+                    newObject.oInfo.nNormals++;
                 }
             }
 
@@ -105,7 +105,7 @@ bool Loader::parseFile(string filePath, string mFolder)
                         attrib.texcoords[vOffset], 
                         attrib.texcoords[vOffset+1], 
                         attrib.texcoords[vOffset+2]));
-                    oInfo.nTexCoords++;
+                    newObject.oInfo.nTexCoords++;
                 }
             }
 
@@ -116,7 +116,7 @@ bool Loader::parseFile(string filePath, string mFolder)
                     attrib.colors[vOffset], 
                     attrib.colors[vOffset+1], 
                     attrib.colors[vOffset+2]));
-                oInfo.nColors++;
+                newObject.oInfo.nColors++;
             }
 
             index_offset += fv;
@@ -124,7 +124,7 @@ bool Loader::parseFile(string filePath, string mFolder)
             // per-face material
             shapes[s].mesh.material_ids[f];
         }
-        oInfo.nShapes++;
+        newObject.oInfo.nShapes++;
     }
     newObject.vCoords = vertexCoords;
     newObject.indices = indices;

@@ -32,18 +32,6 @@ class Loader
 
         vector<Object> objects; //STORE ALL LOADED OBJECTS.
 
-        // Object information.
-        struct objectInfo {
-            size_t nShapes = 0;
-            int nVertices = 0;
-            int nFaces = 0;
-            int nIndices = 0;
-            int nNormals = 0;
-            int nTexCoords = 0;
-            int nColors = 0;
-            bool objectLoaded = false;
-        } oInfo;
-
         char* outputString = new char[255];
 
         void appendString(std::string str) {

@@ -79,7 +79,7 @@ void GeometryRender::loadGeometry(string fileName)
         size_t vSize = 0;
         size_t nSize = 0;
         size_t iSize = 0;
-        for(size_t s = 0; s < loader.oInfo.nShapes; s++) {
+        for(size_t s = 0; s < loader.objects[0].oInfo.nShapes; s++) {
             vSize += loader.objects[0].vCoords[s].size()*sizeof(glm::vec3);
             vSize += loader.objects[0].vNormals[s].size()*sizeof(glm::vec3);
             iSize += loader.objects[0].indices[s].size()*sizeof(unsigned int);
@@ -100,7 +100,7 @@ void GeometryRender::loadGeometry(string fileName)
         // Fill buffers with the data.
         size_t vbOffset = 0;
         size_t ebOffset = 0;
-        for(size_t s = 0; s < loader.oInfo.nShapes; s++) {
+        for(size_t s = 0; s < loader.objects[0].oInfo.nShapes; s++) {
             vSize = loader.objects[0].vCoords[s].size()*sizeof(glm::vec3);
             nSize = loader.objects[0].vNormals[s].size()*sizeof(glm::vec3);
             iSize = loader.objects[0].indices[s].size()*sizeof(unsigned int);
@@ -136,18 +136,18 @@ void GeometryRender::display()
     glBindVertexArray(vao);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    // Call OpenGL to draw the triangle
-    size_t nIndices = 0;
-    for(size_t s = 0; s < loader.oInfo.nShapes; s++) {
-        nIndices += loader.objects[0].indices[s].size();
+    if(loader.objects.size() != 0) {
+        // Call OpenGL to draw the triangle
+        size_t nIndices = 0;
+        for(size_t s = 0; s < loader.objects[0].oInfo.nShapes; s++) {
+            nIndices += loader.objects[0].indices[s].size();
+        }
+        glDrawElements(GL_TRIANGLES, static_cast<int>(nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+        
+
+        // Not to be called in release...
+        debugShader();
     }
-    glDrawElements(GL_TRIANGLES, static_cast<int>(nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-    
-
-    // Not to be called in release...
-    debugShader();
-
     glBindVertexArray(0);
     glUseProgram(0);
 }
