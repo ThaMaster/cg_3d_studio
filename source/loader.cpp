@@ -22,7 +22,7 @@
  */
 bool Loader::parseFile(string filePath, string mFolder) 
 {
-    numberOfShapes = 0;
+    
     tinyobj::ObjReaderConfig readerConfig;
     readerConfig.mtl_search_path = mFolder;
     tinyobj::ObjReader reader;
@@ -30,18 +30,18 @@ bool Loader::parseFile(string filePath, string mFolder)
     if(!reader.ParseFromFile(filePath, readerConfig)) {
         // If reader detects known error.
         if (!reader.Error().empty()) {
-            appendString("\nError: \n");
+            /* appendString("\nError: \n");
             appendString("\tTinyObjReader: ");
-            appendString(reader.Error().c_str());
+            appendString(reader.Error()); */
         }
         // If reader is unable to parse the file.
         return false;
     }
 
     if (!reader.Warning().empty()) {
-        appendString("\nWarning: \n");
+        /* appendString("\nWarning: \n");
         appendString("\tTinyObjReader: ");
-        appendString(reader.Warning().c_str());
+        appendString(reader.Warning()); */
     }
 
     auto& attrib = reader.GetAttrib();
@@ -49,20 +49,21 @@ bool Loader::parseFile(string filePath, string mFolder)
     //auto& materials = reader.GetMaterials();
     
     // Allocate the number of shapes for the data vectors.
-    vertexCoords.resize(shapes.size());
-    indices.resize(shapes.size());
-    textureCoords.resize(shapes.size());
-    colorVals.resize(shapes.size());
-    vertexNormals.resize(shapes.size());
-
+    vector<vector<glm::vec3>> vertexCoords(shapes.size());
+    vector<vector<unsigned int>> indices(shapes.size());
+    vector<vector<glm::vec3>> textureCoords(shapes.size());
+    vector<vector<glm::vec3>> colorVals(shapes.size());
+    vector<vector<glm::vec3>> vertexNormals(shapes.size());
+    
+    Object newObject = Object(filePath);
     // Loop over object shapes
     for (size_t s = 0; s < shapes.size(); s++) {
 
         size_t index_offset = 0;
         size_t vOffset = 0;
         std::vector<unsigned char> faceVertices = shapes[s].mesh.num_face_vertices;
-        numberOfVertices += attrib.vertices.size();
-        numberOfFaces += faceVertices.size();
+        oInfo.nVertices += attrib.vertices.size();
+        oInfo.nFaces += faceVertices.size();
 
         // Store all vertex coordinates
         for (size_t i = 0; i < attrib.vertices.size(); i+=3) {
@@ -79,7 +80,7 @@ bool Loader::parseFile(string filePath, string mFolder)
             for (size_t v = 0; v < fv; v++) {
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
                 indices[s].push_back(idx.vertex_index);
-                numberOfIndices++;
+                oInfo.nIndices++;
             }
             
             // Check if `normal_index` is zero or positive. negative = no normal data
@@ -91,7 +92,7 @@ bool Loader::parseFile(string filePath, string mFolder)
                         attrib.normals[vOffset], 
                         attrib.normals[vOffset+1], 
                         attrib.normals[vOffset+2]));
-                    numberOfNormals++;
+                    oInfo.nNormals++;
                 }
             }
 
@@ -104,7 +105,7 @@ bool Loader::parseFile(string filePath, string mFolder)
                         attrib.texcoords[vOffset], 
                         attrib.texcoords[vOffset+1], 
                         attrib.texcoords[vOffset+2]));
-                    numberOfTexCoords++;
+                    oInfo.nTexCoords++;
                 }
             }
 
@@ -115,7 +116,7 @@ bool Loader::parseFile(string filePath, string mFolder)
                     attrib.colors[vOffset], 
                     attrib.colors[vOffset+1], 
                     attrib.colors[vOffset+2]));
-                numberOfColors++;
+                oInfo.nColors++;
             }
 
             index_offset += fv;
@@ -123,8 +124,15 @@ bool Loader::parseFile(string filePath, string mFolder)
             // per-face material
             shapes[s].mesh.material_ids[f];
         }
-        numberOfShapes++;
+        oInfo.nShapes++;
     }
+    newObject.vCoords = vertexCoords;
+    newObject.indices = indices;
+    newObject.tCoords = textureCoords;
+    newObject.colorVals = colorVals;
+    newObject.vNormals = vertexNormals;
+    Loader::objects.push_back(newObject);
+
     return true;
 }
 
@@ -134,13 +142,13 @@ bool Loader::parseFile(string filePath, string mFolder)
  */
 void Loader::normalizeVertexCoords()
 {
-    for(size_t s = 0; s < vertexCoords.size(); s++) {
+    for(size_t s = 0; s < objects[0].vCoords.size(); s++) {
 
         float largest_length = getLargestVertexLength(s);
 
-        for(size_t v = 0; v < vertexCoords[s].size(); v++)
+        for(size_t v = 0; v < objects[0].vCoords[s].size(); v++)
         {
-            vertexCoords[s][v] /= largest_length;    
+            objects[0].vCoords[s][v] /= largest_length;    
         }
     }
 }
@@ -156,10 +164,10 @@ float Loader::getLargestVertexLength(size_t s)
     float largest_length = 0;
     float new_length;
 
-    for(size_t v = 0; v < vertexCoords[s].size(); v++)
+    for(size_t v = 0; v < objects[0].vCoords[s].size(); v++)
     {
         // Calculate the length of the current vector.
-        new_length = calcVectorLength(vertexCoords[s][v]);
+        new_length = calcVectorLength(objects[0].vCoords[s][v]);
 
         if(largest_length < new_length) {
             largest_length = new_length; 
@@ -174,14 +182,6 @@ float Loader::calcVectorLength(glm::vec3 v)
     return sqrt(pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0));
 }
 
-/**
- * Clears the object data in the loader object.
- */
-void Loader::clearLoader()
-{
-    vertexCoords.clear();
-    indices.clear();
-    vertexNormals.clear();
-    textureCoords.clear();
-    colorVals.clear();
+void Loader::clearLoader() {
+    objects.clear();
 }

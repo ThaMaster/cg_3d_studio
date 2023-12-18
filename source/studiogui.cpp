@@ -1,7 +1,7 @@
 #include "studiogui.h"
 namespace StudioGui {
 
-    void mainMenuBar(GLFWwindow *glfwWindow, OpenGLWindow::objectInfo oInfo, OpenGLWindow::windowInfo &wInfo)
+    void mainMenuBar(GLFWwindow *glfwWindow, OpenGLWindow::windowInfo &wInfo)
     {
         if (ImGui::BeginMainMenuBar())
         {
@@ -15,14 +15,12 @@ namespace StudioGui {
             }
             if(ImGui::BeginMenu("View"))
             {
-                ImGui::BeginDisabled(!oInfo.objectLoaded);
                 if(ImGui::MenuItem("Object Transformation", "F1", wInfo.showObjTransWindow)) { wInfo.showObjTransWindow = !wInfo.showObjTransWindow; }
-                if(ImGui::MenuItem("Object Information", "F2", wInfo.showObjInfWindow)) { wInfo.showObjInfWindow = !wInfo.showObjInfWindow; }
+                //if(ImGui::MenuItem("Object Information", "F2", wInfo.showObjInfWindow)) { wInfo.showObjInfWindow = !wInfo.showObjInfWindow; }
                 ImGui::Separator();  
                 if(ImGui::MenuItem("Camera", "F3", wInfo.showCamWindow)) { wInfo.showCamWindow = !wInfo.showCamWindow; }
-                ImGui::EndDisabled();
                 ImGui::Separator();
-                if(ImGui::MenuItem("Studio Overlay", NULL, wInfo.showOverlay)) { wInfo.showOverlay = !wInfo.showOverlay; }
+                //if(ImGui::MenuItem("Studio Overlay", NULL, wInfo.showOverlay)) { wInfo.showOverlay = !wInfo.showOverlay; }
                 ImGui::EndMenu();
             }
             if(ImGui::BeginMenu("Help")) 
@@ -38,8 +36,6 @@ namespace StudioGui {
 
         aboutPopupModal(wInfo.aboutOpen);
     }
-
-    
 
     // Contains only PLACEHOLDER for now.
     void objTransWindow(bool &showWindow, bool &reset)
@@ -60,7 +56,7 @@ namespace StudioGui {
         }
     }
 
-    void objInfWindow(bool &showWindow, std::string objFileName, std::string objFilePath, OpenGLWindow::objectInfo oInfo)
+    /* void objInfWindow(bool &showWindow, std::string objFileName, std::string objFilePath, OpenGLWindow::objectInfo oInfo)
     {
         if(showWindow) {
             char fileName[objFileName.length()+1];
@@ -88,7 +84,7 @@ namespace StudioGui {
             ImGui::SameLine(200); ImGui::Text("%d", oInfo.nColors);
             ImGui::End();
         }
-    }
+    } */
 
     void aboutPopupModal(bool &aboutOpen)
     {
@@ -166,7 +162,7 @@ namespace StudioGui {
         }
     }
 
-    void showStudioOverlay(bool &showOverlay, std::string objFileName, OpenGLWindow::objectInfo oInfo)
+    /* void showStudioOverlay(bool &showOverlay, std::string objFileName, OpenGLWindow::objectInfo oInfo)
     {
         if(showOverlay) {
             char fileName[objFileName.length()+1];
@@ -203,7 +199,7 @@ namespace StudioGui {
             }
             ImGui::End();
         }
-    }
+    } */
 
     void logWindow(bool &showWindow, Logger &log)
     {

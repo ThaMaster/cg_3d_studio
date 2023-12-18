@@ -71,24 +71,20 @@ void GeometryRender::loadGeometry(string fileName)
     objectParseSuccess = loader.parseFile("./object_files/" + fileName, "./object_files/");
     // Only load the object if it successfully parsed the object file.
     if(objectParseSuccess) {
-        loader.loadedFileName = fileName;
         
         loader.normalizeVertexCoords();
-        setObjInfo();
-
         glUseProgram(program);
         glBindVertexArray(vao);
 
         size_t vSize = 0;
         size_t nSize = 0;
         size_t iSize = 0;
-
-        for(size_t s = 0; s < loader.numberOfShapes; s++) {
-            vSize += loader.vertexCoords[s].size()*sizeof(glm::vec3);
-            vSize += loader.vertexNormals[s].size()*sizeof(glm::vec3);
-            iSize += loader.indices[s].size()*sizeof(unsigned int);
+        for(size_t s = 0; s < loader.oInfo.nShapes; s++) {
+            vSize += loader.objects[0].vCoords[s].size()*sizeof(glm::vec3);
+            vSize += loader.objects[0].vNormals[s].size()*sizeof(glm::vec3);
+            iSize += loader.objects[0].indices[s].size()*sizeof(unsigned int);
         }
-
+        
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         // Set the pointers of locVertices to the right places
@@ -104,13 +100,13 @@ void GeometryRender::loadGeometry(string fileName)
         // Fill buffers with the data.
         size_t vbOffset = 0;
         size_t ebOffset = 0;
-        for(size_t s = 0; s < loader.numberOfShapes; s++) {
-            vSize = loader.vertexCoords[s].size()*sizeof(glm::vec3);
-            nSize = loader.vertexNormals[s].size()*sizeof(glm::vec3);
-            iSize = loader.indices[s].size()*sizeof(unsigned int);
-            glBufferSubData( GL_ARRAY_BUFFER, vbOffset, vSize, loader.vertexCoords[s].data());
-            glBufferSubData( GL_ARRAY_BUFFER, vbOffset + vSize, nSize, loader.vertexNormals[s].data());
-            glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, ebOffset, iSize, loader.indices[s].data());
+        for(size_t s = 0; s < loader.oInfo.nShapes; s++) {
+            vSize = loader.objects[0].vCoords[s].size()*sizeof(glm::vec3);
+            nSize = loader.objects[0].vNormals[s].size()*sizeof(glm::vec3);
+            iSize = loader.objects[0].indices[s].size()*sizeof(unsigned int);
+            glBufferSubData( GL_ARRAY_BUFFER, vbOffset, vSize, loader.objects[0].vCoords[s].data());
+            glBufferSubData( GL_ARRAY_BUFFER, vbOffset + vSize, nSize, loader.objects[0].vNormals[s].data());
+            glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, ebOffset, iSize, loader.objects[0].indices[s].data());
             vbOffset += vSize + nSize;
             ebOffset += iSize;
         }
@@ -143,8 +139,8 @@ void GeometryRender::display()
     
     // Call OpenGL to draw the triangle
     size_t nIndices = 0;
-    for(size_t s = 0; s < loader.numberOfShapes; s++) {
-        nIndices += loader.indices[s].size();
+    for(size_t s = 0; s < loader.oInfo.nShapes; s++) {
+        nIndices += loader.objects[0].indices[s].size();
     }
     glDrawElements(GL_TRIANGLES, static_cast<int>(nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
     
@@ -233,7 +229,6 @@ void GeometryRender::loadObjectFromGui(string fileName)
             loader.appendString("\nSuccessfully loaded \"");
             loader.appendString(fileName);
             loader.appendString("\"\n\n");
-            cout << loader.getOutputString() << endl;
         } else {
             loader.appendString("\nFailed to load \"");
             loader.appendString(fileName);
@@ -301,28 +296,4 @@ void GeometryRender::updateProjMatrix()
         if(cInfo.obliqueScale != 0.0f)
             matProj = obliqueProjection(matProj, cInfo.obliqueScale, cInfo.obliqueAngleRad);
     }
-}
-
-void GeometryRender::setObjInfo()
-{
-    oInfo.objectLoaded = true;
-    oInfo.nShapes = loader.numberOfShapes;
-    oInfo.nVertices = loader.numberOfVertices;
-    oInfo.nFaces = loader.numberOfFaces;
-    oInfo.nIndices = loader.numberOfIndices;
-    oInfo.nNormals = loader.numberOfNormals;
-    oInfo.nTexCoords = loader.numberOfTexCoords;
-    oInfo.nColors = loader.numberOfColors;
-}
-
-void GeometryRender::clearObjInfo()
-{
-    oInfo.objectLoaded = false;
-    oInfo.nShapes = 0;
-    oInfo.nVertices = 0;
-    oInfo.nFaces = 0;
-    oInfo.nIndices = 0;
-    oInfo.nNormals = 0;
-    oInfo.nTexCoords = 0;
-    oInfo.nColors = 0;
 }

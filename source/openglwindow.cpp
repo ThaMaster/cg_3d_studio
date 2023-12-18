@@ -334,13 +334,13 @@ void OpenGLWindow::reshape(const int width, const int height) const
 void OpenGLWindow::DrawGui()
 {
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
-    StudioGui::mainMenuBar(glfwWindow, oInfo, wInfo);
+    StudioGui::mainMenuBar(glfwWindow, wInfo);
 
     StudioGui::objTransWindow(wInfo.showObjTransWindow, tInfo.reset);
-    StudioGui::objInfWindow(wInfo.showObjInfWindow, objFileName, objFilePath, oInfo);
+    //StudioGui::objInfWindow(wInfo.showObjInfWindow, objFileName, objFilePath, oInfo);
     StudioGui::camWindow(wInfo.showCamWindow, cInfo, pZeroDefault, pRefDefault);
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
-    StudioGui::showStudioOverlay(wInfo.showOverlay, objFileName, oInfo);
+    //StudioGui::showStudioOverlay(wInfo.showOverlay, objFileName, oInfo);
 
     if(wInfo.openFileDialog) openFile();
 

@@ -33,17 +33,6 @@ class OpenGLWindow
             bool reset = false;
         } tInfo;
 
-        struct objectInfo {
-            int nShapes = 0;
-            int nVertices = 0;
-            int nFaces = 0;
-            int nIndices = 0;
-            int nNormals = 0;
-            int nTexCoords = 0;
-            int nColors = 0;
-            bool objectLoaded = false;
-        } oInfo;
-
         struct cameraInfo {
             glm::vec3 pZero = glm::vec3(0.0f, 0.0f, 2.0f);
             glm::vec3 pRef = glm::vec3(0.0f, 0.0f, 0.0f);

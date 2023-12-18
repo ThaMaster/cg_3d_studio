@@ -1,4 +1,4 @@
-/*
+/**
  *  Workshop 1
  *  Computer Graphics course
  *  Dept Computing Science, Umea University

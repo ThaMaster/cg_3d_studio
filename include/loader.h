@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <cstring>
 
+#include "object.h"
 #include "tiny_obj_loader.h"
 
 using namespace std;
@@ -29,32 +30,19 @@ class Loader
         void normalizeVertexCoords();
         void clearLoader();
 
-        // The name of the last successfully loaded object file.
-        string loadedFileName;
-
-        // Vertex coordinates.
-        vector<vector<glm::vec3>> vertexCoords;
-
-        // Vertex indexes.
-        vector<vector<unsigned int>> indices;
-
-        // Vertex normals.
-        vector<vector<glm::vec3>> vertexNormals;
-
-        // Texture coordinates.
-        vector<vector<glm::vec3>> textureCoords;
-
-        // Color values.
-        vector<vector<glm::vec3>> colorVals;
+        vector<Object> objects; //STORE ALL LOADED OBJECTS.
 
         // Object information.
-        size_t numberOfShapes = 0;
-        int numberOfVertices = 0;
-        int numberOfFaces = 0;
-        int numberOfIndices = 0;
-        int numberOfNormals = 0;
-        int numberOfTexCoords = 0;
-        int numberOfColors = 0;
+        struct objectInfo {
+            size_t nShapes = 0;
+            int nVertices = 0;
+            int nFaces = 0;
+            int nIndices = 0;
+            int nNormals = 0;
+            int nTexCoords = 0;
+            int nColors = 0;
+            bool objectLoaded = false;
+        } oInfo;
 
         char* outputString = new char[255];
 
@@ -69,7 +57,7 @@ class Loader
 
             strcpy(newStr, outputString);
             strcpy(newStr, inputStr);
-            outputString = newStr;
+            strcpy(outputString, newStr);
         }
 
         char* getOutputString() const {
