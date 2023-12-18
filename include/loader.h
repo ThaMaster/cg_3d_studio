@@ -56,26 +56,23 @@ class Loader
         int numberOfTexCoords = 0;
         int numberOfColors = 0;
 
-        char * outputString = new char[1];
+        char* outputString = new char[255];
 
-        void appendString(const char* str) {
-            // Calculate the new size of the buffer
-            size_t newSize = strlen(outputString) + strlen(str) + 1;
+        void appendString(std::string str) {
+            const char* inputStr = str.c_str();
+            if(inputStr == nullptr)
+                return;
+            size_t destLen = strlen(outputString);
+            size_t strLen = strlen(inputStr);
+            size_t newLen = destLen + strLen;
+            char* newStr = new char[newLen + 1];
 
-            // Allocate a new buffer with the new size
-            char* newBuffer = new char[newSize];
-
-            // Copy the existing content and the new string to the new buffer
-            strcpy(newBuffer, outputString);
-            strcat(newBuffer, str);
-
-            // Deallocate the old buffer and update the pointer
-            delete[] outputString;
-            outputString = newBuffer;
-            
+            strcpy(newStr, outputString);
+            strcpy(newStr, inputStr);
+            outputString = newStr;
         }
 
-        const char* getOutputString() const {
+        char* getOutputString() const {
             return outputString;
         }
 

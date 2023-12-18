@@ -72,6 +72,7 @@ void GeometryRender::loadGeometry(string fileName)
     // Only load the object if it successfully parsed the object file.
     if(objectParseSuccess) {
         loader.loadedFileName = fileName;
+        
         loader.normalizeVertexCoords();
         setObjInfo();
 
@@ -223,16 +224,23 @@ void GeometryRender::reset()
 void GeometryRender::loadObjectFromGui(string fileName)
 {
     if(!fileName.empty()) {
-        cout << "\nLoading " << fileName << "...\n";
+        loader.appendString("\nLoading ");
+        loader.appendString(fileName);
+        loader.appendString("...\n");
         loadGeometry(fileName);
         if(objectParseSuccess) {
             reset();
-            cout << "\nSuccessfully loaded \"" << fileName << "\"\n\n";
+            loader.appendString("\nSuccessfully loaded \"");
+            loader.appendString(fileName);
+            loader.appendString("\"\n\n");
+            cout << loader.getOutputString() << endl;
         } else {
-            cout << "\nFailed to load \"" << fileName << "\", returning.\n\n";
+            loader.appendString("\nFailed to load \"");
+            loader.appendString(fileName);
+            loader.appendString("\", returning.\n\n");
         }
     } else {
-        cout << "\nNo file specified, returning.\n\n";
+        loader.appendString("\nNo file specified, returning.\n\n");
     }
 }
 

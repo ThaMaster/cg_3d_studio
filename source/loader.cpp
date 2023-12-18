@@ -31,9 +31,8 @@ bool Loader::parseFile(string filePath, string mFolder)
         // If reader detects known error.
         if (!reader.Error().empty()) {
             appendString("\nError: \n");
-            char output[255] = "\tTinyObjReader: ";
-            strcat(output, reader.Error().c_str());
-            appendString(output);
+            appendString("\tTinyObjReader: ");
+            appendString(reader.Error().c_str());
         }
         // If reader is unable to parse the file.
         return false;
@@ -41,10 +40,10 @@ bool Loader::parseFile(string filePath, string mFolder)
 
     if (!reader.Warning().empty()) {
         appendString("\nWarning: \n");
-        char output[255] = "\tTinyObjReader: ";
-            strcat(output, reader.Warning().c_str());
-            appendString(output);
+        appendString("\tTinyObjReader: ");
+        appendString(reader.Warning().c_str());
     }
+
     auto& attrib = reader.GetAttrib();
     auto& shapes = reader.GetShapes();
     //auto& materials = reader.GetMaterials();

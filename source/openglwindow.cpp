@@ -132,7 +132,6 @@ string OpenGLWindow::readShaderSource(const string shaderFile) const
     return shaderSource;
 }
 
-
 // Initialize OpenGL shader program
 GLuint OpenGLWindow::initProgram(const string vShaderFile, const string fShaderFile) const
 {
@@ -361,7 +360,6 @@ void OpenGLWindow::openFile()
         fileDialog.Close();
         wInfo.openFileDialog = false;
     }
-    
 }
 
 void OpenGLWindow::handleMouseInput() 
