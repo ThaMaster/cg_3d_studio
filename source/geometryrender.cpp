@@ -69,7 +69,7 @@ void GeometryRender::loadGeometry(string fileName)
 {
     Object newObject = loader.parseFile("./object_files/" + fileName, "./object_files/");
     // Only load the object if it successfully parsed the object file.
-    if(newObject.isValid) {
+    if(newObject.oInfo.objectLoaded) {
         wContext.objects.push_back(newObject);
         loader.normalizeVertexCoords(wContext.objects[0]);
         glUseProgram(program);

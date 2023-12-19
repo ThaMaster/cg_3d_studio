@@ -1,7 +1,7 @@
 #include "studiogui.h"
 namespace StudioGui {
 
-    void mainMenuBar(GLFWwindow *glfwWindow, OpenGLWindow::windowInfo &wInfo)
+    void mainMenuBar(GLFWwindow *glfwWindow, OpenGLWindow::windowInfo &wInfo, vector<Object> objects)
     {
         if (ImGui::BeginMainMenuBar())
         {
@@ -15,12 +15,15 @@ namespace StudioGui {
             }
             if(ImGui::BeginMenu("View"))
             {
+                if(objects.size() == 0) ImGui::BeginDisabled();
                 if(ImGui::MenuItem("Object Transformation", "F1", wInfo.showObjTransWindow)) { wInfo.showObjTransWindow = !wInfo.showObjTransWindow; }
-                //if(ImGui::MenuItem("Object Information", "F2", wInfo.showObjInfWindow)) { wInfo.showObjInfWindow = !wInfo.showObjInfWindow; }
-                ImGui::Separator();  
+                if(ImGui::MenuItem("Object Information", "F2", wInfo.showObjInfWindow)) { wInfo.showObjInfWindow = !wInfo.showObjInfWindow; }
+                if(objects.size() == 0) ImGui::EndDisabled();
+                ImGui::Separator();
                 if(ImGui::MenuItem("Camera", "F3", wInfo.showCamWindow)) { wInfo.showCamWindow = !wInfo.showCamWindow; }
                 ImGui::Separator();
-                //if(ImGui::MenuItem("Studio Overlay", NULL, wInfo.showOverlay)) { wInfo.showOverlay = !wInfo.showOverlay; }
+                if(ImGui::MenuItem("Studio Overlay", NULL, wInfo.showOverlay)) { wInfo.showOverlay = !wInfo.showOverlay; }
+                if(ImGui::MenuItem("Log Window", "F10", wInfo.showLogWindow)) { wInfo.showLogWindow = ! wInfo.showLogWindow; }
                 ImGui::EndMenu();
             }
             if(ImGui::BeginMenu("Help")) 
@@ -56,35 +59,37 @@ namespace StudioGui {
         }
     }
 
-    /* void objInfWindow(bool &showWindow, std::string objFileName, std::string objFilePath, OpenGLWindow::objectInfo oInfo)
+    void objInfWindow(bool &showWindow, std::string objFileName, std::string objFilePath, Object::objectInfo oInfo)
     {
         if(showWindow) {
-            char fileName[objFileName.length()+1];
-            char filePath[objFilePath.length()+objFileName.length()+2];
-            strcpy(fileName, objFileName.c_str());
-            strcpy(filePath, (objFilePath+"/"+objFileName).c_str());
             ImGui::Begin("Object Information", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
             ImGui::SeparatorText("Object Information");
-            ImGui::Text("Object File Name: %s", fileName);
-            ImGui::Text("File Path: %s", filePath);
-            ImGui::Separator();
-            ImGui::Text("Shapes:");
-            ImGui::SameLine(200); ImGui::Text("%d", oInfo.nShapes);
-            ImGui::Text("Vertices:");
-            ImGui::SameLine(200); ImGui::Text("%d", oInfo.nVertices);
-            ImGui::Text("Indices:");
-            ImGui::SameLine(200); ImGui::Text("%d", oInfo.nIndices);
-            ImGui::Text("Faces:");
-            ImGui::SameLine(200); ImGui::Text("%d", oInfo.nFaces);
-            ImGui::Text("Normals:");
-            ImGui::SameLine(200); ImGui::Text("%d", oInfo.nNormals);
-            ImGui::Text("Texture Coordinates:");
-            ImGui::SameLine(200); ImGui::Text("%d", oInfo.nTexCoords);
-            ImGui::Text("Color Values:");
-            ImGui::SameLine(200); ImGui::Text("%d", oInfo.nColors);
+            if(oInfo.objectLoaded) {
+                char fileName[objFileName.length()+1];
+                char filePath[objFilePath.length()+objFileName.length()+2];
+                strcpy(fileName, objFileName.c_str());
+                strcpy(filePath, (objFilePath+"/"+objFileName).c_str());
+                ImGui::Text("Object File Name: %s", fileName);
+                ImGui::Text("File Path: %s", filePath);
+                ImGui::Separator();
+                ImGui::Text("Shapes:");
+                ImGui::SameLine(200); ImGui::Text("%d", (int)oInfo.nShapes);
+                ImGui::Text("Vertices:");
+                ImGui::SameLine(200); ImGui::Text("%d", oInfo.nVertices);
+                ImGui::Text("Indices:");
+                ImGui::SameLine(200); ImGui::Text("%d", oInfo.nIndices);
+                ImGui::Text("Faces:");
+                ImGui::SameLine(200); ImGui::Text("%d", oInfo.nFaces);
+                ImGui::Text("Normals:");
+                ImGui::SameLine(200); ImGui::Text("%d", oInfo.nNormals);
+                ImGui::Text("Texture Coordinates:");
+                ImGui::SameLine(200); ImGui::Text("%d", oInfo.nTexCoords);
+                ImGui::Text("Color Values:");
+                ImGui::SameLine(200); ImGui::Text("%d", oInfo.nColors);
+            }
             ImGui::End();
         }
-    } */
+    }
 
     void aboutPopupModal(bool &aboutOpen)
     {
@@ -162,11 +167,9 @@ namespace StudioGui {
         }
     }
 
-    /* void showStudioOverlay(bool &showOverlay, std::string objFileName, OpenGLWindow::objectInfo oInfo)
+    void showStudioOverlay(bool &showOverlay, std::string objFileName, Object::objectInfo oInfo)
     {
         if(showOverlay) {
-            char fileName[objFileName.length()+1];
-            strcpy(fileName, objFileName.c_str());
             static int location = 0;
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
             const float PAD = 10.0f;
@@ -185,8 +188,11 @@ namespace StudioGui {
             if(ImGui::Begin("Overlay", &showOverlay, window_flags))
             {
                 ImGui::SeparatorText("3D Studio v0.0.1");
-                if(oInfo.objectLoaded) ImGui::Text("Loaded object: %s", fileName);
-
+                if(oInfo.objectLoaded) {
+                    char fileName[objFileName.length()+1];
+                    strcpy(fileName, objFileName.c_str());
+                    ImGui::Text("Loaded object: %s", fileName);
+                }
                 if (ImGui::BeginPopupContextWindow())
                 {
                     if (ImGui::MenuItem("Top-left (default)",     NULL, location == 0)) location = 0;
@@ -199,7 +205,43 @@ namespace StudioGui {
             }
             ImGui::End();
         }
-    } */
+    }
+
+    void showEmptyStudioOverlay(bool& showOverlay) 
+    {
+        if(showOverlay) {
+            static int location = 0;
+            ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+            const float PAD = 10.0f;
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImVec2 work_pos = viewport->WorkPos;
+            ImVec2 work_size = viewport->WorkSize;
+            ImVec2 window_pos, window_pos_pivot;
+            window_pos.x = (location & 1) ? (work_pos.x + work_size.x - PAD) : (work_pos.x + PAD);
+            window_pos.y = (location & 2) ? (work_pos.y + work_size.y - PAD) : (work_pos.y + PAD);
+            window_pos_pivot.x = (location & 1) ? 1.0f : 0.0f;
+            window_pos_pivot.y = (location & 2) ? 1.0f : 0.0f;
+            ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+            window_flags |= ImGuiWindowFlags_NoMove;
+            
+            ImGui::SetNextWindowBgAlpha(0.35f);
+            if(ImGui::Begin("Overlay", &showOverlay, window_flags))
+            {
+                ImGui::SeparatorText("3D Studio v0.0.1");
+                if (ImGui::BeginPopupContextWindow())
+                {
+                    if (ImGui::MenuItem("Top-left (default)",     NULL, location == 0)) location = 0;
+                    if (ImGui::MenuItem("Top-right",    NULL, location == 1)) location = 1;
+                    if (ImGui::MenuItem("Bottom-left",  NULL, location == 2)) location = 2;
+                    if (ImGui::MenuItem("Bottom-right", NULL, location == 3)) location = 3;
+                    if (showOverlay && ImGui::MenuItem("Close")) showOverlay = false;
+                    ImGui::EndPopup();
+                }
+            }
+            ImGui::End();
+        }
+    }
+
 
     void logWindow(bool &showWindow, Logger &log)
     {

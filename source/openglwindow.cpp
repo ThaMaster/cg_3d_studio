@@ -110,7 +110,6 @@ GLFWwindow* OpenGLWindow::window() const
 
 float OpenGLWindow::getAspectRatio()
 {
-    cout << windowWidth << " : " << windowHeight << endl;
     return (float)windowWidth / (float) windowHeight;
 }
 
@@ -247,8 +246,8 @@ void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int ac
             case GLFW_KEY_R: wContext.tInfo.reset= true; break;
             // Detect shortcut keys.
             case GLFW_KEY_O: /**/ break;
-            case GLFW_KEY_F1: wInfo.showObjTransWindow = !wInfo.showObjTransWindow; break;
-            case GLFW_KEY_F2: wInfo.showObjInfWindow = !wInfo.showObjInfWindow; break;
+            case GLFW_KEY_F1: if(wContext.objects.size() != 0) wInfo.showObjTransWindow = !wInfo.showObjTransWindow; break;
+            case GLFW_KEY_F2: if(wContext.objects.size() != 0) wInfo.showObjInfWindow = !wInfo.showObjInfWindow; break;
             case GLFW_KEY_F3: wInfo.showCamWindow = !wInfo.showCamWindow; break;
             case GLFW_KEY_F9: wInfo.showKeyRefWindow = !wInfo.showKeyRefWindow; break;
             case GLFW_KEY_F10: wInfo.showLogWindow = !wInfo.showLogWindow; break;
@@ -334,13 +333,20 @@ void OpenGLWindow::reshape(const int width, const int height) const
 void OpenGLWindow::DrawGui()
 {
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
-    StudioGui::mainMenuBar(glfwWindow, wInfo);
+    StudioGui::mainMenuBar(glfwWindow, wInfo, wContext.objects);
 
     StudioGui::objTransWindow(wInfo.showObjTransWindow, wContext.tInfo.reset);
-    //StudioGui::objInfWindow(wInfo.showObjInfWindow, objFileName, objFilePath, oInfo);
+    if(wContext.objects.size() != 0) {
+        StudioGui::objInfWindow(wInfo.showObjInfWindow, objFileName, objFilePath, wContext.objects[0].oInfo);
+    }
     StudioGui::camWindow(wInfo.showCamWindow, wContext.cInfo, wContext.pZeroDefault, pRefDefault);
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
-    //StudioGui::showStudioOverlay(wInfo.showOverlay, objFileName, oInfo);
+    if(wContext.objects.size() != 0) {
+        StudioGui::showStudioOverlay(wInfo.showOverlay, objFileName, wContext.objects[0].oInfo);
+    } else {
+        StudioGui::showEmptyStudioOverlay(wInfo.showOverlay);
+
+    }
 
     if(wInfo.openFileDialog) openFile();
 

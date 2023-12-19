@@ -131,7 +131,7 @@ Object Loader::parseFile(string filePath, string mFolder)
     newObject.tCoords = textureCoords;
     newObject.colorVals = colorVals;
     newObject.vNormals = vertexNormals;
-    newObject.isValid = true;
+    newObject.oInfo.objectLoaded = true;
     return newObject;
 }
 
