@@ -27,9 +27,11 @@ main()
     mat3 normalMatrix = transpose(inverse(mat3(M)));
     vec3 normal = normalize(normalMatrix * vNormal);
 
-    vec4 l = normalize(lsPos - vec4(vPosition, 1.0));
-    vec4 v = normalize(vec4(camPos - vPosition, 1.0));
-    
+    vec4 viewPosition = V*M*vec4(vPosition, 1.0);
+    vec4 viewSunPos = V*lsPos;
+    vec4 l = normalize(viewSunPos - viewPosition);
+    vec4 viewCamPos = V * vec4(camPos, 1.0);
+    vec4 v = normalize(viewCamPos - viewPosition);
     ambient = Ia * ka;
 
     float diffIntensity = max(dot(normal, l.xyz), 0);

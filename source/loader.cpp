@@ -22,7 +22,6 @@
  */
 Object Loader::parseFile(string filePath, string mFolder) 
 {
-    
     tinyobj::ObjReaderConfig readerConfig;
     readerConfig.mtl_search_path = mFolder;
     tinyobj::ObjReader reader;
@@ -30,18 +29,18 @@ Object Loader::parseFile(string filePath, string mFolder)
     if(!reader.ParseFromFile(filePath, readerConfig)) {
         // If reader detects known error.
         if (!reader.Error().empty()) {
-            /* appendString("\nError: \n");
-            appendString("\tTinyObjReader: ");
-            appendString(reader.Error()); */
+            outputString += "\nError: \n";
+            outputString += "\tTinyObjReader: ";
+            outputString += reader.Error(); 
         }
         // If reader is unable to parse the file.
         return newObject;
     }
 
     if (!reader.Warning().empty()) {
-        /* appendString("\nWarning: \n");
-        appendString("\tTinyObjReader: ");
-        appendString(reader.Warning()); */
+        outputString +="\nWarning: \n";
+        outputString +="\tTinyObjReader: ";
+        outputString += reader.Warning();
     }
 
     auto& attrib = reader.GetAttrib();

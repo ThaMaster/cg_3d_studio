@@ -22,7 +22,7 @@ public:
     void updateCamera() override;
     void updateLight() override;
     void updateMaterial() override;
-    void loadObjectFromGui(string) override;
+    string loadObjectFromGui(string) override;
 
 private:
     GLuint program;

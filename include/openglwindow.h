@@ -56,7 +56,7 @@ class OpenGLWindow
         virtual void updateLight() = 0;
         virtual void updateMaterial() = 0;
 
-        virtual void loadObjectFromGui(std::string) = 0;
+        virtual std::string loadObjectFromGui(std::string) = 0;
         void displayNow();
 
     protected:

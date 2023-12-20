@@ -4,7 +4,6 @@
  *  Dept Computing Science, Umea University
  *  Stefan Johansson, stefanj@cs.umu.se
  */
-
 #include "geometryrender.h"
 #include <glm/gtx/string_cast.hpp>
 
@@ -211,26 +210,27 @@ void GeometryRender::updateMaterial()
  * 
  * If no problems prasing errors are present, load the geometry of the object into the program.
  */
-void GeometryRender::loadObjectFromGui(string fileName)
+string GeometryRender::loadObjectFromGui(string fileName)
 {
     if(!fileName.empty()) {
-        loader.appendString("\nLoading ");
-        loader.appendString(fileName);
-        loader.appendString("...\n");
+        loader.outputString += "\nLoading ";
+        loader.outputString += fileName;
+        loader.outputString += "...\n";
         loadGeometry(fileName);
         if(objectParseSuccess) {
             resetTransformations();
-            loader.appendString("\nSuccessfully loaded \"");
-            loader.appendString(fileName);
-            loader.appendString("\"\n\n");
+            loader.outputString += "\nSuccessfully loaded \"";
+            loader.outputString += fileName;
+            loader.outputString += "\"\n\n";
         } else {
-            loader.appendString("\nFailed to load \"");
-            loader.appendString(fileName);
-            loader.appendString("\", returning.\n\n");
+            loader.outputString += "\nFailed to load \"";
+            loader.outputString += fileName;
+            loader.outputString += "\", returning.\n\n";
         }
     } else {
-        loader.appendString("\nNo file specified, returning.\n\n");
+        loader.outputString += "\nNo file specified, returning.\n\n";
     }
+    return loader.getOutputString();
 }
 
 void GeometryRender::resetTransformations() 

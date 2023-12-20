@@ -29,23 +29,9 @@ class Loader
         Object parseFile(string, string);
         void normalizeVertexCoords(Object&);
 
-        char* outputString = new char[255];
+        string outputString = "";
 
-        void appendString(std::string str) {
-            const char* inputStr = str.c_str();
-            if(inputStr == nullptr)
-                return;
-            size_t destLen = strlen(outputString);
-            size_t strLen = strlen(inputStr);
-            size_t newLen = destLen + strLen;
-            char* newStr = new char[newLen + 1];
-
-            strcpy(newStr, outputString);
-            strcpy(newStr, inputStr);
-            strcpy(outputString, newStr);
-        }
-
-        char* getOutputString() const {
+        string getOutputString() const {
             return outputString;
         }
 

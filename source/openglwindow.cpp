@@ -296,8 +296,7 @@ void OpenGLWindow::start()
         updateCamera();
         updateLight();
         updateMaterial();
-
-
+        
         // Call display in geomentryRender to render the scene
         display();
 
@@ -363,16 +362,18 @@ void OpenGLWindow::DrawGui()
 void OpenGLWindow::openFile()
 {
     static ImGuiFileDialog fileDialog;
+    std::string loaderOutput;
     fileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", ".");
     if (fileDialog.Display("ChooseFileDlgKey")) {
         if (fileDialog.IsOk() == true) {
             objFileName = fileDialog.GetCurrentFileName();
             objFilePath = fileDialog.GetCurrentPath();
-            loadObjectFromGui(objFileName);
+            loaderOutput = loadObjectFromGui(objFileName);
         }
         fileDialog.Close();
         wInfo.openFileDialog = false;
     }
+    log.addLog(loaderOutput.c_str());
 }
 
 void OpenGLWindow::handleMouseInput() 
