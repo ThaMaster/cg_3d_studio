@@ -34,19 +34,24 @@ void GeometryRender::initialize()
        bind it as GL_ELEMENT_ARRAY_BUFFER */
     glGenBuffers(1, &iBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBuffer);
-
     // Get locations of the attributes in the shader
-    locVertices = glGetAttribLocation( program, "vPosition");
+    locVertices = glGetAttribLocation(program, "vPosition");
     locNormals = glGetAttribLocation(program, "vNormal");
 
-    //matModel = glm::rotate(matModel, glm::radians(20.0f), glm::vec3(1,1,0));
-    // matModel = glm::translate(matModel, glm::vec3(1.0f, 0.0f, 0.0f));
+    GLuint locCam;
+    locCam = glGetUniformLocation(program, "camPos");
+    glUniform3fv(locCam, 1, glm::value_ptr(wContext.cInfo.pZero));
+
+    GLuint locLightPos;
+    locLightPos = glGetUniformLocation(program, "lsPos");
+    glUniform3fv(locLightPos, 1, glm::value_ptr(wContext.light.position));
+
+    GLuint locLightColor;
+    locLightColor = glGetUniformLocation(program, "lsColor");
+    glUniform4fv(locLightColor, 1, glm::value_ptr(wContext.light.color));
 
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
-
-    // GLM already orders the arrays in column major, this means that we do not need to 
-    // transpose the given matrix. Therefore GLboolean transpose = GL_FALSE.
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matModel));
     locModel = glGetUniformLocation( program, "V");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matView));
@@ -67,24 +72,19 @@ void GeometryRender::initialize()
  */
 void GeometryRender::loadGeometry(string fileName)
 {
+    wContext.clearObjects();
     Object newObject = loader.parseFile("./object_files/" + fileName, "./object_files/");
     // Only load the object if it successfully parsed the object file.
     if(newObject.oInfo.objectLoaded) {
         wContext.objects.push_back(newObject);
-        loader.normalizeVertexCoords(wContext.objects[0]);
+        
         glUseProgram(program);
         glBindVertexArray(vao);
 
-        size_t vSize = 0;
-        size_t nSize = 0;
-        size_t iSize = 0;
-        vSize += wContext.objects[0].oInfo.nVertices*sizeof(glm::vec3);
-        nSize += wContext.objects[0].oInfo.nNormals*sizeof(glm::vec3);
-        iSize += wContext.objects[0].oInfo.nIndices*sizeof(unsigned int);
-        
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-        // Set the pointers of locVertices to the right places
+        size_t vSize = wContext.getTotalVertexSize();
+        size_t nSize = wContext.getTotalVertexNormalSize();
+        size_t iSize = wContext.getTotalIndicesSize();
+        // Set the pointers of locVertices to the right places.
         glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
         glEnableVertexAttribArray(locVertices);
         glVertexAttribPointer(locNormals, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vSize));
@@ -92,20 +92,17 @@ void GeometryRender::loadGeometry(string fileName)
         
         // Allocate memory for both buffers without inserting data.
         glBufferData( GL_ARRAY_BUFFER, vSize + nSize, NULL, GL_STATIC_DRAW );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, 0, GL_STATIC_DRAW );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, NULL, GL_STATIC_DRAW );
         
         // Fill buffers with the data.
-        size_t vbOffset = 0;
-        size_t ebOffset = 0;
-        for(size_t s = 0; s < wContext.objects[0].oInfo.nShapes; s++) {
-            vSize = wContext.objects[0].vCoords[s].size()*sizeof(glm::vec3);
-            nSize = wContext.objects[0].vNormals[s].size()*sizeof(glm::vec3);
-            iSize = wContext.objects[0].indices[s].size()*sizeof(unsigned int);
-            glBufferSubData( GL_ARRAY_BUFFER, vbOffset, vSize, wContext.objects[0].vCoords[s].data());
-            glBufferSubData( GL_ARRAY_BUFFER, vbOffset + vSize, nSize, wContext.objects[0].vNormals[s].data());
-            glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, ebOffset, iSize, wContext.objects[0].indices[s].data());
-            vbOffset += vSize + nSize;
-            ebOffset += iSize;
+        for(size_t o = 0; o < wContext.objects.size(); o++) {
+
+            vSize = wContext.objects[o].vCoords.size()*sizeof(glm::vec3);
+            glBufferSubData( GL_ARRAY_BUFFER, 0, vSize, wContext.objects[o].vCoords.data());
+            glBufferSubData( GL_ARRAY_BUFFER, vSize, nSize, wContext.objects[o].vNormals.data());
+            
+            iSize = wContext.objects[o].indices.size()*sizeof(unsigned int);
+            glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, 0, iSize, wContext.objects[o].indices.data());
         }
 
         glBindVertexArray(0);
@@ -133,8 +130,12 @@ void GeometryRender::display()
     glBindVertexArray(vao);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //size_t ebOffset = 0;
     if(wContext.objects.size() != 0) {
-        glDrawElements(GL_TRIANGLES, static_cast<int>(wContext.objects[0].oInfo.nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+        for(size_t o = 0; o < wContext.objects.size(); o++) {
+            glDrawElements(GL_TRIANGLES, static_cast<int>(wContext.objects[o].oInfo.nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+            //ebOffset = wContext.objects[o].oInfo.nIndices*sizeof(unsigned int);
+        }
         // Not to be called in release...
         debugShader();
     }
@@ -169,6 +170,39 @@ void GeometryRender::updateObject()
     locModel = glGetUniformLocation( program, "P");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matProj));
     glUseProgram(0);    
+}
+
+void GeometryRender::updateCamera()
+{
+    glUseProgram(program);
+    GLuint locCam;
+    locCam = glGetUniformLocation(program, "camPos");
+    glUniform3fv(locCam, 1, glm::value_ptr(wContext.cInfo.pZero));
+    glUseProgram(0);
+}
+
+void GeometryRender::updateLight()
+{
+    glUseProgram(program);
+    GLuint locLightPos;
+    locLightPos = glGetUniformLocation(program, "lsPos");
+    glUniform4fv(locLightPos, 1, glm::value_ptr(wContext.light.position));
+
+    GLuint locLightColor;
+    locLightColor = glGetUniformLocation(program, "lsColor");
+    glUniform4fv(locLightColor, 1, glm::value_ptr(wContext.light.color));
+    glUseProgram(0);
+}
+
+void GeometryRender::updateMaterial()
+{
+    if(wContext.objects.size() != 0) {
+        glUseProgram(program);
+        GLuint locAlpha;
+        locAlpha = glGetUniformLocation(program, "alpha");
+        glUniform1i(locAlpha, (wContext.objects[0].matAlpha));
+        glUseProgram(0);
+    }
 }
 
 /**

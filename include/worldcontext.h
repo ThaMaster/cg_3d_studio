@@ -9,11 +9,12 @@
 #include <GLFW/glfw3.h>
 
 #include "loader.h"
+#include "lightsource.h"
 
 const float pi_f = 3.1415926f;
 const int windowWidth = 1024;
 const int windowHeight = 768;
-const float ROT_SPEED = 10.0f;
+const float ROT_SPEED = 5.0f;
 const float TRA_SPEED = 0.1f;
 const float SCA_INC_SPEED = 1.1f;
 const float SCA_DEC_SPEED = 0.9f;
@@ -49,6 +50,7 @@ class WorldContext
         const glm::vec3 pRefDefault = glm::vec3(0.0f, 0.0f, 0.0f);
 
         vector<Object> objects;
+        LightSource light = LightSource(glm::vec4( 0.0, .0, 0.0, 0.0), glm::vec4( 0.4, 0.4, 0.2, 1.0 ));
 
         // Model matrix
         glm::mat4x4 matModel = {
@@ -64,6 +66,10 @@ class WorldContext
 
         void updateMatrices();
         void resetModel();
+        void clearObjects();
+        size_t getTotalVertexSize();
+        size_t getTotalVertexNormalSize();
+        size_t getTotalIndicesSize();
 
     private:
 

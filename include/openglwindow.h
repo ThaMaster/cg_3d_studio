@@ -33,6 +33,8 @@ class OpenGLWindow
             bool showKeyRefWindow = false;
             bool openFileDialog = false;
             bool showLogWindow = false;
+            bool showLightSourcesWindow = false;
+            bool showObjMatWindow = false;
         } wInfo;        
 
         const glm::vec3 pZeroDefault = glm::vec3(0.0f, 0.0f, 2.0f);
@@ -50,6 +52,10 @@ class OpenGLWindow
         virtual void initialize() = 0;
         virtual void display() = 0;
         virtual void updateObject() = 0;
+        virtual void updateCamera() = 0;
+        virtual void updateLight() = 0;
+        virtual void updateMaterial() = 0;
+
         virtual void loadObjectFromGui(std::string) = 0;
         void displayNow();
 

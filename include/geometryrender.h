@@ -12,7 +12,6 @@
 class GeometryRender : public OpenGLWindow
 {
 public:
-    vector<Object> objects;
     template<typename... ARGS>
     GeometryRender(ARGS&&... args) : OpenGLWindow{ std::forward<ARGS>(args)... }
     {}
@@ -20,6 +19,9 @@ public:
     void initialize();
     virtual void display() override;
     void updateObject() override;
+    void updateCamera() override;
+    void updateLight() override;
+    void updateMaterial() override;
     void loadObjectFromGui(string) override;
 
 private:

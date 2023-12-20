@@ -2,9 +2,12 @@
 
 in vec3 vNormal;
 in vec3 vPosition;
-
 out vec4 color;
 
+uniform vec3 camPos;
+uniform vec4 lsPos;
+uniform vec4 lsColor;
+uniform int alpha;
 uniform mat4 M;
 uniform mat4 P;
 uniform mat4 V;
@@ -14,26 +17,29 @@ vec4 diffuse;
 vec4 specular;
 
 vec4 Ia = vec4( 0.1, 0.1, 0.1, 1.0 );
-vec4 Il = vec4( 0.4, 0.4, 0.2, 1.0 );
 vec4 ka = vec4( 1.0, 1.0, 1.0, 1.0 );
 vec4 kd = ka;
 vec4 ks = kd;
-vec4 l = normalize(vec4( 2.0, 0.5, 5.0, 0.0 ));
-vec4 v = normalize(vec4( 0.0, 0.0, 2.0, 0.0 ));
 
 void
 main()
 {
+    mat3 normalMatrix = transpose(inverse(mat3(M)));
+    vec3 normal = normalize(normalMatrix * vNormal);
+
+    vec4 l = normalize(lsPos - vec4(vPosition, 1.0));
+    vec4 v = normalize(vec4(camPos - vPosition, 1.0));
+    
     ambient = Ia * ka;
 
-    float diffIntensity = max(dot(normalize(vec4(vNormal, 1.0)), l), 0);
+    float diffIntensity = max(dot(normal, l.xyz), 0);
     
     if(diffIntensity > 0.0) {
 
-        diffuse = Il * kd * diffIntensity;        
-        vec4 r = normalize(reflect( -l, normalize(vec4( vNormal , 0.0 )) ));
-        float specIntensity = pow( max( dot( v, r ), 0 ),  2);
-        specular = Il * ks * specIntensity;
+        diffuse = lsColor * kd * diffIntensity;        
+        vec4 r = vec4(reflect( l.xyz, normal), 1.0);
+        float specIntensity = pow( max( dot( v, r ), 0 ),  alpha);
+        specular = lsColor * ks * specIntensity;
 
         color = ambient + diffuse + specular;
 
@@ -45,3 +51,4 @@ main()
         
     gl_Position =  P * V * M * vec4( vPosition, 1.0 );
 }
+

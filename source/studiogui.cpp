@@ -1,27 +1,35 @@
 #include "studiogui.h"
 namespace StudioGui {
 
-    void mainMenuBar(GLFWwindow *glfwWindow, OpenGLWindow::windowInfo &wInfo, vector<Object> objects)
+    void mainMenuBar(GLFWwindow *glfwWindow, OpenGLWindow::windowInfo &wInfo, WorldContext &wContext)
     {
         if (ImGui::BeginMainMenuBar())
         {
+            bool noObjects = wContext.objects.size() == 0;
             if(ImGui::BeginMenu("File"))
             {
                 if(ImGui::MenuItem("Open")) { wInfo.openFileDialog = true; }  
-                if(ImGui::MenuItem("Settings")) {} 
+                if(noObjects) ImGui::BeginDisabled();
+                if(ImGui::MenuItem("Reset Scene")) { wContext.clearObjects(); }
+                if(noObjects) ImGui::EndDisabled();
+                if(ImGui::MenuItem("Settings")) {}
                 ImGui::Separator();         
                 if(ImGui::MenuItem("Quit")) { glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE); }
                 ImGui::EndMenu();
             }
             if(ImGui::BeginMenu("View"))
             {
-                if(objects.size() == 0) ImGui::BeginDisabled();
+                ImGui::SeparatorText("Object");
+                if(noObjects) ImGui::BeginDisabled();
                 if(ImGui::MenuItem("Object Transformation", "F1", wInfo.showObjTransWindow)) { wInfo.showObjTransWindow = !wInfo.showObjTransWindow; }
-                if(ImGui::MenuItem("Object Information", "F2", wInfo.showObjInfWindow)) { wInfo.showObjInfWindow = !wInfo.showObjInfWindow; }
-                if(objects.size() == 0) ImGui::EndDisabled();
-                ImGui::Separator();
-                if(ImGui::MenuItem("Camera", "F3", wInfo.showCamWindow)) { wInfo.showCamWindow = !wInfo.showCamWindow; }
-                ImGui::Separator();
+                if(ImGui::MenuItem("Object Material", "F2", wInfo.showObjMatWindow)) { wInfo.showObjMatWindow = !wInfo.showObjMatWindow; }
+                if(ImGui::MenuItem("Object Information", "F3", wInfo.showObjInfWindow)) { wInfo.showObjInfWindow = !wInfo.showObjInfWindow; }
+                if(noObjects) ImGui::EndDisabled();
+                ImGui::SeparatorText("Camera");
+                if(ImGui::MenuItem("Camera Information", "F4", wInfo.showCamWindow)) { wInfo.showCamWindow = !wInfo.showCamWindow; }
+                ImGui::SeparatorText("Lightning");
+                if(ImGui::MenuItem("Light Sources", "F", wInfo.showLightSourcesWindow)) { wInfo.showLightSourcesWindow = !wInfo.showLightSourcesWindow; }
+                ImGui::SeparatorText("Studio");
                 if(ImGui::MenuItem("Studio Overlay", NULL, wInfo.showOverlay)) { wInfo.showOverlay = !wInfo.showOverlay; }
                 if(ImGui::MenuItem("Log Window", "F10", wInfo.showLogWindow)) { wInfo.showLogWindow = ! wInfo.showLogWindow; }
                 ImGui::EndMenu();
@@ -81,12 +89,25 @@ namespace StudioGui {
                 ImGui::Text("Faces:");
                 ImGui::SameLine(200); ImGui::Text("%d", oInfo.nFaces);
                 ImGui::Text("Normals:");
-                ImGui::SameLine(200); ImGui::Text("%d", oInfo.nNormals);
+                ImGui::SameLine(200); ImGui::Text("%d", oInfo.nVertexNormals);
                 ImGui::Text("Texture Coordinates:");
                 ImGui::SameLine(200); ImGui::Text("%d", oInfo.nTexCoords);
                 ImGui::Text("Color Values:");
                 ImGui::SameLine(200); ImGui::Text("%d", oInfo.nColors);
             }
+            ImGui::End();
+        }
+    }
+
+    // Contains only PLACEHOLDER for now.
+    void objMatWindow(bool &showWindow, Object &object)
+    {
+        if(showWindow) {
+            static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
+            ImGui::Begin("Object Material", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
+            ImGui::SeparatorText("Shininess");
+            ImGui::Text("Alpha: %d", object.matAlpha);
+            ImGui::SliderInt("Alpha", &object.matAlpha, 2, 16, "%d", flags);
             ImGui::End();
         }
     }
@@ -153,6 +174,38 @@ namespace StudioGui {
                 ImGui::SliderFloat("Oblique scale",&cInfo.obliqueScale, 0.0f, 1.0f, "%.1f", flags);
                 ImGui::SliderAngle("Oblique angle",&cInfo.obliqueAngleRad, 15, 75, "%1.0f", flags);
             }
+            ImGui::End();
+        }
+    }
+
+    // Contains only PLACEHOLDER for now.
+    void showLightSourcesWindow(bool &showWindow, LightSource &lightSource)
+    {
+        if(showWindow) {
+            static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
+            ImGui::Begin("Light Sources", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
+            ImGui::SeparatorText("Position");
+            ImGui::Text("Light Position: ");
+            ImGui::PushItemWidth(100);
+            ImGui::Text("X: %.3f", lightSource.position.x); ImGui::SameLine(); 
+            ImGui::Text("Y: %.3f", lightSource.position.y); ImGui::SameLine(); 
+            ImGui::Text("Z: %.3f", lightSource.position.z);
+            ImGui::PopItemWidth();
+            ImGui::SliderFloat("X",&lightSource.position.x, -10.0f, 10.0f, "%.2f", flags);
+            ImGui::SliderFloat("Y",&lightSource.position.y, -10.0f, 10.0f, "%.2f", flags);
+            ImGui::SliderFloat("Z",&lightSource.position.z, -10.0f, 10.0f, "%.2f", flags);
+            if(ImGui::Button("Reset Light Direction")) { lightSource.resetDir(); }
+            ImGui::SeparatorText("Color");
+            ImGui::PushItemWidth(100);
+            ImGui::Text("R: %.3f", lightSource.color.x); ImGui::SameLine(); 
+            ImGui::Text("G: %.3f", lightSource.color.y); ImGui::SameLine(); 
+            ImGui::Text("B: %.3f", lightSource.color.z); ImGui::SameLine(); 
+            ImGui::Text("A: %.3f", lightSource.color.w);
+            ImGui::PopItemWidth();
+            ImGui::SliderFloat("R",&lightSource.color.x, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("G",&lightSource.color.y, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("B",&lightSource.color.z, 0.0f, 1.0f, "%.2f", flags);
+            if(ImGui::Button("Reset Light Color")) { lightSource.resetColor(); }
             ImGui::End();
         }
     }

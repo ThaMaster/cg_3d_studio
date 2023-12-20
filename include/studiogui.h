@@ -4,14 +4,17 @@
 #include "openglwindow.h"
 
 namespace StudioGui {
-    void mainMenuBar(GLFWwindow*, OpenGLWindow::windowInfo&, vector<Object>);
+    void mainMenuBar(GLFWwindow*, OpenGLWindow::windowInfo&, WorldContext&);
     void aboutPopupModal(bool&);
     void objTransWindow(bool&, bool&);
+    void objMatWindow(bool&, Object&);
     void objInfWindow(bool&, std::string, std::string, Object::objectInfo);
     void camWindow(bool&, WorldContext::cameraInfo&, glm::vec3, glm::vec3);
     void keyRefWindow(bool&);
     void showStudioOverlay(bool&, std::string, Object::objectInfo);
     void showEmptyStudioOverlay(bool&);
+    void showLightSourcesWindow(bool&, LightSource&);
+
 
     void logWindow(bool&, Logger&);
 }

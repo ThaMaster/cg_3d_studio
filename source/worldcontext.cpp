@@ -12,7 +12,6 @@ void WorldContext::updateMatrices()
     updateProjMatrix();
 }
 
-
 void WorldContext::updateModelMatrix()
 {
     // Check translation.
@@ -92,3 +91,39 @@ void WorldContext::resetModel()
     matModel = glm::mat4(1.0f);
     tInfo.reset = false;
 }
+
+void WorldContext::clearObjects()
+{
+    objects.clear();
+}
+
+size_t WorldContext::getTotalVertexSize() 
+{
+    size_t totalVertexSize = 0;
+    for(size_t o = 0; o < objects.size(); o++)
+    {
+        totalVertexSize += objects[o].oInfo.nVertices*sizeof(glm::vec3);
+    }
+    return totalVertexSize;
+}
+
+size_t WorldContext::getTotalVertexNormalSize() 
+{
+    size_t totalVertexNormalSize = 0;
+    for(size_t o = 0; o < objects.size(); o++)
+    {
+        totalVertexNormalSize += objects[o].oInfo.nVertexNormals*sizeof(glm::vec3);
+    }
+    return totalVertexNormalSize;
+}
+
+size_t WorldContext::getTotalIndicesSize() 
+{
+    size_t totalIndicesSize = 0;
+    for(size_t o = 0; o < objects.size(); o++)
+    {
+        totalIndicesSize += objects[o].oInfo.nIndices*sizeof(unsigned int);
+    }
+    return totalIndicesSize;
+}
+

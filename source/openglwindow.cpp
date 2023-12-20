@@ -247,8 +247,10 @@ void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int ac
             // Detect shortcut keys.
             case GLFW_KEY_O: /**/ break;
             case GLFW_KEY_F1: if(wContext.objects.size() != 0) wInfo.showObjTransWindow = !wInfo.showObjTransWindow; break;
-            case GLFW_KEY_F2: if(wContext.objects.size() != 0) wInfo.showObjInfWindow = !wInfo.showObjInfWindow; break;
-            case GLFW_KEY_F3: wInfo.showCamWindow = !wInfo.showCamWindow; break;
+            case GLFW_KEY_F2: if(wContext.objects.size() != 0) wInfo.showObjMatWindow = !wInfo.showObjMatWindow; break;
+            case GLFW_KEY_F3: if(wContext.objects.size() != 0) wInfo.showObjInfWindow = !wInfo.showObjInfWindow; break;
+            case GLFW_KEY_F4: wInfo.showCamWindow = !wInfo.showCamWindow; break;
+            case GLFW_KEY_F5: wInfo.showLightSourcesWindow = !wInfo.showLightSourcesWindow; break;
             case GLFW_KEY_F9: wInfo.showKeyRefWindow = !wInfo.showKeyRefWindow; break;
             case GLFW_KEY_F10: wInfo.showLogWindow = !wInfo.showLogWindow; break;
         } 
@@ -291,6 +293,10 @@ void OpenGLWindow::start()
         DrawGui();
 
         updateObject();
+        updateCamera();
+        updateLight();
+        updateMaterial();
+
 
         // Call display in geomentryRender to render the scene
         display();
@@ -333,13 +339,14 @@ void OpenGLWindow::reshape(const int width, const int height) const
 void OpenGLWindow::DrawGui()
 {
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
-    StudioGui::mainMenuBar(glfwWindow, wInfo, wContext.objects);
-
-    StudioGui::objTransWindow(wInfo.showObjTransWindow, wContext.tInfo.reset);
+    StudioGui::mainMenuBar(glfwWindow, wInfo, wContext);
     if(wContext.objects.size() != 0) {
+        StudioGui::objTransWindow(wInfo.showObjTransWindow, wContext.tInfo.reset);
+        StudioGui::objMatWindow(wInfo.showObjMatWindow, wContext.objects[0]);
         StudioGui::objInfWindow(wInfo.showObjInfWindow, objFileName, objFilePath, wContext.objects[0].oInfo);
     }
     StudioGui::camWindow(wInfo.showCamWindow, wContext.cInfo, wContext.pZeroDefault, pRefDefault);
+    StudioGui::showLightSourcesWindow(wInfo.showLightSourcesWindow, wContext.light);
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
     if(wContext.objects.size() != 0) {
         StudioGui::showStudioOverlay(wInfo.showOverlay, objFileName, wContext.objects[0].oInfo);
