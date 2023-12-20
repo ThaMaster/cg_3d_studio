@@ -13,9 +13,10 @@ uniform mat4 P;
 uniform mat4 V;
 
 vec4 Ia = vec4( 0.1, 0.1, 0.1, 1.0 );
-vec4 ka = vec4( 1.0, 1.0, 1.0, 1.0 );
-vec4 kd = ka;
-vec4 ks = kd;
+
+vec4 ka = vec4(0.9551, 0.9551, 0.9551, 1.0);
+vec4 kd = vec4(0.6163, 0.6163, 0.6163, 1.0);
+vec4 ks = vec4(0.3000, 0.3000, 0.3000, 1.0);
 
 vec4 diffuse = vec4(0.0, 0.0, 0.0, 0.0);
 vec4 specular = vec4(0.0, 0.0, 0.0, 0.0);
