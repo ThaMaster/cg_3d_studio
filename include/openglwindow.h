@@ -35,10 +35,7 @@ class OpenGLWindow
             bool showLogWindow = false;
             bool showLightSourcesWindow = false;
             bool showObjMatWindow = false;
-        } wInfo;        
-
-        const glm::vec3 pZeroDefault = glm::vec3(0.0f, 0.0f, 2.0f);
-        const glm::vec3 pRefDefault = glm::vec3(0.0f, 0.0f, 0.0f);
+        } wInfo;
 
         OpenGLWindow(std::string title, int width, int height);
         ~OpenGLWindow();

@@ -12,44 +12,37 @@ uniform mat4 M;
 uniform mat4 P;
 uniform mat4 V;
 
-vec4 ambient;
-vec4 diffuse;
-vec4 specular;
-
 vec4 Ia = vec4( 0.1, 0.1, 0.1, 1.0 );
 vec4 ka = vec4( 1.0, 1.0, 1.0, 1.0 );
 vec4 kd = ka;
 vec4 ks = kd;
 
+vec4 diffuse = vec4(0.0, 0.0, 0.0, 0.0);
+vec4 specular = vec4(0.0, 0.0, 0.0, 0.0);
+
 void
 main()
 {
-    mat3 normalMatrix = transpose(inverse(mat3(M)));
-    vec3 normal = normalize(normalMatrix * vNormal);
+    // Calculate the coordinates to world coordinates.
+    vec3 normal = normalize(mat3(M) * vNormal);
+    vec4 worldPosition = M * vec4(vPosition, 1.0);
+    vec3 worldLightPos = lsPos.xyz; // Assuming lsPos is a point light in world space
+    vec3 lightDir = normalize(worldLightPos - worldPosition.xyz);
+    vec3 viewDir = normalize(camPos - worldPosition.xyz);
+    viewDir = normalize(lsPos.xyz);
 
-    vec4 viewPosition = V*M*vec4(vPosition, 1.0);
-    vec4 viewSunPos = V*lsPos;
-    vec4 l = normalize(viewSunPos - viewPosition);
-    vec4 viewCamPos = V * vec4(camPos, 1.0);
-    vec4 v = normalize(viewCamPos - viewPosition);
-    ambient = Ia * ka;
+    // Calculate the three light components.
+    vec4 ambient = Ia * ka;
+    float diff = max(dot(normal, lightDir), 0);
+    if(diff > 0.0) {
+        diffuse = lsColor * kd * diff;
 
-    float diffIntensity = max(dot(normal, l.xyz), 0);
-    
-    if(diffIntensity > 0.0) {
-
-        diffuse = lsColor * kd * diffIntensity;        
-        vec4 r = vec4(reflect( l.xyz, normal), 1.0);
-        float specIntensity = pow( max( dot( v, r ), 0 ),  alpha);
-        specular = lsColor * ks * specIntensity;
-
-        color = ambient + diffuse + specular;
-
-    } else {
-
-        color = ambient;
-
+        vec3 reflectDir = reflect(-lightDir, normal);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), alpha);
+        specular = lsColor * ks * spec;
     }
+    
+    color = ambient + diffuse + specular;
         
     gl_Position =  P * V * M * vec4( vPosition, 1.0 );
 }

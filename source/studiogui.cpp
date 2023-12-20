@@ -67,7 +67,7 @@ namespace StudioGui {
         }
     }
 
-    void objInfWindow(bool &showWindow, std::string objFileName, std::string objFilePath, Object::objectInfo oInfo)
+    void objInfWindow(bool &showWindow, std::string objFileName, std::string objFilePath, Object::objectInfo& oInfo)
     {
         if(showWindow) {
             ImGui::Begin("Object Information", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
@@ -94,6 +94,7 @@ namespace StudioGui {
                 ImGui::SameLine(200); ImGui::Text("%d", oInfo.nTexCoords);
                 ImGui::Text("Color Values:");
                 ImGui::SameLine(200); ImGui::Text("%d", oInfo.nColors);
+                ImGui::Checkbox("Wireframe Mode", &oInfo.showWireFrame);
             }
             ImGui::End();
         }

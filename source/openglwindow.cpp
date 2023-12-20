@@ -344,7 +344,7 @@ void OpenGLWindow::DrawGui()
         StudioGui::objMatWindow(wInfo.showObjMatWindow, wContext.objects[0]);
         StudioGui::objInfWindow(wInfo.showObjInfWindow, objFileName, objFilePath, wContext.objects[0].oInfo);
     }
-    StudioGui::camWindow(wInfo.showCamWindow, wContext.cInfo, wContext.pZeroDefault, pRefDefault);
+    StudioGui::camWindow(wInfo.showCamWindow, wContext.cInfo, wContext.pZeroDefault, wContext.pRefDefault);
     StudioGui::showLightSourcesWindow(wInfo.showLightSourcesWindow, wContext.light);
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
     if(wContext.objects.size() != 0) {

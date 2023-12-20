@@ -30,6 +30,7 @@ class Object
             int nTexCoords = 0;
             int nColors = 0;
             bool objectLoaded = false;
+            bool showWireFrame = false;
         } oInfo;
         
         string fileName;

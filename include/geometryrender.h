@@ -25,7 +25,8 @@ public:
     string loadObjectFromGui(string) override;
 
 private:
-    GLuint program;
+    GLuint program1;
+    GLuint program2;
 
     Loader loader;
     
@@ -40,9 +41,11 @@ private:
 
     bool objectParseSuccess;
 
+    void setupShaderProgram(GLuint);
+
     void debugShader(void) const;
 
-    void loadGeometry(string fileName);
+    void loadGeometry(string);
 
     void resetTransformations();
 };

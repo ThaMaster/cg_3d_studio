@@ -16,9 +16,15 @@ void GeometryRender::initialize()
     glEnable(GL_DEPTH_TEST);
 
     // Create and initialize a program object with shaders
-    program = initProgram("./source/shaders/vshader.glsl", "./source/shaders/fshader.glsl");
+    program1 = initProgram("./source/shaders/vshader.glsl", "./source/shaders/fshader.glsl");
+    program2 = initProgram("./source/shaders/vshader.glsl", "./source/shaders/fshader.glsl");
+
     // Installs the program object as part of current rendering state
-    glUseProgram(program);
+    glUseProgram(program1);
+    setupShaderProgram(program1);
+    glUseProgram(program2);
+    setupShaderProgram(program2);
+    glUseProgram(0);
 
     // Creat a vertex array object
     glGenVertexArrays(1, &vao);
@@ -33,6 +39,16 @@ void GeometryRender::initialize()
        bind it as GL_ELEMENT_ARRAY_BUFFER */
     glGenBuffers(1, &iBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBuffer);
+    
+    glBindVertexArray(0);
+    glUseProgram(0);
+
+    Loader loader;
+}
+
+void GeometryRender::setupShaderProgram(GLuint program) 
+{
+    glBindVertexArray(vao);
     // Get locations of the attributes in the shader
     locVertices = glGetAttribLocation(program, "vPosition");
     locNormals = glGetAttribLocation(program, "vNormal");
@@ -56,11 +72,7 @@ void GeometryRender::initialize()
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matView));
     locModel = glGetUniformLocation( program, "P");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matProj));
-
     glBindVertexArray(0);
-    glUseProgram(0);
-
-    Loader loader;
 }
 
 /**
@@ -77,7 +89,7 @@ void GeometryRender::loadGeometry(string fileName)
     if(newObject.oInfo.objectLoaded) {
         wContext.objects.push_back(newObject);
         
-        glUseProgram(program);
+        glUseProgram(program1);
         glBindVertexArray(vao);
 
         size_t vSize = wContext.getTotalVertexSize();
@@ -113,11 +125,11 @@ void GeometryRender::loadGeometry(string fileName)
 void GeometryRender::debugShader(void) const
 {
     GLint  logSize;
-    glGetProgramiv( program, GL_INFO_LOG_LENGTH, &logSize );
+    glGetProgramiv( program1, GL_INFO_LOG_LENGTH, &logSize );
     if (logSize > 0) {
         std::cerr << "Failure in shader "  << std::endl;
         char logMsg[logSize+1];
-        glGetProgramInfoLog( program, logSize, nullptr, &(logMsg[0]) );
+        glGetProgramInfoLog( program1, logSize, nullptr, &(logMsg[0]) );
         std::cerr << "Shader info log: " << logMsg << std::endl;
     }
 }
@@ -125,13 +137,15 @@ void GeometryRender::debugShader(void) const
 // Render object
 void GeometryRender::display()
 {
-    glUseProgram(program);
+    glUseProgram(program1);
     glBindVertexArray(vao);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
     //size_t ebOffset = 0;
     if(wContext.objects.size() != 0) {
         for(size_t o = 0; o < wContext.objects.size(); o++) {
+            wContext.objects[o].oInfo.showWireFrame? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             glDrawElements(GL_TRIANGLES, static_cast<int>(wContext.objects[o].oInfo.nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
             //ebOffset = wContext.objects[o].oInfo.nIndices*sizeof(unsigned int);
         }
@@ -157,38 +171,38 @@ void GeometryRender::display()
  */
 void GeometryRender::updateObject()
 {
-    glUseProgram(program);
+    glUseProgram(program1);
 
     wContext.updateMatrices();
     
     GLuint locModel;
-    locModel = glGetUniformLocation( program, "M");
+    locModel = glGetUniformLocation( program1, "M");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matModel));
-    locModel = glGetUniformLocation( program, "V");
+    locModel = glGetUniformLocation( program1, "V");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matView));
-    locModel = glGetUniformLocation( program, "P");
+    locModel = glGetUniformLocation( program1, "P");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matProj));
     glUseProgram(0);    
 }
 
 void GeometryRender::updateCamera()
 {
-    glUseProgram(program);
+    glUseProgram(program1);
     GLuint locCam;
-    locCam = glGetUniformLocation(program, "camPos");
+    locCam = glGetUniformLocation(program1, "camPos");
     glUniform3fv(locCam, 1, glm::value_ptr(wContext.cInfo.pZero));
     glUseProgram(0);
 }
 
 void GeometryRender::updateLight()
 {
-    glUseProgram(program);
+    glUseProgram(program1);
     GLuint locLightPos;
-    locLightPos = glGetUniformLocation(program, "lsPos");
+    locLightPos = glGetUniformLocation(program1, "lsPos");
     glUniform4fv(locLightPos, 1, glm::value_ptr(wContext.light.position));
 
     GLuint locLightColor;
-    locLightColor = glGetUniformLocation(program, "lsColor");
+    locLightColor = glGetUniformLocation(program1, "lsColor");
     glUniform4fv(locLightColor, 1, glm::value_ptr(wContext.light.color));
     glUseProgram(0);
 }
@@ -196,9 +210,9 @@ void GeometryRender::updateLight()
 void GeometryRender::updateMaterial()
 {
     if(wContext.objects.size() != 0) {
-        glUseProgram(program);
+        glUseProgram(program1);
         GLuint locAlpha;
-        locAlpha = glGetUniformLocation(program, "alpha");
+        locAlpha = glGetUniformLocation(program1, "alpha");
         glUniform1i(locAlpha, (wContext.objects[0].matAlpha));
         glUseProgram(0);
     }
@@ -235,13 +249,13 @@ string GeometryRender::loadObjectFromGui(string fileName)
 
 void GeometryRender::resetTransformations() 
 {
-    glUseProgram(program);
+    glUseProgram(program1);
 
     // Reset the model matrix to the identity matrix.
     wContext.resetModel();
 
     GLuint locModel;
-    locModel = glGetUniformLocation( program, "M");
+    locModel = glGetUniformLocation( program1, "M");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matModel));
     glUseProgram(0); 
     
