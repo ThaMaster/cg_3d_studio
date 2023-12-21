@@ -91,39 +91,40 @@ void GeometryRender::loadGeometry(string fileName)
 {
     wContext.clearObjects();
     Object newObject = loader.parseFile("./object_files/" + fileName, "./object_files/");
+    
     // Only load the object if it successfully parsed the object file.
     if(newObject.oInfo.objectLoaded) {
         wContext.objects.push_back(newObject);
         glUseProgram(program1);
         glBindVertexArray(vao);
+        for(Object object : wContext.objects) {
 
-        size_t vSize = wContext.getTotalVertexSize();
-        size_t nSize = wContext.getTotalVertexNormalSize();
-        size_t iSize = wContext.getTotalIndicesSize();
-        size_t tSize = wContext.getTotalTextureSize();
+            size_t vSize = wContext.getTotalVertexSize();
+            size_t nSize = wContext.getTotalVertexNormalSize();
+            size_t iSize = wContext.getTotalIndicesSize();
+            size_t tSize = wContext.getTotalTextureSize();
 
-        // Set the pointers of locVertices to the right places.
-        glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-        glEnableVertexAttribArray(locVertices);
-        glVertexAttribPointer(locNormals, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vSize));
-        glEnableVertexAttribArray(locNormals);
-        glVertexAttribPointer(locTextures, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vSize+nSize));
-        glEnableVertexAttribArray(locTextures);
-        
-        // Allocate memory for both buffers without inserting data.
-        glBufferData( GL_ARRAY_BUFFER, vSize + nSize + tSize, NULL, GL_STATIC_DRAW );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, NULL, GL_STATIC_DRAW );
-        
-        // Fill buffers with the data.
-        for(size_t o = 0; o < wContext.objects.size(); o++) {
-
-            vSize = wContext.objects[o].vCoords.size()*sizeof(glm::vec3);
-            glBufferSubData( GL_ARRAY_BUFFER, 0, vSize, wContext.objects[o].vCoords.data());
-            glBufferSubData( GL_ARRAY_BUFFER, vSize, nSize, wContext.objects[o].vNormals.data());
-            glBufferSubData( GL_ARRAY_BUFFER, vSize+nSize, tSize, wContext.objects[o].tCoords.data());
+            // Set the pointers of locVertices to the right places.
+            glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+            glEnableVertexAttribArray(locVertices);
+            glVertexAttribPointer(locNormals, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vSize));
+            glEnableVertexAttribArray(locNormals);
+            glVertexAttribPointer(locTextures, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vSize+nSize));
+            glEnableVertexAttribArray(locTextures);
             
-            iSize = wContext.objects[o].indices.size()*sizeof(unsigned int);
-            glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, 0, iSize, wContext.objects[o].indices.data());
+            // Allocate memory for both buffers without inserting data.
+            glBufferData( GL_ARRAY_BUFFER, vSize + nSize + tSize, NULL, GL_STATIC_DRAW );
+            glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, NULL, GL_STATIC_DRAW );
+            
+            // Fill buffers with the data.
+
+            vSize = object.vertices.size()*sizeof(glm::vec3);
+            glBufferSubData( GL_ARRAY_BUFFER, 0, vSize, object.getVertexCoords().data());
+            glBufferSubData( GL_ARRAY_BUFFER, vSize, nSize, object.vNormals.data());
+            glBufferSubData( GL_ARRAY_BUFFER, vSize+nSize, tSize, object.tCoords.data());
+            
+            iSize = object.indices.size()*sizeof(unsigned int);
+            glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, 0, iSize, object.indices.data());
         }
 
         glBindVertexArray(0);

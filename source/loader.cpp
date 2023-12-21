@@ -48,7 +48,6 @@ Object Loader::parseFile(string filePath, string mFolder)
     // auto& materials = reader.GetMaterials();
     
     // Allocate the number of shapes for the data vectors.
-    vector<glm::vec3> vertexCoords;
     vector<unsigned int> indices;
     vector<glm::vec2> textureCoords;
     vector<glm::vec3> colorVals;
@@ -61,15 +60,15 @@ Object Loader::parseFile(string filePath, string mFolder)
         size_t vOffset = 0;
         std::vector<unsigned char> faceVertices = shapes[s].mesh.num_face_vertices;
         newObject.oInfo.nFaces += faceVertices.size();
-
         // Store all vertex coordinates
         for (size_t i = 0; i < attrib.vertices.size(); i+=3) {
-            vertexCoords.push_back(glm::vec3(
+            newObject.vertices.push_back(Vertex(
                 attrib.vertices[i], 
                 attrib.vertices[i+1], 
                 attrib.vertices[i+2]));
             newObject.oInfo.nVertices++;
         }
+
 
         if(attrib.normals.size() != 0) {
             for (size_t i = 0; i < attrib.vertices.size(); i+=3) {
@@ -129,12 +128,13 @@ Object Loader::parseFile(string filePath, string mFolder)
         }
         newObject.oInfo.nShapes++;
     }
-    newObject.vCoords = vertexCoords;
     newObject.indices = indices;
     newObject.tCoords = textureCoords;
     newObject.colorVals = colorVals;
     newObject.vNormals = vertexNormals;
+
     if(newObject.oInfo.nVertexNormals == 0) newObject.produceVertexNormals();
+
     newObject.oInfo.nTexCoords == 0? newObject.oInfo.hasTexCoords = false : newObject.oInfo.hasTexCoords = true;
     normalizeVertexCoords(newObject);
     newObject.oInfo.objectLoaded = true;
@@ -149,9 +149,9 @@ void Loader::normalizeVertexCoords(Object &object)
 {
     float largest_length = getLargestVertexLength(object);
 
-    for(size_t v = 0; v < object.vCoords.size(); v++)
+    for(size_t v = 0; v < object.vertices.size(); v++)
     {
-        object.vCoords[v] /= largest_length;    
+        object.vertices[v].position /= largest_length;    
     }
 }
 
@@ -165,10 +165,10 @@ float Loader::getLargestVertexLength(Object object)
     float largest_length = 0;
     float new_length;
 
-    for(size_t v = 0; v < object.vCoords.size(); v++)
+    for(size_t v = 0; v < object.vertices.size(); v++)
     {
         // Calculate the length of the current vector.
-        new_length = calcVectorLength(object.vCoords[v]);
+        new_length = calcVectorLength(object.vertices[v].position);
 
         if(largest_length < new_length) {
             largest_length = new_length; 
