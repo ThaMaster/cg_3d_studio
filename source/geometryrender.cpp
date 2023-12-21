@@ -53,6 +53,10 @@ void GeometryRender::setupShaderProgram(GLuint program)
     locVertices = glGetAttribLocation(program, "vPosition");
     locNormals = glGetAttribLocation(program, "vNormal");
 
+    GLuint locAmbi;
+    locAmbi = glGetUniformLocation(program, "la");
+    glUniform4fv(locAmbi, 1, glm::value_ptr(wContext.ambientLight));
+
     GLuint locCam;
     locCam = glGetUniformLocation(program, "camPos");
     glUniform3fv(locCam, 1, glm::value_ptr(wContext.cInfo.pZero));
@@ -88,7 +92,6 @@ void GeometryRender::loadGeometry(string fileName)
     // Only load the object if it successfully parsed the object file.
     if(newObject.oInfo.objectLoaded) {
         wContext.objects.push_back(newObject);
-        
         glUseProgram(program1);
         glBindVertexArray(vao);
 
@@ -204,6 +207,11 @@ void GeometryRender::updateLight()
     GLuint locLightColor;
     locLightColor = glGetUniformLocation(program1, "lsColor");
     glUniform4fv(locLightColor, 1, glm::value_ptr(wContext.light.color));
+
+    // THIS IS AMBIENT LIGHT AND SHOULD MAYBE CHANGE POSITION LATER!
+    GLuint locAmbi;
+    locAmbi = glGetUniformLocation(program1, "la");
+    glUniform4fv(locAmbi, 1, glm::value_ptr(wContext.ambientLight));
     glUseProgram(0);
 }
 
@@ -213,7 +221,7 @@ void GeometryRender::updateMaterial()
         glUseProgram(program1);
         GLuint locAlpha;
         locAlpha = glGetUniformLocation(program1, "alpha");
-        glUniform1i(locAlpha, (wContext.objects[0].matAlpha));
+        glUniform1f(locAlpha, (wContext.objects[0].matAlpha));
         glUseProgram(0);
     }
 }

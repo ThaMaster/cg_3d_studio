@@ -45,7 +45,7 @@ Object Loader::parseFile(string filePath, string mFolder)
 
     auto& attrib = reader.GetAttrib();
     auto& shapes = reader.GetShapes();
-    auto& materials = reader.GetMaterials();
+    // auto& materials = reader.GetMaterials();
     
     // Allocate the number of shapes for the data vectors.
     vector<glm::vec3> vertexCoords;
@@ -84,7 +84,6 @@ Object Loader::parseFile(string filePath, string mFolder)
 
         // Loop over faces(polygon)
         for (size_t f = 0; f < faceVertices.size(); f++) {
-            tinyobj::material_t currMat = materials[shapes[s].mesh.material_ids[f]];
             size_t fv = size_t(faceVertices[f]);
             // Store all indices for each face
             for (size_t v = 0; v < fv; v++) {

@@ -13,7 +13,7 @@ namespace StudioGui {
     void keyRefWindow(bool&);
     void showStudioOverlay(bool&, std::string, Object::objectInfo);
     void showEmptyStudioOverlay(bool&);
-    void showLightSourcesWindow(bool&, LightSource&);
+    void showLightSourcesWindow(bool&, LightSource&, WorldContext& wContext);
 
 
     void logWindow(bool&, Logger&);

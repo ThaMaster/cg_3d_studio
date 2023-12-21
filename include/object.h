@@ -39,8 +39,8 @@ class Object
         vector<glm::vec3> vNormals;
         vector<glm::vec3> tCoords;
         vector<glm::vec3> colorVals;
-        
-        int matAlpha = 2;
+
+        float matAlpha = 2.0;
 
         Object(string fileName)
         {

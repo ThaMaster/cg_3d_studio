@@ -51,6 +51,8 @@ class WorldContext
 
         vector<Object> objects;
         LightSource light = LightSource(glm::vec4( 0.0, .0, 0.0, 0.0), glm::vec4( 0.4, 0.4, 0.2, 1.0 ));
+        glm::vec4 ambientLight = glm::vec4(0.1, 0.1, 0.1, 1.0);
+        const glm::vec4 defaultAmbientLight = glm::vec4(0.1, 0.1, 0.1, 1.0);
 
         // Model matrix
         glm::mat4x4 matModel = {

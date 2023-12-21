@@ -345,13 +345,12 @@ void OpenGLWindow::DrawGui()
         StudioGui::objInfWindow(wInfo.showObjInfWindow, objFileName, objFilePath, wContext.objects[0].oInfo);
     }
     StudioGui::camWindow(wInfo.showCamWindow, wContext.cInfo, wContext.pZeroDefault, wContext.pRefDefault);
-    StudioGui::showLightSourcesWindow(wInfo.showLightSourcesWindow, wContext.light);
+    StudioGui::showLightSourcesWindow(wInfo.showLightSourcesWindow, wContext.light, wContext);
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
     if(wContext.objects.size() != 0) {
         StudioGui::showStudioOverlay(wInfo.showOverlay, objFileName, wContext.objects[0].oInfo);
     } else {
         StudioGui::showEmptyStudioOverlay(wInfo.showOverlay);
-
     }
 
     if(wInfo.openFileDialog) openFile();

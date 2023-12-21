@@ -107,8 +107,8 @@ namespace StudioGui {
             static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
             ImGui::Begin("Object Material", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
             ImGui::SeparatorText("Shininess");
-            ImGui::Text("Alpha: %d", object.matAlpha);
-            ImGui::SliderInt("Alpha", &object.matAlpha, 2, 16, "%d", flags);
+            ImGui::Text("Alpha: %.3f", object.matAlpha);
+            ImGui::SliderFloat("Alpha", &object.matAlpha, 0.0, 50.0, "%.2f", flags);
             ImGui::End();
         }
     }
@@ -180,7 +180,7 @@ namespace StudioGui {
     }
 
     // Contains only PLACEHOLDER for now.
-    void showLightSourcesWindow(bool &showWindow, LightSource &lightSource)
+    void showLightSourcesWindow(bool &showWindow, LightSource &lightSource, WorldContext& wContext)
     {
         if(showWindow) {
             static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
@@ -207,6 +207,17 @@ namespace StudioGui {
             ImGui::SliderFloat("G",&lightSource.color.y, 0.0f, 1.0f, "%.2f", flags);
             ImGui::SliderFloat("B",&lightSource.color.z, 0.0f, 1.0f, "%.2f", flags);
             if(ImGui::Button("Reset Light Color")) { lightSource.resetColor(); }
+            ImGui::SeparatorText("Ambient Light Intensity");
+            ImGui::PushItemWidth(100);
+            ImGui::Text("R#: %.3f", wContext.ambientLight.x); ImGui::SameLine(); 
+            ImGui::Text("G#: %.3f", wContext.ambientLight.y); ImGui::SameLine(); 
+            ImGui::Text("B#: %.3f", wContext.ambientLight.z); ImGui::SameLine(); 
+            ImGui::Text("A#: %.3f", wContext.ambientLight.w);
+            ImGui::PopItemWidth();
+            ImGui::SliderFloat("R#",&wContext.ambientLight.x, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("G#",&wContext.ambientLight.y, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("B#",&wContext.ambientLight.z, 0.0f, 1.0f, "%.2f", flags);
+            if(ImGui::Button("Reset Ambient Intensity")) { wContext.ambientLight = wContext.defaultAmbientLight; }
             ImGui::End();
         }
     }
