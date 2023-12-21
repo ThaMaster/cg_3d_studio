@@ -49,9 +49,7 @@ Object Loader::parseFile(string filePath, string mFolder)
     
     // Allocate the number of shapes for the data vectors.
     vector<unsigned int> indices;
-    vector<glm::vec2> textureCoords;
     vector<glm::vec3> colorVals;
-    vector<glm::vec3> vertexNormals;
     
     // Loop over object shapes
     for (size_t s = 0; s < shapes.size(); s++) {
@@ -69,22 +67,21 @@ Object Loader::parseFile(string filePath, string mFolder)
             newObject.oInfo.nVertices++;
         }
 
-
         if(attrib.normals.size() != 0) {
             for (size_t i = 0; i < attrib.vertices.size(); i+=3) {
-                vertexNormals.push_back(glm::vec3(
+                newObject.vertices[i/3].setNormal(
                     attrib.normals[i], 
                     attrib.normals[i+1], 
-                    attrib.normals[i+2]));
+                    attrib.normals[i+2]);
                 newObject.oInfo.nVertexNormals++;
             }
         }
 
         // Store all texture coordinates
         for (size_t t = 0; t < attrib.texcoords.size(); t+=2) {
-            textureCoords.push_back(glm::vec2(
+            newObject.vertices[t/2].setTexCoords(
                 attrib.texcoords[t], 
-                attrib.texcoords[t+1]));
+                attrib.texcoords[t+1]);
             newObject.oInfo.nTexCoords++;
         }
 
@@ -129,9 +126,7 @@ Object Loader::parseFile(string filePath, string mFolder)
         newObject.oInfo.nShapes++;
     }
     newObject.indices = indices;
-    newObject.tCoords = textureCoords;
     newObject.colorVals = colorVals;
-    newObject.vNormals = vertexNormals;
 
     if(newObject.oInfo.nVertexNormals == 0) newObject.produceVertexNormals();
 

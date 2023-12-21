@@ -99,10 +99,10 @@ void GeometryRender::loadGeometry(string fileName)
         glBindVertexArray(vao);
         for(Object object : wContext.objects) {
 
-            size_t vSize = wContext.getTotalVertexSize();
-            size_t nSize = wContext.getTotalVertexNormalSize();
-            size_t iSize = wContext.getTotalIndicesSize();
-            size_t tSize = wContext.getTotalTextureSize();
+            size_t vSize = object.vertices.size()*sizeof(glm::vec3);
+            size_t nSize = object.getVertexNormals().size()*sizeof(glm::vec3);
+            size_t iSize = object.indices.size()*sizeof(unsigned int);
+            size_t tSize = object.getTextureCoords().size()*sizeof(glm::vec2);
 
             // Set the pointers of locVertices to the right places.
             glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -117,13 +117,9 @@ void GeometryRender::loadGeometry(string fileName)
             glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, NULL, GL_STATIC_DRAW );
             
             // Fill buffers with the data.
-
-            vSize = object.vertices.size()*sizeof(glm::vec3);
             glBufferSubData( GL_ARRAY_BUFFER, 0, vSize, object.getVertexCoords().data());
-            glBufferSubData( GL_ARRAY_BUFFER, vSize, nSize, object.vNormals.data());
-            glBufferSubData( GL_ARRAY_BUFFER, vSize+nSize, tSize, object.tCoords.data());
-            
-            iSize = object.indices.size()*sizeof(unsigned int);
+            glBufferSubData( GL_ARRAY_BUFFER, vSize, nSize, object.getVertexNormals().data());
+            glBufferSubData( GL_ARRAY_BUFFER, vSize+nSize, tSize, object.getTextureCoords().data());
             glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, 0, iSize, object.indices.data());
         }
 

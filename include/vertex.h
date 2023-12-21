@@ -7,6 +7,7 @@ class Vertex
 { 
     public:
         glm::vec3 position;
+        glm::vec2 texCoords;
         glm::vec3 normal;
 
         struct MaterialInfo {
@@ -27,9 +28,14 @@ class Vertex
             mInfo.ks = ks;
         }
 
-        void setNormal(glm::vec3 normal)
+        void setNormal(float xn, float yn, float zn)
         {
-            Vertex::normal = normal;
+            Vertex::normal = glm::vec3(xn, yn, zn);
+        }
+
+        void setTexCoords(float s, float t)
+        {
+            Vertex::texCoords = glm::vec2(s, t);
         }
 
         
