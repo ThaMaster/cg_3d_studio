@@ -45,7 +45,7 @@ Object Loader::parseFile(string filePath, string mFolder)
 
     auto& attrib = reader.GetAttrib();
     auto& shapes = reader.GetShapes();
-    //auto& materials = reader.GetMaterials();
+    auto& materials = reader.GetMaterials();
     
     // Allocate the number of shapes for the data vectors.
     vector<glm::vec3> vertexCoords;
@@ -84,6 +84,7 @@ Object Loader::parseFile(string filePath, string mFolder)
 
         // Loop over faces(polygon)
         for (size_t f = 0; f < faceVertices.size(); f++) {
+            tinyobj::material_t currMat = materials[shapes[s].mesh.material_ids[f]];
             size_t fv = size_t(faceVertices[f]);
             // Store all indices for each face
             for (size_t v = 0; v < fv; v++) {
@@ -91,20 +92,6 @@ Object Loader::parseFile(string filePath, string mFolder)
                 indices.push_back(idx.vertex_index);
                 newObject.oInfo.nIndices++;
             }
-            
-            // Check if `normal_index` is zero or positive. negative = no normal data
-            /* for (size_t v = 0; v < fv; v++) {
-                tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
-                cout << "normal_index: " << idx.normal_index << endl;
-                if (idx.normal_index >= 0) {
-                    vOffset = 3*size_t(idx.normal_index);
-                    vertexNormals[s].push_back(glm::vec3(
-                        attrib.normals[vOffset], 
-                        attrib.normals[vOffset+1], 
-                        attrib.normals[vOffset+2]));
-                    newObject.oInfo.nNormals++;
-                }
-            } */
 
             // Check if `texcoord_index` is zero or positive. negative = no texcoord data
             for (size_t v = 0; v < fv; v++) {
