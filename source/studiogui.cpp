@@ -95,6 +95,7 @@ namespace StudioGui {
                 ImGui::Text("Color Values:");
                 ImGui::SameLine(200); ImGui::Text("%d", oInfo.nColors);
                 ImGui::Checkbox("Wireframe Mode", &oInfo.showWireFrame);
+                ImGui::Checkbox("Show Texture", &oInfo.showTexture);
             }
             ImGui::End();
         }

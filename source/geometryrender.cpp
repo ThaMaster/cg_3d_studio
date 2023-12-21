@@ -6,6 +6,7 @@
  */
 #include "geometryrender.h"
 #include <glm/gtx/string_cast.hpp>
+#include "stb_image.h"
 
 using namespace std;
 
@@ -25,6 +26,26 @@ void GeometryRender::initialize()
     glUseProgram(program2);
     setupShaderProgram(program2);
     glUseProgram(0);
+
+    // --- TEXTURE SHIT ---
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        cout << "Failed to load texture" << endl;
+    }
+    stbi_image_free(data);
+    // --- TEXTURE SHIT ---
 
     // Creat a vertex array object
     glGenVertexArrays(1, &vao);
@@ -142,13 +163,13 @@ void GeometryRender::display()
 {
     glUseProgram(program1);
     glBindVertexArray(vao);
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     //size_t ebOffset = 0;
     if(wContext.objects.size() != 0) {
         for(size_t o = 0; o < wContext.objects.size(); o++) {
             wContext.objects[o].oInfo.showWireFrame? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            wContext.objects[o].oInfo.showTexture? glBindTexture(GL_TEXTURE_2D, texture) : glBindTexture(GL_TEXTURE_2D, 0);
             glDrawElements(GL_TRIANGLES, static_cast<int>(wContext.objects[o].oInfo.nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
             //ebOffset = wContext.objects[o].oInfo.nIndices*sizeof(unsigned int);
         }
@@ -222,6 +243,9 @@ void GeometryRender::updateMaterial()
         GLuint locAlpha;
         locAlpha = glGetUniformLocation(program1, "alpha");
         glUniform1f(locAlpha, (wContext.objects[0].matAlpha));
+        GLuint locHasTexture;
+        locHasTexture = glGetUniformLocation(program1, "hasTexture");
+        glUniform1i(locHasTexture, wContext.objects[0].oInfo.showTexture);
         glUseProgram(0);
     }
 }

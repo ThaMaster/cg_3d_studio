@@ -31,13 +31,14 @@ class Object
             int nColors = 0;
             bool objectLoaded = false;
             bool showWireFrame = false;
+            bool showTexture = false;
         } oInfo;
         
         string fileName;
         vector<glm::vec3> vCoords;
         vector<unsigned int> indices;
         vector<glm::vec3> vNormals;
-        vector<glm::vec3> tCoords;
+        vector<glm::vec2> tCoords;
         vector<glm::vec3> colorVals;
 
         float matAlpha = 2.0;

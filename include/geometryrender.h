@@ -35,6 +35,8 @@ private:
     GLuint vBuffer;
     GLuint iBuffer;
 
+    GLuint texture;
+
     // OpenGL attribute locations
     GLuint locVertices;
     GLuint locNormals;

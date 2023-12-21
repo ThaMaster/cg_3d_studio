@@ -50,10 +50,9 @@ Object Loader::parseFile(string filePath, string mFolder)
     // Allocate the number of shapes for the data vectors.
     vector<glm::vec3> vertexCoords;
     vector<unsigned int> indices;
-    vector<glm::vec3> textureCoords;
+    vector<glm::vec2> textureCoords;
     vector<glm::vec3> colorVals;
     vector<glm::vec3> vertexNormals;
-    
     
     // Loop over object shapes
     for (size_t s = 0; s < shapes.size(); s++) {
@@ -82,6 +81,14 @@ Object Loader::parseFile(string filePath, string mFolder)
             }
         }
 
+        // Store all texture coordinates
+        for (size_t t = 0; t < attrib.texcoords.size(); t+=2) {
+            textureCoords.push_back(glm::vec2(
+                attrib.texcoords[t], 
+                attrib.texcoords[t+1]));
+            newObject.oInfo.nTexCoords++;
+        }
+
         // Loop over faces(polygon)
         for (size_t f = 0; f < faceVertices.size(); f++) {
             size_t fv = size_t(faceVertices[f]);
@@ -93,7 +100,7 @@ Object Loader::parseFile(string filePath, string mFolder)
             }
 
             // Check if `texcoord_index` is zero or positive. negative = no texcoord data
-            for (size_t v = 0; v < fv; v++) {
+            /* for (size_t v = 0; v < fv; v++) {
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
                 if (idx.texcoord_index >= 0) {
                     vOffset = 2*size_t(idx.texcoord_index);
@@ -103,7 +110,7 @@ Object Loader::parseFile(string filePath, string mFolder)
                         attrib.texcoords[vOffset+2]));
                     newObject.oInfo.nTexCoords++;
                 }
-            }
+            } */
 
             for (size_t v = 0; v < fv; v++) {
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];

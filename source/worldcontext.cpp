@@ -127,3 +127,12 @@ size_t WorldContext::getTotalIndicesSize()
     return totalIndicesSize;
 }
 
+size_t WorldContext::getTotalTextureSize() 
+{
+    size_t totalTextureSize = 0;
+    for(size_t o = 0; o < objects.size(); o++)
+    {
+        totalTextureSize += objects[o].oInfo.nTexCoords*sizeof(glm::vec2);
+    }
+    return totalTextureSize;
+}

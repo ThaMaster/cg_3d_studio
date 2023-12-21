@@ -1,5 +1,6 @@
 #version 330 core
 
+in vec2 texCoord;
 in vec3 fragNormal; // Normalized
 in vec3 fragPosition; 
 
@@ -10,6 +11,9 @@ uniform vec4 la; // Ambient Light Intensity
 uniform vec4 lsPos;  // Light source position
 uniform vec4 lsColor;  // Light source color
 uniform float alpha;  // Shininess coefficient
+
+uniform sampler2D ourTexture;
+uniform bool hasTexture;
 
 // Need to be able to map these later!
 vec4 ka = vec4(1.0, 1.0, 1.0, 1.0); // Ambient reflectivity
@@ -31,6 +35,12 @@ void main() {
     vec3 reflectDir = reflect(-lightDir, fragNormal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), alpha);
     vec4 specular = lsColor * ks * spec;
+    
+    if(hasTexture) {
+        vec4 textureColor = texture(ourTexture, texCoord);
+        color = textureColor * (ambient + diffuse + specular);
+    } else{
+        color = ambient + diffuse + specular;
+    }
 
-    color = ambient + diffuse + specular;
 }

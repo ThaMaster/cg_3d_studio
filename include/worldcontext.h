@@ -72,6 +72,8 @@ class WorldContext
         size_t getTotalVertexSize();
         size_t getTotalVertexNormalSize();
         size_t getTotalIndicesSize();
+        size_t getTotalTextureSize();
+
 
     private:
 
