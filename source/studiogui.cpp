@@ -8,8 +8,9 @@ namespace StudioGui {
             bool noObjects = wContext.objects.size() == 0;
             if(ImGui::BeginMenu("File"))
             {
-                if(ImGui::MenuItem("Open")) { wInfo.openFileDialog = true; }  
+                if(ImGui::MenuItem("Load New Object")) { wInfo.openObjFileDialog = true; }  
                 if(noObjects) ImGui::BeginDisabled();
+                if(ImGui::MenuItem("Load New Texture")) { wInfo.openTexFileDialog = true; }  
                 if(ImGui::MenuItem("Reset Scene")) { wContext.clearObjects(); }
                 if(noObjects) ImGui::EndDisabled();
                 if(ImGui::MenuItem("Settings")) {}
@@ -95,7 +96,10 @@ namespace StudioGui {
                 ImGui::Text("Color Values:");
                 ImGui::SameLine(200); ImGui::Text("%d", oInfo.nColors);
                 ImGui::Checkbox("Wireframe Mode", &oInfo.showWireFrame);
+                if(!oInfo.hasTexture) ImGui::BeginDisabled();
                 ImGui::Checkbox("Show Texture", &oInfo.showTexture);
+                if(!oInfo.hasTexture) ImGui::EndDisabled();
+
             }
             ImGui::End();
         }

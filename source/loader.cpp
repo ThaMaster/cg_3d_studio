@@ -135,6 +135,7 @@ Object Loader::parseFile(string filePath, string mFolder)
     newObject.colorVals = colorVals;
     newObject.vNormals = vertexNormals;
     if(newObject.oInfo.nVertexNormals == 0) newObject.produceVertexNormals();
+    newObject.oInfo.nTexCoords == 0? newObject.oInfo.hasTexCoords = false : newObject.oInfo.hasTexCoords = true;
     normalizeVertexCoords(newObject);
     newObject.oInfo.objectLoaded = true;
     return newObject;

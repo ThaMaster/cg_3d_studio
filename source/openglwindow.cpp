@@ -353,26 +353,45 @@ void OpenGLWindow::DrawGui()
         StudioGui::showEmptyStudioOverlay(wInfo.showOverlay);
     }
 
-    if(wInfo.openFileDialog) openFile();
+    if(wInfo.openObjFileDialog) openObjectFile();
+    if(wInfo.openTexFileDialog) openTextureFile();
+
 
     StudioGui::logWindow(wInfo.showLogWindow, log);
 }
 
-void OpenGLWindow::openFile()
+void OpenGLWindow::openObjectFile()
 {
-    static ImGuiFileDialog fileDialog;
+    static ImGuiFileDialog objFileDialog;
     std::string loaderOutput;
-    fileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", ".");
-    if (fileDialog.Display("ChooseFileDlgKey")) {
-        if (fileDialog.IsOk() == true) {
-            objFileName = fileDialog.GetCurrentFileName();
-            objFilePath = fileDialog.GetCurrentPath();
+    objFileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", ".");
+    if (objFileDialog.Display("ChooseFileDlgKey")) {
+        if (objFileDialog.IsOk() == true) {
+            objFileName = objFileDialog.GetCurrentFileName();
+            objFilePath = objFileDialog.GetCurrentPath();
             loaderOutput = loadObjectFromGui(objFileName);
         }
-        fileDialog.Close();
-        wInfo.openFileDialog = false;
+        objFileDialog.Close();
+        wInfo.openObjFileDialog = false;
     }
     log.addLog(loaderOutput.c_str());
+}
+
+void OpenGLWindow::openTextureFile()
+{
+    static ImGuiFileDialog texFileDialog;
+    std::string textureOutput;
+    texFileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".jpg", ".");
+    if (texFileDialog.Display("ChooseFileDlgKey")) {
+        if (texFileDialog.IsOk() == true) {
+            texFileName = texFileDialog.GetCurrentFileName();
+            texFilePath = texFileDialog.GetCurrentPath();
+            textureOutput = loadTextureFromGui(texFileName);
+        }
+        texFileDialog.Close();
+        wInfo.openTexFileDialog = false;
+    }
+    log.addLog(textureOutput.c_str());
 }
 
 void OpenGLWindow::handleMouseInput() 

@@ -32,6 +32,8 @@ class Object
             bool objectLoaded = false;
             bool showWireFrame = false;
             bool showTexture = false;
+            bool hasTexture = false;
+            bool hasTexCoords = false;
         } oInfo;
         
         string fileName;

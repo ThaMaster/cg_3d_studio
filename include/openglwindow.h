@@ -31,7 +31,8 @@ class OpenGLWindow
             bool showObjInfWindow = false;
             bool showCamWindow = false;
             bool showKeyRefWindow = false;
-            bool openFileDialog = false;
+            bool openObjFileDialog = false;
+            bool openTexFileDialog = false;
             bool showLogWindow = false;
             bool showLightSourcesWindow = false;
             bool showObjMatWindow = false;
@@ -54,6 +55,8 @@ class OpenGLWindow
         virtual void updateMaterial() = 0;
 
         virtual std::string loadObjectFromGui(std::string) = 0;
+        virtual std::string loadTextureFromGui(std::string) = 0;
+
         void displayNow();
 
     protected:
@@ -71,7 +74,9 @@ class OpenGLWindow
     private:
         Logger log = Logger();
         std::string objFileName;
-        std::string objFilePath;     
+        std::string objFilePath;
+        std::string texFileName;
+        std::string texFilePath;  
 
         void DrawGui();
         void handleMouseInput(); 
@@ -79,5 +84,6 @@ class OpenGLWindow
         int windowWidth = 0;
         int windowHeight = 0;
 
-        void openFile();
+        void openObjectFile();
+        void openTextureFile();
 };

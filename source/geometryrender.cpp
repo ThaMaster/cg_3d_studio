@@ -27,26 +27,6 @@ void GeometryRender::initialize()
     setupShaderProgram(program2);
     glUseProgram(0);
 
-    // --- TEXTURE SHIT ---
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        cout << "Failed to load texture" << endl;
-    }
-    stbi_image_free(data);
-    // --- TEXTURE SHIT ---
-
     // Creat a vertex array object
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -73,6 +53,7 @@ void GeometryRender::setupShaderProgram(GLuint program)
     // Get locations of the attributes in the shader
     locVertices = glGetAttribLocation(program, "vPosition");
     locNormals = glGetAttribLocation(program, "vNormal");
+    locTextures = glGetAttribLocation(program, "aTexCoord");
 
     GLuint locAmbi;
     locAmbi = glGetUniformLocation(program, "la");
@@ -119,14 +100,18 @@ void GeometryRender::loadGeometry(string fileName)
         size_t vSize = wContext.getTotalVertexSize();
         size_t nSize = wContext.getTotalVertexNormalSize();
         size_t iSize = wContext.getTotalIndicesSize();
+        size_t tSize = wContext.getTotalTextureSize();
+
         // Set the pointers of locVertices to the right places.
         glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
         glEnableVertexAttribArray(locVertices);
         glVertexAttribPointer(locNormals, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vSize));
         glEnableVertexAttribArray(locNormals);
+        glVertexAttribPointer(locTextures, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vSize+nSize));
+        glEnableVertexAttribArray(locTextures);
         
         // Allocate memory for both buffers without inserting data.
-        glBufferData( GL_ARRAY_BUFFER, vSize + nSize, NULL, GL_STATIC_DRAW );
+        glBufferData( GL_ARRAY_BUFFER, vSize + nSize + tSize, NULL, GL_STATIC_DRAW );
         glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, NULL, GL_STATIC_DRAW );
         
         // Fill buffers with the data.
@@ -135,6 +120,7 @@ void GeometryRender::loadGeometry(string fileName)
             vSize = wContext.objects[o].vCoords.size()*sizeof(glm::vec3);
             glBufferSubData( GL_ARRAY_BUFFER, 0, vSize, wContext.objects[o].vCoords.data());
             glBufferSubData( GL_ARRAY_BUFFER, vSize, nSize, wContext.objects[o].vNormals.data());
+            glBufferSubData( GL_ARRAY_BUFFER, vSize+nSize, tSize, wContext.objects[o].tCoords.data());
             
             iSize = wContext.objects[o].indices.size()*sizeof(unsigned int);
             glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, 0, iSize, wContext.objects[o].indices.data());
@@ -246,6 +232,9 @@ void GeometryRender::updateMaterial()
         GLuint locHasTexture;
         locHasTexture = glGetUniformLocation(program1, "hasTexture");
         glUniform1i(locHasTexture, wContext.objects[0].oInfo.showTexture);
+        GLuint locHasTexCoords;
+        locHasTexCoords = glGetUniformLocation(program1, "hasTexCoords");
+        glUniform1i(locHasTexCoords, wContext.objects[0].oInfo.hasTexCoords);
         glUseProgram(0);
     }
 }
@@ -256,27 +245,41 @@ void GeometryRender::updateMaterial()
  * 
  * If no problems prasing errors are present, load the geometry of the object into the program.
  */
-string GeometryRender::loadObjectFromGui(string fileName)
+string GeometryRender::loadObjectFromGui(string objName)
 {
-    if(!fileName.empty()) {
+    if(!objName.empty()) {
         loader.outputString += "\nLoading ";
-        loader.outputString += fileName;
+        loader.outputString += objName;
         loader.outputString += "...\n";
-        loadGeometry(fileName);
+        loadGeometry(objName);
         if(objectParseSuccess) {
             resetTransformations();
             loader.outputString += "\nSuccessfully loaded \"";
-            loader.outputString += fileName;
+            loader.outputString += objName;
             loader.outputString += "\"\n\n";
         } else {
             loader.outputString += "\nFailed to load \"";
-            loader.outputString += fileName;
+            loader.outputString += objName;
             loader.outputString += "\", returning.\n\n";
         }
     } else {
         loader.outputString += "\nNo file specified, returning.\n\n";
     }
     return loader.getOutputString();
+}
+
+string GeometryRender::loadTextureFromGui(string textureName)
+{
+    string outputString = "";
+    if(!textureName.empty()) {
+        outputString += "\nLoading ";
+        outputString += textureName;
+        outputString += "...\n";
+        outputString += loadTexture(textureName);
+    } else {
+        outputString += "\nNo texture specified, returning.\n\n";
+    }
+    return outputString;
 }
 
 void GeometryRender::resetTransformations() 
@@ -290,5 +293,28 @@ void GeometryRender::resetTransformations()
     locModel = glGetUniformLocation( program1, "M");
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matModel));
     glUseProgram(0); 
-    
+}
+
+string GeometryRender::loadTexture(string textureName)
+{
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load(("./textures/" + textureName).c_str(), &width, &height, &nrChannels, 0);
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        return "\nFailed to load texture \"" + textureName + "\"\n";
+    }
+    stbi_image_free(data);
+    wContext.objects[0].oInfo.hasTexture = true;
+    wContext.objects[0].oInfo.showTexture = true;
+    return "\nSuccessfully loaded texture \"" + textureName + "\"\n";
 }

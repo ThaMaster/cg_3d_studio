@@ -23,6 +23,8 @@ public:
     void updateLight() override;
     void updateMaterial() override;
     string loadObjectFromGui(string) override;
+    string loadTextureFromGui(string) override;
+
 
 private:
     GLuint program1;
@@ -40,6 +42,7 @@ private:
     // OpenGL attribute locations
     GLuint locVertices;
     GLuint locNormals;
+    GLuint locTextures;
 
     bool objectParseSuccess;
 
@@ -50,4 +53,6 @@ private:
     void loadGeometry(string);
 
     void resetTransformations();
+
+    string loadTexture(string);
 };
