@@ -36,6 +36,7 @@ class OpenGLWindow
             bool showLogWindow = false;
             bool showLightSourcesWindow = false;
             bool showObjMatWindow = false;
+            bool showSettingsWindow = false;
         } wInfo;
 
         OpenGLWindow(std::string title, int width, int height);

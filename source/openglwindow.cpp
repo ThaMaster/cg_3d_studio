@@ -219,29 +219,29 @@ void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int ac
         switch(key)
         {
             // Detect Camera keys.
-            case GLFW_KEY_A: wContext.cInfo.camOffset[0] = -CAM_SPEED; break;
-            case GLFW_KEY_D: wContext.cInfo.camOffset[0] = CAM_SPEED; break;
-            case GLFW_KEY_Q: wContext.cInfo.camOffset[1] = CAM_SPEED; break;
-            case GLFW_KEY_E: wContext.cInfo.camOffset[1] = -CAM_SPEED; break;
-            case GLFW_KEY_W: wContext.cInfo.camOffset[2] = -CAM_SPEED; break;
-            case GLFW_KEY_S: wContext.cInfo.camOffset[2] = CAM_SPEED; break;
+            case GLFW_KEY_A: wContext.cInfo.camOffset[0] = -wContext.CAM_SPEED; break;
+            case GLFW_KEY_D: wContext.cInfo.camOffset[0] = wContext.CAM_SPEED; break;
+            case GLFW_KEY_Q: wContext.cInfo.camOffset[1] = wContext.CAM_SPEED; break;
+            case GLFW_KEY_E: wContext.cInfo.camOffset[1] = -wContext.CAM_SPEED; break;
+            case GLFW_KEY_W: wContext.cInfo.camOffset[2] = -wContext.CAM_SPEED; break;
+            case GLFW_KEY_S: wContext.cInfo.camOffset[2] = wContext.CAM_SPEED; break;
             // Detect Rotation keys.
-            case GLFW_KEY_UP: wContext.tInfo.rVals[0] = -ROT_SPEED; break;
-            case GLFW_KEY_DOWN: wContext.tInfo.rVals[0] = ROT_SPEED; break; 
-            case GLFW_KEY_LEFT: wContext.tInfo.rVals[1] = -ROT_SPEED; break;
-            case GLFW_KEY_RIGHT: wContext.tInfo.rVals[1] = ROT_SPEED; break;
-            case GLFW_KEY_COMMA: wContext.tInfo.rVals[2] = ROT_SPEED; break;
-            case GLFW_KEY_PERIOD: wContext.tInfo.rVals[2] = -ROT_SPEED; break;
+            case GLFW_KEY_UP: wContext.tInfo.rVals[0] = -wContext.ROT_SPEED; break;
+            case GLFW_KEY_DOWN: wContext.tInfo.rVals[0] = wContext.ROT_SPEED; break; 
+            case GLFW_KEY_LEFT: wContext.tInfo.rVals[1] = -wContext.ROT_SPEED; break;
+            case GLFW_KEY_RIGHT: wContext.tInfo.rVals[1] = wContext.ROT_SPEED; break;
+            case GLFW_KEY_COMMA: wContext.tInfo.rVals[2] = wContext.ROT_SPEED; break;
+            case GLFW_KEY_PERIOD: wContext.tInfo.rVals[2] = -wContext.ROT_SPEED; break;
             // Detect Translation keys.
-            case GLFW_KEY_J: wContext.tInfo.tVals[0] = -TRA_SPEED; break;
-            case GLFW_KEY_L: wContext.tInfo.tVals[0] = TRA_SPEED; break;
-            case GLFW_KEY_I: wContext.tInfo.tVals[1] = TRA_SPEED; break;
-            case GLFW_KEY_K: wContext.tInfo.tVals[1] = -TRA_SPEED; break; 
-            case GLFW_KEY_Y: wContext.tInfo.tVals[2] = TRA_SPEED; break;
-            case GLFW_KEY_H: wContext.tInfo.tVals[2] = -TRA_SPEED; break;
+            case GLFW_KEY_J: wContext.tInfo.tVals[0] = -wContext.TRA_SPEED; break;
+            case GLFW_KEY_L: wContext.tInfo.tVals[0] = wContext.TRA_SPEED; break;
+            case GLFW_KEY_I: wContext.tInfo.tVals[1] = wContext.TRA_SPEED; break;
+            case GLFW_KEY_K: wContext.tInfo.tVals[1] = -wContext.TRA_SPEED; break; 
+            case GLFW_KEY_Y: wContext.tInfo.tVals[2] = wContext.TRA_SPEED; break;
+            case GLFW_KEY_H: wContext.tInfo.tVals[2] = -wContext.TRA_SPEED; break;
             // Detect Scaling keys.
-            case GLFW_KEY_KP_ADD: wContext.tInfo.scVal = SCA_INC_SPEED; break;
-            case GLFW_KEY_KP_SUBTRACT: wContext.tInfo.scVal = SCA_DEC_SPEED; break;
+            case GLFW_KEY_KP_ADD: wContext.tInfo.scVal = 1+wContext.SCA_SPEED; break;
+            case GLFW_KEY_KP_SUBTRACT: wContext.tInfo.scVal = 1-wContext.SCA_SPEED; break;
             // Detect reset key.
             case GLFW_KEY_R: wContext.tInfo.reset= true; break;
             // Detect shortcut keys.
@@ -356,7 +356,7 @@ void OpenGLWindow::DrawGui()
     if(wInfo.openObjFileDialog) openObjectFile();
     if(wInfo.openTexFileDialog) openTextureFile();
 
-
+    StudioGui::settingsWindow(wInfo.showSettingsWindow, wContext);
     StudioGui::logWindow(wInfo.showLogWindow, log);
 }
 

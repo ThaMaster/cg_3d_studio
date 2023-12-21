@@ -13,10 +13,9 @@ namespace StudioGui {
     void keyRefWindow(bool&);
     void showStudioOverlay(bool&, std::string, Object::objectInfo);
     void showEmptyStudioOverlay(bool&);
-    void showLightSourcesWindow(bool&, LightSource&, WorldContext& wContext);
-
-
+    void showLightSourcesWindow(bool&, LightSource&, WorldContext&);
     void logWindow(bool&, Logger&);
+    void settingsWindow(bool&, WorldContext&);
 }
 
 #endif

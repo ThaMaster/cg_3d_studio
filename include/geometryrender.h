@@ -15,7 +15,7 @@ public:
     template<typename... ARGS>
     GeometryRender(ARGS&&... args) : OpenGLWindow{ std::forward<ARGS>(args)... }
     {}
-
+    ~GeometryRender();
     void initialize();
     virtual void display() override;
     void updateObject() override;

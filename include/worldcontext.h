@@ -14,15 +14,16 @@
 const float pi_f = 3.1415926f;
 const int windowWidth = 1024;
 const int windowHeight = 768;
-const float ROT_SPEED = 5.0f;
-const float TRA_SPEED = 0.1f;
-const float SCA_INC_SPEED = 1.1f;
-const float SCA_DEC_SPEED = 0.9f;
-const float CAM_SPEED = 0.1f;
 
 class WorldContext
 {
     public:
+
+        float ROT_SPEED = 5.0f;
+        float TRA_SPEED = 0.1f;
+        float SCA_SPEED = 0.1f;
+        float CAM_SPEED = 0.1f;
+
         struct transformInfo {
             glm::vec3 rVals = glm::vec3(0.0f, 0.0f, 0.0f);
             glm::vec3 tVals = glm::vec3(0.0f, 0.0f, 0.0f);

@@ -18,7 +18,9 @@ class Vertex
 
         Vertex(float x, float y, float z)
         {
-            position = glm::vec3(x,y,z);
+            Vertex::position = glm::vec3(x,y,z);
+            Vertex::normal = glm::vec3(0.0, 0.0, 0.0);
+            Vertex::texCoords = glm::vec2(0.0, 0.0);
         }
 
         void setMaterial(glm::vec3 ka, glm::vec3 kd, glm::vec3 ks) 

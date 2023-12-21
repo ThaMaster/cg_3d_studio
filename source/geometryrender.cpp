@@ -18,17 +18,12 @@ void GeometryRender::initialize()
 
     // Create and initialize a program object with shaders
     program1 = initProgram("./source/shaders/vshader.glsl", "./source/shaders/fshader.glsl");
-    program2 = initProgram("./source/shaders/vshader.glsl", "./source/shaders/fshader.glsl");
 
     // Installs the program object as part of current rendering state
     glUseProgram(program1);
     setupShaderProgram(program1);
-    glUseProgram(program2);
-    setupShaderProgram(program2);
-    glUseProgram(0);
 
     // Creat a vertex array object
-    glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
     // Create vertex buffer in the shared display list space and
@@ -47,8 +42,17 @@ void GeometryRender::initialize()
     Loader loader;
 }
 
+GeometryRender::~GeometryRender()
+{
+    glDeleteBuffers(1, &vBuffer);
+    glDeleteBuffers(1, &iBuffer);
+    glDeleteVertexArrays(1, &vao);
+    // Add deletion of other resources as needed
+}
+
 void GeometryRender::setupShaderProgram(GLuint program) 
 {
+    glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     // Get locations of the attributes in the shader
     locVertices = glGetAttribLocation(program, "vPosition");
@@ -122,7 +126,6 @@ void GeometryRender::loadGeometry(string fileName)
             glBufferSubData( GL_ARRAY_BUFFER, vSize+nSize, tSize, object.getTextureCoords().data());
             glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, 0, iSize, object.indices.data());
         }
-
         glBindVertexArray(0);
         glUseProgram(0);
     }

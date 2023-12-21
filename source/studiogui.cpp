@@ -13,7 +13,7 @@ namespace StudioGui {
                 if(ImGui::MenuItem("Load New Texture")) { wInfo.openTexFileDialog = true; }  
                 if(ImGui::MenuItem("Reset Scene")) { wContext.clearObjects(); }
                 if(noObjects) ImGui::EndDisabled();
-                if(ImGui::MenuItem("Settings")) {}
+                if(ImGui::MenuItem("Settings", NULL, wInfo.showSettingsWindow)) { wInfo.showSettingsWindow = !wInfo.showSettingsWindow; }
                 ImGui::Separator();         
                 if(ImGui::MenuItem("Quit")) { glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE); }
                 ImGui::EndMenu();
@@ -317,7 +317,7 @@ namespace StudioGui {
     {
         if(showWindow) {
             ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiCond_FirstUseEver);
-            ImGui::Begin("Example: Log", &showWindow);
+            ImGui::Begin("Studio Log", &showWindow);
 
             // Actually call in the regular Log helper (which will Begin() into the same window as we just did)
             bool clearBuf = ImGui::Button("Clear"); ImGui::SameLine();
@@ -348,4 +348,25 @@ namespace StudioGui {
         }
         
     }
+
+    void settingsWindow(bool &showWindow, WorldContext &wContext) 
+    {
+        if(showWindow) {
+            static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
+            ImGui::Begin("Settings", &showWindow);
+            ImGui::SeparatorText("Camera Settings");
+            ImGui::Text("Camera Speed");
+            ImGui::SliderFloat("##1", &wContext.CAM_SPEED, 0.0f, 1.0f, "%.1f", flags);
+            ImGui::SeparatorText("Transformation Settings");
+            ImGui::Text("Translation Speed");
+            ImGui::SliderFloat("##2", &wContext.TRA_SPEED, 0.0f, 1.0f, "%.1f", flags);
+            ImGui::Text("Rotation Speed");
+            ImGui::SliderFloat("##3", &wContext.ROT_SPEED, 0.0f, 10.0f, "%.1f", flags);
+            ImGui::Text("Scaling Speed");
+            ImGui::SliderFloat("##4", &wContext.SCA_SPEED, 0.0f, 1.0f, "%.1f", flags);
+
+            ImGui::End();
+        }
+    }
+
 }
