@@ -1,10 +1,22 @@
 #include "object.h"
 
+/**
+ * Function for sending the data of the object to the vertex shader. The data
+ * that is sent for each vertex is:
+ * 
+ *      -   The Vertex position.
+ *      -   The Vertex Normal.
+ *      -   The Texture Coordinate.
+ * 
+ * After the call the objects vertex array object, array buffer and element
+ * array buffer will be altered.
+ */
 void Object::sendDataToBuffers()
 {
     glBindVertexArray(vao);
     size_t vSize = vertices.size()*sizeof(Vertex);
     size_t iSize = indices.size()*sizeof(unsigned int);
+
     // Position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
     glEnableVertexAttribArray(0);
@@ -23,6 +35,14 @@ void Object::sendDataToBuffers()
     glBindVertexArray(0);
 }
 
+/**
+ * Function for producing vertex normals for the object. The objects vertex normals
+ * will be assigned after the function call. 
+ * 
+ * It takes the three vertices of a face and adds the face normal to each of the
+ * vertex normal. After iterating all faces, normalize each of the vertex normal to
+ * produce the vertex normal for a vertex of the object.
+ */
 void Object::produceVertexNormals()
 {
     // Calculate normals per triangle and add them to each vertex normal
@@ -44,6 +64,13 @@ void Object::produceVertexNormals()
         vertices[n].normal = glm::normalize(vertices[n].normal);
 }
 
+/**
+ * Function for creating texture coordinates that maps to a sphere. The
+ * created coordinates will be mapped to each vertex. Should be called
+ * if there are no texture already mapped to the vertices of the object.
+ * 
+ * @param r: The radius of the sphere to be mapped to.
+ */
 void Object::produceTextureCoords(float r)
 {
     for(Vertex &vertex : vertices)
@@ -55,6 +82,11 @@ void Object::produceTextureCoords(float r)
     }
 }
 
+/**
+ * Function for getting all the vertices position of the object.
+ * 
+ * @return A vector with the objects vertex coordinates.
+ */
 vector<glm::vec3> Object::getVertexCoords()
 {
     vector<glm::vec3> vertexCoords;
@@ -62,6 +94,11 @@ vector<glm::vec3> Object::getVertexCoords()
     return vertexCoords;
 }
 
+/**
+ * Function for getting all the vertex normals of the object.
+ * 
+ * @return A vector with the objects vertex normals.
+ */
 vector<glm::vec3> Object::getVertexNormals()
 {
     vector<glm::vec3> vertexNormals;
@@ -69,6 +106,11 @@ vector<glm::vec3> Object::getVertexNormals()
     return vertexNormals;
 }
 
+/**
+ * Function for getting all the texture coordinates of the object.
+ * 
+ * @return A vector with the objects texture coordinates.
+ */
 vector<glm::vec2> Object::getTextureCoords()
 {
     vector<glm::vec2> textureCoords;
@@ -76,6 +118,12 @@ vector<glm::vec2> Object::getTextureCoords()
     return textureCoords;
 }
 
+/**
+ * Function for finding the largest vertex length of all the objects
+ * vertices. If there are no vertices in the object, 0 will be returned.
+ * 
+ * @return The largest vertex length of all the objects vertices.
+ */
 float Object::getLargestVertexLength()
 {
     float largest_length = 0;
@@ -94,7 +142,18 @@ float Object::getLargestVertexLength()
     return largest_length;
 }
 
-void Object::updateModelMatrix(glm::vec3 tVals, float scVal, glm::vec3 rDir, float rotSpeed, bool &reset)
+/**
+ * Function for updating the model matrix that affects this particular object. Will
+ * not perform the operation if the value of the input is 0. The function will alter
+ * the model matrix after it is called.
+ * 
+ * @param tVals: The translation value.
+ * @param scVal: The scaling value.
+ * @param rVals: The axises to rotate around.
+ * @param rotSpeed: The speed of the rotation.
+ * @param reset: If the model matrix should reset or not.
+ */
+void Object::updateModelMatrix(glm::vec3 tVals, float scVal, glm::vec3 rVals, float rotSpeed, bool &reset)
 {
     // Check translation.
     if(glm::compMax(tVals) != 0 || glm::compMin(tVals) != 0)
@@ -105,13 +164,19 @@ void Object::updateModelMatrix(glm::vec3 tVals, float scVal, glm::vec3 rDir, flo
         matModel = glm::scale(matModel, glm::vec3(scVal));
 
     // Check rotation.
-    if(glm::compMax(rDir) != 0 || glm::compMin(rDir) != 0)
-        matModel = glm::rotate(matModel, glm::radians(rotSpeed), rDir);
+    if(glm::compMax(rVals) != 0 || glm::compMin(rVals) != 0)
+        matModel = glm::rotate(matModel, glm::radians(rotSpeed), rVals);
 
     // Check if object should be reset.
     resetModel(reset);
 }
 
+/**
+ * Function for resetting the model matrix. If the input is true it will be
+ * switch to false immediately after the operation.
+ * 
+ * @param reset: If the model matrix should reset or not.
+ */
 void Object::resetModel(bool &reset)
 {
     if(reset) {
