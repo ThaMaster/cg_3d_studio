@@ -1,13 +1,8 @@
-/*
- *  Workshop 1
- *  Computer Graphics course
- *  Dept Computing Science, Umea University
- *  Stefan Johansson, stefanj@cs.umu.se
- */
 #pragma once
 
 #include "openglwindow.h"
 #include "loader.h"
+#include "stb_image.h"
 
 class GeometryRender : public OpenGLWindow
 {

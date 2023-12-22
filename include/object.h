@@ -44,8 +44,6 @@ class Object
         float matAlpha = 2.0;
 
         GLuint vao;
-        GLuint vBuffer;
-        GLuint iBuffer;
 
         GLuint texture;
 
@@ -76,16 +74,21 @@ class Object
             glBindVertexArray(0);
         }
 
-        void sendDataToBuffers();
-
-        void produceVertexNormals();
-        void produceTextureCoords(float r);
         vector<glm::vec3> getVertexCoords();
         vector<glm::vec3> getVertexNormals();
         vector<glm::vec2> getTextureCoords();
+
+        void sendDataToBuffers();
+        void drawObject(GLuint);
+        void produceVertexNormals();
+        void produceTextureCoords(float r);
         float getLargestVertexLength();
         void updateModelMatrix(glm::vec3 tVals, float scVal, glm::vec3 rDir, float rotSpeed, bool &reset);
         void resetModel(bool&);
+
+    private:
+        GLuint vBuffer;
+        GLuint iBuffer;
 };
 
 #endif

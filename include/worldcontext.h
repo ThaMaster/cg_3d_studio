@@ -1,4 +1,4 @@
-#ifndef CONTEXT_H
+#ifndef WORLDCONTEXT_H
 #define WORLDCONTEXT_H
 
 #include <glm/glm.hpp>
@@ -65,7 +65,6 @@ class WorldContext
                             0.0, 1.0, 0.0, 0.0,
                             0.0, 0.0, 1.0, 0.0,
                             0.0, 0.0, 0.0, 1.0};
-                            
         // View matrix
         glm::mat4x4 matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
         
@@ -74,11 +73,6 @@ class WorldContext
 
         void updateMatrices();
         void clearObjects();
-        size_t getTotalVertexSize();
-        size_t getTotalVertexNormalSize();
-        size_t getTotalIndicesSize();
-        size_t getTotalTextureSize();
-
     private:
 
         glm::mat4x4 obliqueProjection(glm::mat4x4, float, float);

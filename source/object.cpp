@@ -36,6 +36,32 @@ void Object::sendDataToBuffers()
 }
 
 /**
+ * Function for drawing the object to the frame buffer, using a specified shader
+ * program.
+ * 
+ * @param program: The shader program to be used when drawing the object.
+ */
+void Object::drawObject(GLuint program)
+{
+    glBindVertexArray(vao);
+
+    oInfo.showWireFrame? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    oInfo.showTexture? glBindTexture(GL_TEXTURE_2D, texture) : glBindTexture(GL_TEXTURE_2D, 0);
+
+    GLuint locModel;
+    locModel = glGetUniformLocation( program, "M");
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(matModel));
+
+    GLuint locHasTexture;
+    locHasTexture = glGetUniformLocation(program, "showTexture");
+    glUniform1i(locHasTexture, oInfo.showTexture);
+
+    glDrawElements(GL_TRIANGLES, static_cast<int>(oInfo.nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+    glBindVertexArray(0);
+}
+
+/**
  * Function for producing vertex normals for the object. The objects vertex normals
  * will be assigned after the function call. 
  * 

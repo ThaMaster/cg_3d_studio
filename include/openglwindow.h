@@ -1,9 +1,3 @@
-/*
- *  Workshop 1
- *  Computer Graphics course
- *  Dept Computing Science, Umea University
- *  Stefan Johansson, stefanj@cs.umu.se
- */
 #pragma once
 
 #include <glm/glm.hpp>
@@ -19,7 +13,7 @@
 #include "imgui_impl_opengl3.h"
 
 #include "logger.h"
-#include "3dstudio.h"
+#include "worldcontext.h"
 
 class OpenGLWindow
 {

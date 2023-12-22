@@ -6,7 +6,6 @@
  */
 #include "geometryrender.h"
 #include <glm/gtx/string_cast.hpp>
-#include "stb_image.h"
 
 using namespace std;
 
@@ -61,22 +60,7 @@ void GeometryRender::display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     for(Object &object : wContext.objects) {
-        glBindVertexArray(object.vao);
-
-        object.oInfo.showWireFrame? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        object.oInfo.showTexture? glBindTexture(GL_TEXTURE_2D, object.texture) : glBindTexture(GL_TEXTURE_2D, 0);
-
-        GLuint locModel;
-        locModel = glGetUniformLocation( program, "M");
-        glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(object.matModel));
-
-        GLuint locHasTexture;
-        locHasTexture = glGetUniformLocation(program, "showTexture");
-        glUniform1i(locHasTexture, object.oInfo.showTexture);
-
-        glDrawElements(GL_TRIANGLES, static_cast<int>(object.oInfo.nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-
-        glBindVertexArray(0);
+        object.drawObject(program);
     }
     // Not to be called in release...
     debugShader();
@@ -124,6 +108,11 @@ void GeometryRender::updateCamera()
 void GeometryRender::updateLight()
 {
     glUseProgram(program);
+    
+    GLuint locAmbi;
+    locAmbi = glGetUniformLocation(program, "la");
+    glUniform4fv(locAmbi, 1, glm::value_ptr(wContext.ambientLight));
+
     GLuint locLightPos;
     locLightPos = glGetUniformLocation(program, "lsPos");
     glUniform4fv(locLightPos, 1, glm::value_ptr(wContext.light.position));
@@ -131,11 +120,6 @@ void GeometryRender::updateLight()
     GLuint locLightColor;
     locLightColor = glGetUniformLocation(program, "lsColor");
     glUniform4fv(locLightColor, 1, glm::value_ptr(wContext.light.color));
-
-    // THIS IS AMBIENT LIGHT AND SHOULD MAYBE CHANGE POSITION LATER!
-    GLuint locAmbi;
-    locAmbi = glGetUniformLocation(program, "la");
-    glUniform4fv(locAmbi, 1, glm::value_ptr(wContext.ambientLight));
     glUseProgram(0);
 }
 
