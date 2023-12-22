@@ -13,7 +13,7 @@ uniform vec4 lsColor;  // Light source color
 uniform float alpha;  // Shininess coefficient
 
 uniform sampler2D ourTexture;
-uniform bool hasTexture;
+uniform bool showTexture;
 
 // Need to be able to map these later!
 vec4 ka = vec4(1.0, 1.0, 1.0, 1.0); // Ambient reflectivity
@@ -36,7 +36,7 @@ void main() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), alpha);
     vec4 specular = lsColor * ks * spec;
     
-    if(hasTexture) {
+    if(showTexture) {
         vec4 textureColor = texture(ourTexture, texCoord);
         color = textureColor * (ambient + diffuse + specular);
     } else{

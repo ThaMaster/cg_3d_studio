@@ -10,7 +10,6 @@ out vec2 texCoord;
 uniform mat4 M;
 uniform mat4 P;
 uniform mat4 V;
-uniform bool hasTexCoords;
 
 void main() {
     fragNormal = normalize(mat3(M) * vNormal);

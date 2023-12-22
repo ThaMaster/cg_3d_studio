@@ -69,6 +69,11 @@ void GeometryRender::display()
         GLuint locModel;
         locModel = glGetUniformLocation( program, "M");
         glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(object.matModel));
+
+        GLuint locHasTexture;
+        locHasTexture = glGetUniformLocation(program, "showTexture");
+        glUniform1i(locHasTexture, object.oInfo.showTexture);
+
         glDrawElements(GL_TRIANGLES, static_cast<int>(object.oInfo.nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
         glBindVertexArray(0);
@@ -141,9 +146,6 @@ void GeometryRender::updateMaterial(int objIndex)
         GLuint locAlpha;
         locAlpha = glGetUniformLocation(program, "alpha");
         glUniform1f(locAlpha, (wContext.objects[objIndex].matAlpha));
-        GLuint locHasTexture;
-        locHasTexture = glGetUniformLocation(program, "hasTexture");
-        glUniform1i(locHasTexture, wContext.objects[objIndex].oInfo.hasTexture);
         glUseProgram(0);
     }
 }
