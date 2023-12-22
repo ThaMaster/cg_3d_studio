@@ -348,7 +348,7 @@ void OpenGLWindow::DrawGui()
     StudioGui::showLightSourcesWindow(wInfo.showLightSourcesWindow, wContext.light, wContext);
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
     if(wContext.objects.size() != 0) {
-        StudioGui::showStudioOverlay(wInfo.showOverlay, objFileName, wContext.objects[0].oInfo);
+        StudioGui::showStudioOverlay(wInfo.showOverlay, wContext.objects);
     } else {
         StudioGui::showEmptyStudioOverlay(wInfo.showOverlay);
     }

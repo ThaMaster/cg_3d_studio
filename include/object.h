@@ -38,14 +38,62 @@ class Object
         string fileName;
         vector<unsigned int> indices;
         vector<glm::vec3> colorVals;
-
         vector<Vertex> vertices;
 
         float matAlpha = 2.0;
 
+        GLuint vao;
+        GLuint vBuffer;
+        GLuint iBuffer;
+
+        // Model matrix
+        glm::mat4x4 matModel = {
+                            1.0, 0.0, 0.0, 0.0, 
+                            0.0, 1.0, 0.0, 0.0,
+                            0.0, 0.0, 1.0, 0.0,
+                            0.0, 0.0, 0.0, 1.0};
+
         Object(string fileName)
         {
             Object::fileName = fileName;
+            
+            glGenVertexArrays(1, &vao);
+            glBindVertexArray(vao);
+
+            // Create vertex buffer in the shared display list space and
+            // bind it as VertexBuffer (GL_ARRAY_BUFFER)
+            glGenBuffers( 1, &vBuffer);
+            glBindBuffer( GL_ARRAY_BUFFER, vBuffer);
+
+            /* Create buffer in the shared display list space and 
+            bind it as GL_ELEMENT_ARRAY_BUFFER */
+            glGenBuffers(1, &iBuffer);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBuffer);
+
+            glBindVertexArray(0);
+        }
+
+        void sendDataToBuffers()
+        {
+            glBindVertexArray(vao);
+            size_t vSize = vertices.size()*sizeof(Vertex);
+            size_t iSize = indices.size()*sizeof(unsigned int);
+            // Position
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+            glEnableVertexAttribArray(0);
+
+            // Normal
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+            glEnableVertexAttribArray(1);
+
+            // Texture coordinates
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+            glEnableVertexAttribArray(2);
+            
+            // Allocate memory for both buffers without inserting data.
+            glBufferData( GL_ARRAY_BUFFER, vSize, vertices.data(), GL_STATIC_DRAW );
+            glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, indices.data(), GL_STATIC_DRAW );
+            glBindVertexArray(0);
         }
 
         void produceVertexNormals();

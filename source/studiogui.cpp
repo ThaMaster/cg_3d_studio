@@ -237,7 +237,7 @@ namespace StudioGui {
         }
     }
 
-    void showStudioOverlay(bool &showOverlay, std::string objFileName, Object::objectInfo oInfo)
+    void showStudioOverlay(bool &showOverlay, vector<Object> objects)
     {
         if(showOverlay) {
             static int location = 0;
@@ -258,10 +258,13 @@ namespace StudioGui {
             if(ImGui::Begin("Overlay", &showOverlay, window_flags))
             {
                 ImGui::SeparatorText("3D Studio v0.0.1");
-                if(oInfo.objectLoaded) {
-                    char fileName[objFileName.length()+1];
-                    strcpy(fileName, objFileName.c_str());
-                    ImGui::Text("Loaded object: %s", fileName);
+                if(objects.size() != 0) {
+                    ImGui::Text("Loaded object(s):");
+                    for(Object object : objects) {
+                        char fileName[object.fileName.length()+1];
+                        strcpy(fileName, object.fileName.c_str());
+                        ImGui::Text("%s", fileName);
+                    }
                 }
                 if (ImGui::BeginPopupContextWindow())
                 {

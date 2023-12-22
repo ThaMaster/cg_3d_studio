@@ -15,7 +15,6 @@ public:
     template<typename... ARGS>
     GeometryRender(ARGS&&... args) : OpenGLWindow{ std::forward<ARGS>(args)... }
     {}
-    ~GeometryRender();
     void initialize();
     virtual void display() override;
     void updateObject() override;
@@ -27,26 +26,13 @@ public:
 
 
 private:
-    GLuint program1;
-    GLuint program2;
+    GLuint program;
 
     Loader loader;
-    
-    // OpenGL buffers
-    GLuint vao;
-    GLuint vBuffer;
-    GLuint iBuffer;
 
     GLuint texture;
 
-    // OpenGL attribute locations
-    GLuint locVertices;
-    GLuint locNormals;
-    GLuint locTextures;
-
     bool objectParseSuccess;
-
-    void setupShaderProgram(GLuint);
 
     void debugShader(void) const;
 
