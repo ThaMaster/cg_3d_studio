@@ -47,6 +47,8 @@ class WorldContext
             bool perspProj = true;
         } cInfo;
 
+        int selectedObject = 0;
+
         const glm::vec3 pZeroDefault = glm::vec3(0.0f, 0.0f, 2.0f);
         const glm::vec3 pRefDefault = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -63,6 +65,7 @@ class WorldContext
                             0.0, 1.0, 0.0, 0.0,
                             0.0, 0.0, 1.0, 0.0,
                             0.0, 0.0, 0.0, 1.0};
+                            
         // View matrix
         glm::mat4x4 matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
         
@@ -70,19 +73,16 @@ class WorldContext
         glm::mat4x4 matProj = glm::perspective(glm::radians(cInfo.fov), getAspectRatio(), cInfo.nearPlane, cInfo.farPlane);
 
         void updateMatrices();
-        void resetModel();
         void clearObjects();
         size_t getTotalVertexSize();
         size_t getTotalVertexNormalSize();
         size_t getTotalIndicesSize();
         size_t getTotalTextureSize();
 
-
     private:
 
         glm::mat4x4 obliqueProjection(glm::mat4x4, float, float);
 
-        void updateModelMatrix();
         void updateViewMatrix();
         void updateProjMatrix();
 

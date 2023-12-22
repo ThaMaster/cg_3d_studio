@@ -1,5 +1,28 @@
 #include "object.h"
 
+void Object::sendDataToBuffers()
+{
+    glBindVertexArray(vao);
+    size_t vSize = vertices.size()*sizeof(Vertex);
+    size_t iSize = indices.size()*sizeof(unsigned int);
+    // Position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+    glEnableVertexAttribArray(0);
+
+    // Normal
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+    glEnableVertexAttribArray(1);
+
+    // Texture coordinates
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+    glEnableVertexAttribArray(2);
+    
+    // Allocate memory for both buffers without inserting data.
+    glBufferData( GL_ARRAY_BUFFER, vSize, vertices.data(), GL_STATIC_DRAW );
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, indices.data(), GL_STATIC_DRAW );
+    glBindVertexArray(0);
+}
+
 void Object::produceVertexNormals()
 {
     // Calculate normals per triangle and add them to each vertex normal
@@ -28,6 +51,7 @@ void Object::produceTextureCoords(float r)
         float s = acos(vertex.position.x / r) / 3.14159265;
         float t = (atan(vertex.position.z/vertex.position.y) / 3.14159265) + 0.5;
         vertex.setTexCoords(s, t);
+        oInfo.nTexCoords++;
     }
 }
 
@@ -68,5 +92,31 @@ float Object::getLargestVertexLength()
     }
 
     return largest_length;
+}
+
+void Object::updateModelMatrix(glm::vec3 tVals, float scVal, glm::vec3 rDir, float rotSpeed, bool &reset)
+{
+    // Check translation.
+    if(glm::compMax(tVals) != 0 || glm::compMin(tVals) != 0)
+        matModel = glm::translate(matModel, tVals);
+
+    // Check scaling.
+    if(scVal != 0)
+        matModel = glm::scale(matModel, glm::vec3(scVal));
+
+    // Check rotation.
+    if(glm::compMax(rDir) != 0 || glm::compMin(rDir) != 0)
+        matModel = glm::rotate(matModel, glm::radians(rotSpeed), rDir);
+
+    // Check if object should be reset.
+    resetModel(reset);
+}
+
+void Object::resetModel(bool &reset)
+{
+    if(reset) {
+        matModel = glm::mat4(1.0f);
+        reset = false;
+    }
 }
 

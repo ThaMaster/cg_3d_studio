@@ -37,6 +37,7 @@ class OpenGLWindow
             bool showLightSourcesWindow = false;
             bool showObjMatWindow = false;
             bool showSettingsWindow = false;
+            bool showSceneWindow = false;
         } wInfo;
 
         OpenGLWindow(std::string title, int width, int height);
@@ -50,13 +51,13 @@ class OpenGLWindow
         void start();
         virtual void initialize() = 0;
         virtual void display() = 0;
-        virtual void updateObject() = 0;
+        virtual void updateObject(int) = 0;
         virtual void updateCamera() = 0;
         virtual void updateLight() = 0;
-        virtual void updateMaterial() = 0;
+        virtual void updateMaterial(int) = 0;
 
         virtual std::string loadObjectFromGui(std::string) = 0;
-        virtual std::string loadTextureFromGui(std::string) = 0;
+        virtual std::string loadTextureFromGui(std::string, int) = 0;
 
         void displayNow();
 

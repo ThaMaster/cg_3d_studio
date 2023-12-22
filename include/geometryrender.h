@@ -15,30 +15,23 @@ public:
     template<typename... ARGS>
     GeometryRender(ARGS&&... args) : OpenGLWindow{ std::forward<ARGS>(args)... }
     {}
+    
     void initialize();
     virtual void display() override;
-    void updateObject() override;
+    void updateObject(int) override;
     void updateCamera() override;
     void updateLight() override;
-    void updateMaterial() override;
+    void updateMaterial(int) override;
     string loadObjectFromGui(string) override;
-    string loadTextureFromGui(string) override;
-
+    string loadTextureFromGui(string, int) override;
 
 private:
     GLuint program;
-
     Loader loader;
-
-    GLuint texture;
-
     bool objectParseSuccess;
 
     void debugShader(void) const;
-
     void loadGeometry(string);
-
-    void resetTransformations();
-
-    string loadTexture(string);
+    void resetTransformations(int);
+    string loadTexture(string, GLuint&, int);
 };

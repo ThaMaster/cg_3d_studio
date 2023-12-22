@@ -36,6 +36,7 @@ class Object
         } oInfo;
         
         string fileName;
+        
         vector<unsigned int> indices;
         vector<glm::vec3> colorVals;
         vector<Vertex> vertices;
@@ -45,6 +46,8 @@ class Object
         GLuint vao;
         GLuint vBuffer;
         GLuint iBuffer;
+
+        GLuint texture;
 
         // Model matrix
         glm::mat4x4 matModel = {
@@ -73,28 +76,7 @@ class Object
             glBindVertexArray(0);
         }
 
-        void sendDataToBuffers()
-        {
-            glBindVertexArray(vao);
-            size_t vSize = vertices.size()*sizeof(Vertex);
-            size_t iSize = indices.size()*sizeof(unsigned int);
-            // Position
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
-            glEnableVertexAttribArray(0);
-
-            // Normal
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-            glEnableVertexAttribArray(1);
-
-            // Texture coordinates
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
-            glEnableVertexAttribArray(2);
-            
-            // Allocate memory for both buffers without inserting data.
-            glBufferData( GL_ARRAY_BUFFER, vSize, vertices.data(), GL_STATIC_DRAW );
-            glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, indices.data(), GL_STATIC_DRAW );
-            glBindVertexArray(0);
-        }
+        void sendDataToBuffers();
 
         void produceVertexNormals();
         void produceTextureCoords(float r);
@@ -102,7 +84,8 @@ class Object
         vector<glm::vec3> getVertexNormals();
         vector<glm::vec2> getTextureCoords();
         float getLargestVertexLength();
-
+        void updateModelMatrix(glm::vec3 tVals, float scVal, glm::vec3 rDir, float rotSpeed, bool &reset);
+        void resetModel(bool&);
 };
 
 #endif

@@ -7,27 +7,9 @@ float WorldContext::getAspectRatio()
 
 void WorldContext::updateMatrices() 
 {
-    updateModelMatrix();
+    objects[selectedObject].updateModelMatrix(tInfo.tVals, tInfo.scVal, tInfo.rVals, ROT_SPEED, tInfo.reset);
     updateViewMatrix();
     updateProjMatrix();
-}
-
-void WorldContext::updateModelMatrix()
-{
-    // Check translation.
-    if(glm::compMax(tInfo.tVals) != 0 || glm::compMin(tInfo.tVals) != 0)
-        matModel = glm::translate(matModel, tInfo.tVals);
-
-    // Check scaling.
-    if(tInfo.scVal != 0)
-        matModel = glm::scale(matModel, glm::vec3(tInfo.scVal));
-
-    // Check rotation.
-    if(glm::compMax(tInfo.rVals) != 0 || glm::compMin(tInfo.rVals) != 0)
-        matModel = glm::rotate(matModel, glm::radians(ROT_SPEED), tInfo.rVals);
-
-    // Check if object should be reset.
-    if(tInfo.reset) resetModel();
 }
 
 void WorldContext::updateViewMatrix()
@@ -81,20 +63,10 @@ glm::mat4x4 WorldContext::obliqueProjection(glm::mat4x4 m, float a, float angle)
     return m*shearMat;
 }
 
-/**
- * Resets the model matrix to the identity matrix. This resets the position of
- * all the transformations done to the object in the program.
- */
-void WorldContext::resetModel()
-{
-    // Reset the model matrix to the identity matrix.
-    matModel = glm::mat4(1.0f);
-    tInfo.reset = false;
-}
-
 void WorldContext::clearObjects()
 {
     objects.clear();
+    selectedObject = 0;
 }
 
 size_t WorldContext::getTotalVertexSize() 

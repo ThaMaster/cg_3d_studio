@@ -26,7 +26,7 @@ Object Loader::parseFile(string filePath, string mFolder)
     readerConfig.mtl_search_path = mFolder;
     tinyobj::ObjReader reader;
     Object newObject = Object(filePath);
-    if(!reader.ParseFromFile(filePath, readerConfig)) {
+    if(!reader.ParseFromFile("./object_files/" + filePath, readerConfig)) {
         // If reader detects known error.
         if (!reader.Error().empty()) {
             outputString += "\nError: \n";

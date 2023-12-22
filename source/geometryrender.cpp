@@ -30,7 +30,7 @@ void GeometryRender::initialize()
  */
 void GeometryRender::loadGeometry(string fileName)
 {
-    Object newObject = loader.parseFile("./object_files/" + fileName, "./object_files/");
+    Object newObject = loader.parseFile(fileName, "./object_files/");
     
     // Only load the object if it successfully parsed the object file.
     if(newObject.oInfo.objectLoaded) {
@@ -64,7 +64,7 @@ void GeometryRender::display()
         glBindVertexArray(object.vao);
 
         object.oInfo.showWireFrame? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        object.oInfo.showTexture? glBindTexture(GL_TEXTURE_2D, texture) : glBindTexture(GL_TEXTURE_2D, 0);
+        object.oInfo.showTexture? glBindTexture(GL_TEXTURE_2D, object.texture) : glBindTexture(GL_TEXTURE_2D, 0);
 
         GLuint locModel;
         locModel = glGetUniformLocation( program, "M");
@@ -92,7 +92,7 @@ void GeometryRender::display()
  * This function runs each time a callback is detected to avoid unnecessary updates.
  * 
  */
-void GeometryRender::updateObject()
+void GeometryRender::updateObject(int objIndex)
 {
     glUseProgram(program);
 
@@ -104,7 +104,6 @@ void GeometryRender::updateObject()
     GLuint locProj;
     locProj = glGetUniformLocation( program, "P");
     glUniformMatrix4fv(locProj, 1, GL_FALSE, glm::value_ptr(wContext.matProj));
-    glBindVertexArray(0);
     glUseProgram(0);    
 }
 
@@ -135,16 +134,16 @@ void GeometryRender::updateLight()
     glUseProgram(0);
 }
 
-void GeometryRender::updateMaterial()
+void GeometryRender::updateMaterial(int objIndex)
 {
     if(wContext.objects.size() != 0) {
         glUseProgram(program);
         GLuint locAlpha;
         locAlpha = glGetUniformLocation(program, "alpha");
-        glUniform1f(locAlpha, (wContext.objects[0].matAlpha));
+        glUniform1f(locAlpha, (wContext.objects[objIndex].matAlpha));
         GLuint locHasTexture;
         locHasTexture = glGetUniformLocation(program, "hasTexture");
-        glUniform1i(locHasTexture, wContext.objects[0].oInfo.showTexture);
+        glUniform1i(locHasTexture, wContext.objects[objIndex].oInfo.hasTexture);
         glUseProgram(0);
     }
 }
@@ -163,7 +162,6 @@ string GeometryRender::loadObjectFromGui(string objName)
         loader.outputString += "...\n";
         loadGeometry(objName);
         if(objectParseSuccess) {
-            resetTransformations();
             loader.outputString += "\nSuccessfully loaded \"";
             loader.outputString += objName;
             loader.outputString += "\"\n\n";
@@ -178,34 +176,34 @@ string GeometryRender::loadObjectFromGui(string objName)
     return loader.getOutputString();
 }
 
-string GeometryRender::loadTextureFromGui(string textureName)
+string GeometryRender::loadTextureFromGui(string textureName, int objIndex)
 {
     string outputString = "";
     if(!textureName.empty()) {
         outputString += "\nLoading ";
         outputString += textureName;
         outputString += "...\n";
-        outputString += loadTexture(textureName);
+        outputString += loadTexture(textureName, wContext.objects[objIndex].texture, objIndex);
     } else {
         outputString += "\nNo texture specified, returning.\n\n";
     }
     return outputString;
 }
 
-void GeometryRender::resetTransformations() 
+void GeometryRender::resetTransformations(int objIndex) 
 {
     glUseProgram(program);
 
     // Reset the model matrix to the identity matrix.
-    wContext.resetModel();
+    wContext.objects[objIndex].resetModel(wContext.tInfo.reset);
 
     GLuint locModel;
     locModel = glGetUniformLocation( program, "M");
-    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.matModel));
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(wContext.objects[objIndex].matModel));
     glUseProgram(0); 
 }
 
-string GeometryRender::loadTexture(string textureName)
+string GeometryRender::loadTexture(string textureName, GLuint &texture, int selectedObject)
 {
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -224,7 +222,7 @@ string GeometryRender::loadTexture(string textureName)
         return "\nFailed to load texture \"" + textureName + "\"\n";
     }
     stbi_image_free(data);
-    wContext.objects[0].oInfo.hasTexture = true;
-    wContext.objects[0].oInfo.showTexture = true;
+    wContext.objects[selectedObject].oInfo.hasTexture = true;
+    wContext.objects[selectedObject].oInfo.showTexture = true;
     return "\nSuccessfully loaded texture \"" + textureName + "\"\n";
 }

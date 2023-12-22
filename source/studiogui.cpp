@@ -20,25 +20,27 @@ namespace StudioGui {
             }
             if(ImGui::BeginMenu("View"))
             {
+                ImGui::SeparatorText("Scene");
+                if(ImGui::MenuItem("Object Transformation", "F1", wInfo.showObjTransWindow)) { wInfo.showSceneWindow = !wInfo.showSceneWindow; }
                 ImGui::SeparatorText("Object");
                 if(noObjects) ImGui::BeginDisabled();
-                if(ImGui::MenuItem("Object Transformation", "F1", wInfo.showObjTransWindow)) { wInfo.showObjTransWindow = !wInfo.showObjTransWindow; }
-                if(ImGui::MenuItem("Object Material", "F2", wInfo.showObjMatWindow)) { wInfo.showObjMatWindow = !wInfo.showObjMatWindow; }
-                if(ImGui::MenuItem("Object Information", "F3", wInfo.showObjInfWindow)) { wInfo.showObjInfWindow = !wInfo.showObjInfWindow; }
+                if(ImGui::MenuItem("Object Transformation", "F2", wInfo.showObjTransWindow)) { wInfo.showObjTransWindow = !wInfo.showObjTransWindow; }
+                if(ImGui::MenuItem("Object Material", "F3", wInfo.showObjMatWindow)) { wInfo.showObjMatWindow = !wInfo.showObjMatWindow; }
+                if(ImGui::MenuItem("Object Information", "F4", wInfo.showObjInfWindow)) { wInfo.showObjInfWindow = !wInfo.showObjInfWindow; }
                 if(noObjects) ImGui::EndDisabled();
                 ImGui::SeparatorText("Camera");
-                if(ImGui::MenuItem("Camera Information", "F4", wInfo.showCamWindow)) { wInfo.showCamWindow = !wInfo.showCamWindow; }
+                if(ImGui::MenuItem("Camera Information", "F5", wInfo.showCamWindow)) { wInfo.showCamWindow = !wInfo.showCamWindow; }
                 ImGui::SeparatorText("Lightning");
-                if(ImGui::MenuItem("Light Sources", "F", wInfo.showLightSourcesWindow)) { wInfo.showLightSourcesWindow = !wInfo.showLightSourcesWindow; }
+                if(ImGui::MenuItem("Light Sources", "6", wInfo.showLightSourcesWindow)) { wInfo.showLightSourcesWindow = !wInfo.showLightSourcesWindow; }
                 ImGui::SeparatorText("Studio");
                 if(ImGui::MenuItem("Studio Overlay", NULL, wInfo.showOverlay)) { wInfo.showOverlay = !wInfo.showOverlay; }
-                if(ImGui::MenuItem("Log Window", "F10", wInfo.showLogWindow)) { wInfo.showLogWindow = ! wInfo.showLogWindow; }
+                if(ImGui::MenuItem("Log Window", "F9", wInfo.showLogWindow)) { wInfo.showLogWindow = ! wInfo.showLogWindow; }
                 ImGui::EndMenu();
             }
             if(ImGui::BeginMenu("Help")) 
             {
                 if(ImGui::MenuItem("Introduction")) {}
-                if(ImGui::MenuItem("Keyboard Shortcuts Reference", "F9", wInfo.showKeyRefWindow)) { wInfo.showKeyRefWindow = !wInfo.showKeyRefWindow; }
+                if(ImGui::MenuItem("Keyboard Shortcuts Reference", "F10", wInfo.showKeyRefWindow)) { wInfo.showKeyRefWindow = !wInfo.showKeyRefWindow; }
                 ImGui::Separator();   
                 if(ImGui::MenuItem("About")) wInfo.aboutOpen = true;
                 ImGui::EndMenu();
@@ -48,6 +50,36 @@ namespace StudioGui {
 
         aboutPopupModal(wInfo.aboutOpen);
     }
+
+    void sceneWindow(bool& showWindow, WorldContext &wContext) 
+    {
+        if(showWindow) {
+            ImGui::Begin("Scene", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
+            ImGui::SeparatorText("Current Loaded Objects:");
+            if(wContext.objects.size() == 0) {
+                ImGui::Text("No objects currently loaded!");
+            } else {
+                int oIndex = 0;
+                for(Object object : wContext.objects) {
+                    bool disable = wContext.selectedObject == oIndex;
+                    char fileName[object.fileName.length()+1];
+                    strcpy(fileName, object.fileName.c_str());
+
+                    ImGui::Text("%s", fileName); ImGui::SameLine(200);
+                    std::string buttonLabel = "Select ##" + std::to_string(oIndex);
+
+                    if(disable) ImGui::BeginDisabled();
+                    if(ImGui::Button(buttonLabel.c_str())) { wContext.selectedObject = oIndex; }
+                    if(disable) ImGui::EndDisabled();
+                    oIndex++;
+                }
+            }
+
+            ImGui::Separator();
+            ImGui::End();
+        }
+    }
+
 
     // Contains only PLACEHOLDER for now.
     void objTransWindow(bool &showWindow, bool &reset)
@@ -68,18 +100,15 @@ namespace StudioGui {
         }
     }
 
-    void objInfWindow(bool &showWindow, std::string objFileName, std::string objFilePath, Object::objectInfo& oInfo)
+    void objInfWindow(bool &showWindow, std::string objFileName, Object::objectInfo& oInfo)
     {
         if(showWindow) {
             ImGui::Begin("Object Information", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
             ImGui::SeparatorText("Object Information");
             if(oInfo.objectLoaded) {
                 char fileName[objFileName.length()+1];
-                char filePath[objFilePath.length()+objFileName.length()+2];
                 strcpy(fileName, objFileName.c_str());
-                strcpy(filePath, (objFilePath+"/"+objFileName).c_str());
                 ImGui::Text("Object File Name: %s", fileName);
-                ImGui::Text("File Path: %s", filePath);
                 ImGui::Separator();
                 ImGui::Text("Shapes:");
                 ImGui::SameLine(200); ImGui::Text("%d", (int)oInfo.nShapes);
@@ -205,8 +234,7 @@ namespace StudioGui {
             ImGui::PushItemWidth(100);
             ImGui::Text("R: %.3f", lightSource.color.x); ImGui::SameLine(); 
             ImGui::Text("G: %.3f", lightSource.color.y); ImGui::SameLine(); 
-            ImGui::Text("B: %.3f", lightSource.color.z); ImGui::SameLine(); 
-            ImGui::Text("A: %.3f", lightSource.color.w);
+            ImGui::Text("B: %.3f", lightSource.color.z);
             ImGui::PopItemWidth();
             ImGui::SliderFloat("R",&lightSource.color.x, 0.0f, 1.0f, "%.2f", flags);
             ImGui::SliderFloat("G",&lightSource.color.y, 0.0f, 1.0f, "%.2f", flags);
@@ -214,14 +242,14 @@ namespace StudioGui {
             if(ImGui::Button("Reset Light Color")) { lightSource.resetColor(); }
             ImGui::SeparatorText("Ambient Light Intensity");
             ImGui::PushItemWidth(100);
-            ImGui::Text("R#: %.3f", wContext.ambientLight.x); ImGui::SameLine(); 
-            ImGui::Text("G#: %.3f", wContext.ambientLight.y); ImGui::SameLine(); 
-            ImGui::Text("B#: %.3f", wContext.ambientLight.z); ImGui::SameLine(); 
-            ImGui::Text("A#: %.3f", wContext.ambientLight.w);
+            ImGui::Text("R##1: %.3f", wContext.ambientLight.x); ImGui::SameLine(); 
+            ImGui::Text("G##1: %.3f", wContext.ambientLight.y); ImGui::SameLine(); 
+            ImGui::Text("B##1: %.3f", wContext.ambientLight.z);
             ImGui::PopItemWidth();
-            ImGui::SliderFloat("R#",&wContext.ambientLight.x, 0.0f, 1.0f, "%.2f", flags);
-            ImGui::SliderFloat("G#",&wContext.ambientLight.y, 0.0f, 1.0f, "%.2f", flags);
-            ImGui::SliderFloat("B#",&wContext.ambientLight.z, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("R##1",&wContext.ambientLight.x, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("G##1",&wContext.ambientLight.y, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("B##1",&wContext.ambientLight.z, 0.0f, 1.0f, "%.2f", flags);
+
             if(ImGui::Button("Reset Ambient Intensity")) { wContext.ambientLight = wContext.defaultAmbientLight; }
             ImGui::End();
         }
@@ -237,7 +265,7 @@ namespace StudioGui {
         }
     }
 
-    void showStudioOverlay(bool &showOverlay, vector<Object> objects)
+    void showStudioOverlay(bool &showOverlay, WorldContext wContext)
     {
         if(showOverlay) {
             static int location = 0;
@@ -257,13 +285,22 @@ namespace StudioGui {
             ImGui::SetNextWindowBgAlpha(0.35f);
             if(ImGui::Begin("Overlay", &showOverlay, window_flags))
             {
+                string selected;
                 ImGui::SeparatorText("3D Studio v0.0.1");
-                if(objects.size() != 0) {
+                if(wContext.objects.size() != 0) {
                     ImGui::Text("Loaded object(s):");
-                    for(Object object : objects) {
+                    int oIndex = 0;
+                    for(Object object : wContext.objects) {
                         char fileName[object.fileName.length()+1];
                         strcpy(fileName, object.fileName.c_str());
-                        ImGui::Text("%s", fileName);
+
+                        if(wContext.selectedObject == oIndex) {
+                            selected = "(Selected)";
+                        } else {
+                            selected = "";
+                        }
+                        ImGui::Text("%s %s", fileName, selected.c_str());
+                        oIndex++;
                     }
                 }
                 if (ImGui::BeginPopupContextWindow())
@@ -359,14 +396,14 @@ namespace StudioGui {
             ImGui::Begin("Settings", &showWindow);
             ImGui::SeparatorText("Camera Settings");
             ImGui::Text("Camera Speed");
-            ImGui::SliderFloat("##1", &wContext.CAM_SPEED, 0.0f, 1.0f, "%.1f", flags);
+            ImGui::SliderFloat("##1", &wContext.CAM_SPEED, 0.0f, 1.0f, "%.2f", flags);
             ImGui::SeparatorText("Transformation Settings");
             ImGui::Text("Translation Speed");
-            ImGui::SliderFloat("##2", &wContext.TRA_SPEED, 0.0f, 1.0f, "%.1f", flags);
+            ImGui::SliderFloat("##2", &wContext.TRA_SPEED, 0.0f, 1.0f, "%.2f", flags);
             ImGui::Text("Rotation Speed");
-            ImGui::SliderFloat("##3", &wContext.ROT_SPEED, 0.0f, 10.0f, "%.1f", flags);
+            ImGui::SliderFloat("##3", &wContext.ROT_SPEED, 0.0f, 10.0f, "%.2f", flags);
             ImGui::Text("Scaling Speed");
-            ImGui::SliderFloat("##4", &wContext.SCA_SPEED, 0.0f, 1.0f, "%.1f", flags);
+            ImGui::SliderFloat("##4", &wContext.SCA_SPEED, 0.0f, 1.0f, "%.2f", flags);
 
             ImGui::End();
         }

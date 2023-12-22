@@ -246,13 +246,14 @@ void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int ac
             case GLFW_KEY_R: wContext.tInfo.reset= true; break;
             // Detect shortcut keys.
             case GLFW_KEY_O: /**/ break;
-            case GLFW_KEY_F1: if(wContext.objects.size() != 0) wInfo.showObjTransWindow = !wInfo.showObjTransWindow; break;
-            case GLFW_KEY_F2: if(wContext.objects.size() != 0) wInfo.showObjMatWindow = !wInfo.showObjMatWindow; break;
-            case GLFW_KEY_F3: if(wContext.objects.size() != 0) wInfo.showObjInfWindow = !wInfo.showObjInfWindow; break;
-            case GLFW_KEY_F4: wInfo.showCamWindow = !wInfo.showCamWindow; break;
-            case GLFW_KEY_F5: wInfo.showLightSourcesWindow = !wInfo.showLightSourcesWindow; break;
-            case GLFW_KEY_F9: wInfo.showKeyRefWindow = !wInfo.showKeyRefWindow; break;
-            case GLFW_KEY_F10: wInfo.showLogWindow = !wInfo.showLogWindow; break;
+            case GLFW_KEY_F1:  wInfo.showSceneWindow = !wInfo.showSceneWindow; break;
+            case GLFW_KEY_F2: if(wContext.objects.size() != 0) wInfo.showObjTransWindow = !wInfo.showObjTransWindow; break;
+            case GLFW_KEY_F3: if(wContext.objects.size() != 0) wInfo.showObjMatWindow = !wInfo.showObjMatWindow; break;
+            case GLFW_KEY_F4: if(wContext.objects.size() != 0) wInfo.showObjInfWindow = !wInfo.showObjInfWindow; break;
+            case GLFW_KEY_F5: wInfo.showCamWindow = !wInfo.showCamWindow; break;
+            case GLFW_KEY_F6: wInfo.showLightSourcesWindow = !wInfo.showLightSourcesWindow; break;
+            case GLFW_KEY_F9: wInfo.showLogWindow = !wInfo.showLogWindow; break;
+            case GLFW_KEY_F10: wInfo.showKeyRefWindow = !wInfo.showKeyRefWindow; break;
         } 
     } else if (action == GLFW_RELEASE) {
         // Reset values if key is released.
@@ -292,10 +293,10 @@ void OpenGLWindow::start()
         // Draw the gui
         DrawGui();
 
-        updateObject();
+        updateObject(wContext.selectedObject);
         updateCamera();
         updateLight();
-        updateMaterial();
+        updateMaterial(wContext.selectedObject);
         
         // Call display in geomentryRender to render the scene
         display();
@@ -339,16 +340,18 @@ void OpenGLWindow::DrawGui()
 {
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
     StudioGui::mainMenuBar(glfwWindow, wInfo, wContext);
+    StudioGui::sceneWindow(wInfo.showSceneWindow, wContext);
+
     if(wContext.objects.size() != 0) {
         StudioGui::objTransWindow(wInfo.showObjTransWindow, wContext.tInfo.reset);
-        StudioGui::objMatWindow(wInfo.showObjMatWindow, wContext.objects[0]);
-        StudioGui::objInfWindow(wInfo.showObjInfWindow, objFileName, objFilePath, wContext.objects[0].oInfo);
+        StudioGui::objMatWindow(wInfo.showObjMatWindow, wContext.objects[wContext.selectedObject]);
+        StudioGui::objInfWindow(wInfo.showObjInfWindow, wContext.objects[wContext.selectedObject].fileName, wContext.objects[wContext.selectedObject].oInfo);
     }
     StudioGui::camWindow(wInfo.showCamWindow, wContext.cInfo, wContext.pZeroDefault, wContext.pRefDefault);
     StudioGui::showLightSourcesWindow(wInfo.showLightSourcesWindow, wContext.light, wContext);
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
     if(wContext.objects.size() != 0) {
-        StudioGui::showStudioOverlay(wInfo.showOverlay, wContext.objects);
+        StudioGui::showStudioOverlay(wInfo.showOverlay, wContext);
     } else {
         StudioGui::showEmptyStudioOverlay(wInfo.showOverlay);
     }
@@ -386,7 +389,7 @@ void OpenGLWindow::openTextureFile()
         if (texFileDialog.IsOk() == true) {
             texFileName = texFileDialog.GetCurrentFileName();
             texFilePath = texFileDialog.GetCurrentPath();
-            textureOutput = loadTextureFromGui(texFileName);
+            textureOutput = loadTextureFromGui(texFileName, wContext.selectedObject);
         }
         texFileDialog.Close();
         wInfo.openTexFileDialog = false;
