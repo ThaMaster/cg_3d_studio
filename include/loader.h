@@ -27,7 +27,7 @@ class Loader
 {   
     public:
         Object parseFile(string, string);
-        void normalizeVertexCoords(Object&);
+        void normalizeVertexCoords(vector<Vertex>&, float l);
 
         string outputString = "";
 
@@ -38,7 +38,5 @@ class Loader
     protected:
 
     private:        
-        // Searches a shapes vertices and finds the longest vector lenght
-        float getLargestVertexLength(Object);
-        float calcVectorLength(glm::vec3);
+
 };

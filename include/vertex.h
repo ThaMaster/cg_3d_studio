@@ -40,6 +40,10 @@ class Vertex
             Vertex::texCoords = glm::vec2(s, t);
         }
 
+        float calcVectorLength()
+        {
+            return sqrt(pow(position.x, 2.0) + pow(position.y, 2.0) + pow(position.z, 2.0));
+        }
         
     private:
 

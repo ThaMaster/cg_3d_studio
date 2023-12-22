@@ -232,9 +232,6 @@ void GeometryRender::updateMaterial()
         GLuint locHasTexture;
         locHasTexture = glGetUniformLocation(program1, "hasTexture");
         glUniform1i(locHasTexture, wContext.objects[0].oInfo.showTexture);
-        GLuint locHasTexCoords;
-        locHasTexCoords = glGetUniformLocation(program1, "hasTexCoords");
-        glUniform1i(locHasTexCoords, wContext.objects[0].oInfo.hasTexCoords);
         glUseProgram(0);
     }
 }

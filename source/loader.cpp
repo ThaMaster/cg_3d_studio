@@ -125,13 +125,13 @@ Object Loader::parseFile(string filePath, string mFolder)
         }
         newObject.oInfo.nShapes++;
     }
+
     newObject.indices = indices;
     newObject.colorVals = colorVals;
-
+    float largestVectorLength = newObject.getLargestVertexLength();
     if(newObject.oInfo.nVertexNormals == 0) newObject.produceVertexNormals();
-
-    newObject.oInfo.nTexCoords == 0? newObject.oInfo.hasTexCoords = false : newObject.oInfo.hasTexCoords = true;
-    normalizeVertexCoords(newObject);
+    if(newObject.oInfo.nTexCoords == 0) newObject.produceTextureCoords(largestVectorLength);
+    normalizeVertexCoords(newObject.vertices, largestVectorLength);
     newObject.oInfo.objectLoaded = true;
     return newObject;
 }
@@ -140,40 +140,10 @@ Object Loader::parseFile(string filePath, string mFolder)
  * Normalizes all the shapes coordinates to fit inside the NDC cube.
  * This will change the vertexCoords value in the loader class.
  */
-void Loader::normalizeVertexCoords(Object &object)
+void Loader::normalizeVertexCoords(vector<Vertex> &vertices, float largest_length)
 {
-    float largest_length = getLargestVertexLength(object);
-
-    for(size_t v = 0; v < object.vertices.size(); v++)
+    for(Vertex &vertex : vertices)
     {
-        object.vertices[v].position /= largest_length;    
+        vertex.position /= largest_length;    
     }
-}
-
-/**
- * Gets the largest length of a vector in a selected shape.
- * 
- * @returns largest length of vertex in the selected shape.
- */
-float Loader::getLargestVertexLength(Object object)
-{
-    float largest_length = 0;
-    float new_length;
-
-    for(size_t v = 0; v < object.vertices.size(); v++)
-    {
-        // Calculate the length of the current vector.
-        new_length = calcVectorLength(object.vertices[v].position);
-
-        if(largest_length < new_length) {
-            largest_length = new_length; 
-        }    
-    }
-
-    return largest_length;
-}
-
-float Loader::calcVectorLength(glm::vec3 v) 
-{
-    return sqrt(pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0));
 }

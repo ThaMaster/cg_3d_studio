@@ -17,19 +17,7 @@ void main() {
     vec4 worldPosition = M * vec4(vPosition, 1.0);
     fragPosition = worldPosition.xyz;
 
-    if(hasTexCoords) {
-
-        texCoord = aTexCoord;
-
-    } else {
-        // Assuming the mapping is a sphere, calculate the texture coords.
-
-        vec3 normalizedPos = normalize(worldPosition).xyz;
-        float s = acos(normalizedPos.x) / 3.14159265;
-        float t = (atan(normalizedPos.z, normalizedPos.y) / 3.14159265) + 0.5;
-
-        texCoord = vec2( s, t );
-    }
+    texCoord = aTexCoord;
     
     gl_Position = P * V * worldPosition;
 }

@@ -33,7 +33,6 @@ class Object
             bool showWireFrame = false;
             bool showTexture = false;
             bool hasTexture = false;
-            bool hasTexCoords = false;
         } oInfo;
         
         string fileName;
@@ -70,6 +69,16 @@ class Object
                 vertices[n].normal = glm::normalize(vertices[n].normal);
         }
 
+        void produceTextureCoords(float r)
+        {
+            for(Vertex &vertex : vertices)
+            {
+                float s = acos(vertex.position.x / r) / 3.14159265;
+                float t = (atan(vertex.position.z/vertex.position.y) / 3.14159265) + 0.5;
+                vertex.setTexCoords(s, t);
+            }
+        }
+
         vector<glm::vec3> getVertexCoords()
         {
             vector<glm::vec3> vertexCoords;
@@ -90,6 +99,25 @@ class Object
             for(Vertex vertex : vertices) textureCoords.push_back(vertex.texCoords);
             return textureCoords;
         }
+
+        float getLargestVertexLength()
+        {
+            float largest_length = 0;
+            float new_length;
+
+            for(Vertex vertex : vertices)
+            {
+                // Calculate the length of the current vector.
+                new_length = vertex.calcVectorLength();
+
+                if(largest_length < new_length) {
+                    largest_length = new_length; 
+                }    
+            }
+
+            return largest_length;
+        }
+
 };
 
 #endif
