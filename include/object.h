@@ -34,17 +34,29 @@ class Object
             bool showTexture = false;
             bool hasTexture = false;
         } oInfo;
-        
+    
+        struct MaterialInfo {
+            glm::vec3 ka = glm::vec3(1.0, 1.0, 1.0);
+            glm::vec3 kd = glm::vec3(1.0, 1.0, 1.0);
+            glm::vec3 ks = glm::vec3(1.0, 1.0, 1.0);
+        };
+
+        struct SubMesh {
+            MaterialInfo mInfo;
+            vector<unsigned int> indices;
+        };
+
         string fileName;
-        
+
         vector<unsigned int> indices;
         vector<glm::vec3> colorVals;
         vector<Vertex> vertices;
+        vector<SubMesh> subMeshes;
 
         float matAlpha = 2.0;
 
         GLuint vao;
-
+        
         GLuint texture;
 
         // Model matrix

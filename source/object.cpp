@@ -56,7 +56,15 @@ void Object::drawObject(GLuint program)
     locHasTexture = glGetUniformLocation(program, "showTexture");
     glUniform1i(locHasTexture, oInfo.showTexture);
 
-    glDrawElements(GL_TRIANGLES, static_cast<int>(oInfo.nIndices), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+    int offset = 0;
+    for(SubMesh subMesh : subMeshes) {
+        glUniform3f(glGetUniformLocation(program, "ka"), subMesh.mInfo.ka.x, subMesh.mInfo.ka.y, subMesh.mInfo.ka.z);
+        glUniform3f(glGetUniformLocation(program, "kd"), subMesh.mInfo.kd.x, subMesh.mInfo.kd.y, subMesh.mInfo.kd.z);
+        glUniform3f(glGetUniformLocation(program, "ks"), subMesh.mInfo.ks.x, subMesh.mInfo.ks.y, subMesh.mInfo.ks.z);
+
+        glDrawElements(GL_TRIANGLES, static_cast<int>(subMesh.indices.size()), GL_UNSIGNED_INT, BUFFER_OFFSET(offset));
+        offset += subMesh.indices.size()*sizeof(unsigned int);
+    }
 
     glBindVertexArray(0);
 }

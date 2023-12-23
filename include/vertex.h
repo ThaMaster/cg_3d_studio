@@ -10,24 +10,11 @@ class Vertex
         glm::vec2 texCoords;
         glm::vec3 normal;
 
-        struct MaterialInfo {
-            glm::vec3 ka;
-            glm::vec3 kd;
-            glm::vec3 ks;
-        } mInfo;
-
         Vertex(float x, float y, float z)
         {
             Vertex::position = glm::vec3(x,y,z);
             Vertex::normal = glm::vec3(0.0, 0.0, 0.0);
             Vertex::texCoords = glm::vec2(0.0, 0.0);
-        }
-
-        void setMaterial(glm::vec3 ka, glm::vec3 kd, glm::vec3 ks) 
-        {
-            mInfo.ka = ka;
-            mInfo.kd = kd;
-            mInfo.ks = ks;
         }
 
         void setNormal(float xn, float yn, float zn)
