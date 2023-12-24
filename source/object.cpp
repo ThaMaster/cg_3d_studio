@@ -57,13 +57,13 @@ void Object::drawObject(GLuint program)
     glUniform1i(locHasTexture, oInfo.showTexture);
 
     int offset = 0;
-    for(SubMesh subMesh : subMeshes) {
-        glUniform3f(glGetUniformLocation(program, "ka"), subMesh.mInfo.ka.x, subMesh.mInfo.ka.y, subMesh.mInfo.ka.z);
-        glUniform3f(glGetUniformLocation(program, "kd"), subMesh.mInfo.kd.x, subMesh.mInfo.kd.y, subMesh.mInfo.kd.z);
-        glUniform3f(glGetUniformLocation(program, "ks"), subMesh.mInfo.ks.x, subMesh.mInfo.ks.y, subMesh.mInfo.ks.z);
+    for(Face face : faces) {
+        glUniform3f(glGetUniformLocation(program, "ka"), face.mInfo.ka.x, face.mInfo.ka.y, face.mInfo.ka.z);
+        glUniform3f(glGetUniformLocation(program, "kd"), face.mInfo.kd.x, face.mInfo.kd.y, face.mInfo.kd.z);
+        glUniform3f(glGetUniformLocation(program, "ks"), face.mInfo.ks.x, face.mInfo.ks.y, face.mInfo.ks.z);
 
-        glDrawElements(GL_TRIANGLES, static_cast<int>(subMesh.indices.size()), GL_UNSIGNED_INT, BUFFER_OFFSET(offset));
-        offset += subMesh.indices.size()*sizeof(unsigned int);
+        glDrawElements(GL_TRIANGLES, static_cast<int>(face.indices.size()), GL_UNSIGNED_INT, BUFFER_OFFSET(offset));
+        offset += face.indices.size()*sizeof(unsigned int);
     }
 
     glBindVertexArray(0);

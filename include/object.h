@@ -41,7 +41,8 @@ class Object
             glm::vec3 ks = glm::vec3(1.0, 1.0, 1.0);
         };
 
-        struct SubMesh {
+        struct Face {
+            int materialIndex;
             MaterialInfo mInfo;
             vector<unsigned int> indices;
         };
@@ -51,7 +52,7 @@ class Object
         vector<unsigned int> indices;
         vector<glm::vec3> colorVals;
         vector<Vertex> vertices;
-        vector<SubMesh> subMeshes;
+        vector<Face> faces;
 
         float matAlpha = 2.0;
 
