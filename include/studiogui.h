@@ -3,6 +3,8 @@
 
 #include "openglwindow.h"
 
+#define VERSION "3D Studio v0.4.2"
+
 namespace StudioGui {
 
     void mainMenuBar(GLFWwindow*, OpenGLWindow::windowInfo&, WorldContext&);
@@ -14,7 +16,6 @@ namespace StudioGui {
     void camWindow(bool&, WorldContext::cameraInfo&, glm::vec3, glm::vec3);
     void keyRefWindow(bool&);
     void showStudioOverlay(bool&, WorldContext);
-    void showEmptyStudioOverlay(bool&);
     void showLightSourcesWindow(bool&, LightSource&, WorldContext&);
     void logWindow(bool&, Logger&);
     void settingsWindow(bool&, WorldContext&);

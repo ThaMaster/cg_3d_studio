@@ -350,11 +350,7 @@ void OpenGLWindow::DrawGui()
     StudioGui::camWindow(wInfo.showCamWindow, wContext.cInfo, wContext.pZeroDefault, wContext.pRefDefault);
     StudioGui::showLightSourcesWindow(wInfo.showLightSourcesWindow, wContext.light, wContext);
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
-    if(wContext.objects.size() != 0) {
-        StudioGui::showStudioOverlay(wInfo.showOverlay, wContext);
-    } else {
-        StudioGui::showEmptyStudioOverlay(wInfo.showOverlay);
-    }
+    StudioGui::showStudioOverlay(wInfo.showOverlay, wContext);
 
     if(wInfo.openObjFileDialog) openObjectFile();
     if(wInfo.openTexFileDialog) openTextureFile();
