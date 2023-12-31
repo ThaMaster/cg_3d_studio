@@ -268,7 +268,7 @@ namespace StudioGui {
             ImGui::Text("Move camera forward:"); ImGui::SameLine(margin); ImGui::Text("'W'");
             ImGui::Text("Move camera backward:"); ImGui::SameLine(margin); ImGui::Text("'S'");
             ImGui::Text("Move camera left:"); ImGui::SameLine(margin); ImGui::Text("'A'");
-            ImGui::Text("Move camera right:"); ImGui::SameLine(margin); ImGui::Text("'A'");
+            ImGui::Text("Move camera right:"); ImGui::SameLine(margin); ImGui::Text("'D'");
             ImGui::Text("Move camera up:"); ImGui::SameLine(margin); ImGui::Text("'E'");
             ImGui::Text("Move camera down:"); ImGui::SameLine(margin); ImGui::Text("'Q'");
 
@@ -276,7 +276,6 @@ namespace StudioGui {
             ImGui::Text("Move object up:"); ImGui::SameLine(margin); ImGui::Text("'I'");
             ImGui::Text("Move object down:"); ImGui::SameLine(margin); ImGui::Text("'K'");
             ImGui::Text("Move object left:"); ImGui::SameLine(margin); ImGui::Text("'J'");
-            ImGui::Text("Move object right:"); ImGui::SameLine(margin); ImGui::Text("'L'");
             ImGui::Text("Move object right:"); ImGui::SameLine(margin); ImGui::Text("'L'");
             ImGui::Text("Move object forward:"); ImGui::SameLine(margin); ImGui::Text("'Y'");
             ImGui::Text("Move object backward:"); ImGui::SameLine(margin); ImGui::Text("'H'");
