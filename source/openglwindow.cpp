@@ -336,6 +336,9 @@ void OpenGLWindow::reshape(const int width, const int height) const
     glViewport(-1,-1, width, height);
 }
 
+/**
+ * Function for drawing the entire graphical user interface.
+ */
 void OpenGLWindow::DrawGui()
 {
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
@@ -359,6 +362,9 @@ void OpenGLWindow::DrawGui()
     StudioGui::logWindow(wInfo.showLogWindow, log);
 }
 
+/**
+ * 
+ */
 void OpenGLWindow::openObjectFile()
 {
     static ImGuiFileDialog objFileDialog;
@@ -393,6 +399,11 @@ void OpenGLWindow::openTextureFile()
     log.addLog(textureOutput.c_str());
 }
 
+/**
+ * Function for handling the mouse input. Depending on the direction the
+ * mouse is moving changes the camera rotation offset ONLY if the 
+ * left mouse button is pressed.
+ */
 void OpenGLWindow::handleMouseInput() 
 {
     if(ImGui::IsMouseDragging(ImGuiMouseButton_Left, -1.0f) && !ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow)) {

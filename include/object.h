@@ -33,6 +33,8 @@ class Object
             bool showWireFrame = false;
             bool showTexture = false;
             bool hasTexture = false;
+            bool hasMaterials = false;
+            bool useDefaultMat = false;
         } oInfo;
     
         struct MaterialInfo {
@@ -41,18 +43,20 @@ class Object
             glm::vec3 ks = glm::vec3(1.0, 1.0, 1.0);
         };
 
+        MaterialInfo defMat = MaterialInfo();
         struct Face {
             int materialIndex;
             MaterialInfo mInfo;
             vector<unsigned int> indices;
         };
+        vector<Face> faces;
+
 
         string fileName;
 
         vector<unsigned int> indices;
         vector<glm::vec3> colorVals;
         vector<Vertex> vertices;
-        vector<Face> faces;
 
         float matAlpha = 2.0;
 

@@ -143,6 +143,23 @@ namespace StudioGui {
             ImGui::SeparatorText("Shininess");
             ImGui::Text("Alpha: %.3f", object.matAlpha);
             ImGui::SliderFloat("Alpha", &object.matAlpha, 0.0, 50.0, "%.2f", flags);
+            if(!object.oInfo.useDefaultMat) ImGui::BeginDisabled();
+            ImGui::SeparatorText("Ambient Light");
+            ImGui::SliderFloat("R##1", &object.defMat.ka.r, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("G##1", &object.defMat.ka.g, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("B##1", &object.defMat.ka.b, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SeparatorText("Diffuse Light");
+            ImGui::SliderFloat("R##2", &object.defMat.kd.r, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("G##2", &object.defMat.kd.g, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("B##2", &object.defMat.kd.b, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SeparatorText("Specular Light");
+            ImGui::SliderFloat("R##3", &object.defMat.ks.r, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("G##3", &object.defMat.ks.g, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("B##3", &object.defMat.ks.b, 0.0f, 1.0f, "%.2f", flags);
+            if(!object.oInfo.useDefaultMat) ImGui::EndDisabled();
+            if(!object.oInfo.hasMaterials) ImGui::BeginDisabled();
+            ImGui::Checkbox("Use default material", &object.oInfo.useDefaultMat);
+            if(!object.oInfo.hasMaterials) ImGui::EndDisabled();
             ImGui::End();
         }
     }

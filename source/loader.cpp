@@ -86,13 +86,24 @@ Object Loader::parseFile(string filePath, string mFolder)
 
         // Loop over faces(polygon)
         for (size_t f = 0; f < faceVertices.size(); f++) {
-            Object::Face face = Object::Face();
             size_t fv = size_t(faceVertices[f]);
+            Object::Face newFace = Object::Face();
+            int matIndex = shapes[s].mesh.material_ids[f];
+
+            if(matIndex >= 0) {
+                newObject.oInfo.hasMaterials = true;
+                newFace.materialIndex = matIndex;
+                auto& mat = materials[matIndex];
+                newFace.mInfo.ka = glm::vec3(mat.ambient[0], mat.ambient[1], mat.ambient[2]);
+                newFace.mInfo.kd = glm::vec3(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]);
+                newFace.mInfo.ks = glm::vec3(mat.specular[0], mat.specular[1], mat.specular[2]);
+            }
+
             // Store all indices for each face
             for (size_t v = 0; v < fv; v++) {
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
                 indices.push_back(idx.vertex_index);
-                face.indices.push_back(idx.vertex_index);
+                newFace.indices.push_back(idx.vertex_index);
                 newObject.oInfo.nIndices++;
             }
 
@@ -106,19 +117,13 @@ Object Loader::parseFile(string filePath, string mFolder)
                 newObject.oInfo.nColors++;
             }
 
-            int matIndex = shapes[s].mesh.material_ids[f];
-            if(matIndex >= 0) {
-                auto& mat = materials[matIndex];
-                face.mInfo.ka = glm::vec3(mat.ambient[0], mat.ambient[1], mat.ambient[2]);
-                face.mInfo.kd = glm::vec3(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]);
-                face.mInfo.ks = glm::vec3(mat.specular[0], mat.specular[1], mat.specular[2]);
-            }
-
-            newObject.faces.push_back(face);
+            newObject.faces.push_back(newFace);
             index_offset += fv;
         }
         newObject.oInfo.nShapes++;
     }
+
+    if(!newObject.oInfo.hasMaterials) newObject.oInfo.useDefaultMat = true;
     newObject.indices = indices;
     newObject.colorVals = colorVals;
     float largestVectorLength = newObject.getLargestVertexLength();

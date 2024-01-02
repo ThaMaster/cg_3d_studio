@@ -58,10 +58,15 @@ void Object::drawObject(GLuint program)
 
     int offset = 0;
     for(Face face : faces) {
-        glUniform3f(glGetUniformLocation(program, "ka"), face.mInfo.ka.x, face.mInfo.ka.y, face.mInfo.ka.z);
-        glUniform3f(glGetUniformLocation(program, "kd"), face.mInfo.kd.x, face.mInfo.kd.y, face.mInfo.kd.z);
-        glUniform3f(glGetUniformLocation(program, "ks"), face.mInfo.ks.x, face.mInfo.ks.y, face.mInfo.ks.z);
-
+        if(oInfo.useDefaultMat) {
+            glUniform3f(glGetUniformLocation(program, "ka"), defMat.ka.x, defMat.ka.y, defMat.ka.z);
+            glUniform3f(glGetUniformLocation(program, "kd"), defMat.kd.x, defMat.kd.y, defMat.kd.z);
+            glUniform3f(glGetUniformLocation(program, "ks"), defMat.ks.x, defMat.ks.y, defMat.ks.z);
+        } else {
+            glUniform3f(glGetUniformLocation(program, "ka"), face.mInfo.ka.x, face.mInfo.ka.y, face.mInfo.ka.z);
+            glUniform3f(glGetUniformLocation(program, "kd"), face.mInfo.kd.x, face.mInfo.kd.y, face.mInfo.kd.z);
+            glUniform3f(glGetUniformLocation(program, "ks"), face.mInfo.ks.x, face.mInfo.ks.y, face.mInfo.ks.z);
+        }
         glDrawElements(GL_TRIANGLES, static_cast<int>(face.indices.size()), GL_UNSIGNED_INT, BUFFER_OFFSET(offset));
         offset += face.indices.size()*sizeof(unsigned int);
     }
