@@ -10,7 +10,7 @@ namespace StudioGui {
     void mainMenuBar(GLFWwindow*, OpenGLWindow::windowInfo&, WorldContext&);
     void sceneWindow(bool&, WorldContext&);
     void aboutPopupModal(bool&);
-    void objTransWindow(bool&, bool&);
+    void objTransWindow(bool&, WorldContext&);
     void objMatWindow(bool&, Object&);
     void objInfWindow(bool&, std::string, Object::objectInfo&);
     void camWindow(bool&, WorldContext::cameraInfo&, glm::vec3, glm::vec3);

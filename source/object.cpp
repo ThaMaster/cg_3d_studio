@@ -9,7 +9,7 @@
  *      -   The Texture Coordinate.
  * 
  * After the call the objects vertex array object, array buffer and element
- * array buffer will be altered.
+ * array buffer will be changed.
  */
 void Object::sendDataToBuffers()
 {

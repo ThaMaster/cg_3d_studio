@@ -81,12 +81,13 @@ namespace StudioGui {
 
 
     // Contains only PLACEHOLDER for now.
-    void objTransWindow(bool &showWindow, bool &reset)
+    void objTransWindow(bool &showWindow, WorldContext &wContext)
     {
         if(showWindow) {
             ImGui::Begin("Object Transformation", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
             ImGui::SeparatorText("Translation");
-            ImGui::Text("--placeholder--");
+            if(ImGui::Button("Up")) { wContext.tInfo.tVals[1] = wContext.TRA_SPEED; } ImGui::SameLine();
+            if(ImGui::Button("Down")) { wContext.tInfo.tVals[1] = -wContext.TRA_SPEED; }
             ImGui::SeparatorText("Scaling");
             ImGui::Text("--placeholder--");
             ImGui::SeparatorText("Rotation");
@@ -94,7 +95,7 @@ namespace StudioGui {
             ImGui::SeparatorText("Shearing");
             ImGui::Text("--placeholder--");
             ImGui::SeparatorText("Reset");
-            if(ImGui::Button("Reset Object Transformations")) { reset = true; }
+            if(ImGui::Button("Reset Object Transformations")) { wContext.tInfo.reset = true; }
             ImGui::End();
         }
     }
@@ -121,8 +122,6 @@ namespace StudioGui {
                 ImGui::SameLine(200); ImGui::Text("%d", oInfo.nVertexNormals);
                 ImGui::Text("Texture Coordinates:");
                 ImGui::SameLine(200); ImGui::Text("%d", oInfo.nTexCoords);
-                ImGui::Text("Color Values:");
-                ImGui::SameLine(200); ImGui::Text("%d", oInfo.nColors);
                 ImGui::Checkbox("Wireframe Mode", &oInfo.showWireFrame);
                 bool hasTexture = oInfo.hasTexture;
                 if(!hasTexture) ImGui::BeginDisabled();
@@ -263,9 +262,9 @@ namespace StudioGui {
             if(ImGui::Button("Reset Light Color")) { lightSource.resetColor(); }
             ImGui::SeparatorText("Ambient Light Intensity");
             ImGui::PushItemWidth(100);
-            ImGui::Text("R##1: %.3f", wContext.ambientLight.x); ImGui::SameLine(); 
-            ImGui::Text("G##1: %.3f", wContext.ambientLight.y); ImGui::SameLine(); 
-            ImGui::Text("B##1: %.3f", wContext.ambientLight.z);
+            ImGui::Text("R: %.3f", wContext.ambientLight.x); ImGui::SameLine(); 
+            ImGui::Text("G: %.3f", wContext.ambientLight.y); ImGui::SameLine(); 
+            ImGui::Text("B: %.3f", wContext.ambientLight.z);
             ImGui::PopItemWidth();
             ImGui::SliderFloat("R##1",&wContext.ambientLight.x, 0.0f, 1.0f, "%.2f", flags);
             ImGui::SliderFloat("G##1",&wContext.ambientLight.y, 0.0f, 1.0f, "%.2f", flags);

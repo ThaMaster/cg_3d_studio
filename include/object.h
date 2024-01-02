@@ -28,7 +28,6 @@ class Object
             int nIndices = 0;
             int nVertexNormals = 0;
             int nTexCoords = 0;
-            int nColors = 0;
             bool objectLoaded = false;
             bool showWireFrame = false;
             bool showTexture = false;
@@ -54,7 +53,6 @@ class Object
         string fileName;
 
         vector<unsigned int> indices;
-        vector<glm::vec3> colorVals;
         vector<Vertex> vertices;
         vector<Face> faces;
 

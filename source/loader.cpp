@@ -51,14 +51,13 @@ Object Loader::parseFile(string filePath, string mFolder)
     
     // Allocate the number of shapes for the data vectors.
     vector<unsigned int> indices;
-    vector<glm::vec3> colorVals;
     
     // Loop over object shapes
     for (size_t s = 0; s < shapes.size(); s++) {
         size_t index_offset = 0;
-        size_t vOffset = 0;
         std::vector<unsigned char> faceVertices = shapes[s].mesh.num_face_vertices;
         newObject.oInfo.nFaces += faceVertices.size();
+
         // Store all vertex coordinates
         for (size_t i = 0; i < attrib.vertices.size(); i+=3) {
             newObject.vertices.push_back(Vertex(
@@ -68,6 +67,7 @@ Object Loader::parseFile(string filePath, string mFolder)
             newObject.oInfo.nVertices++;
         }
 
+        // Store all the vertex normals if they exist.
         if(attrib.normals.size() != 0) {
             for (size_t i = 0; i < attrib.vertices.size(); i+=3) {
                 newObject.vertices[i/3].setNormal(
@@ -90,6 +90,8 @@ Object Loader::parseFile(string filePath, string mFolder)
         for (size_t f = 0; f < faceVertices.size(); f++) {
             size_t fv = size_t(faceVertices[f]);
             int matIndex = shapes[s].mesh.material_ids[f];
+
+            // Check if material is already in the map, if not, add the coefficients.
             if(faceMap.find(matIndex) == faceMap.end()) {
                 faceMap[matIndex] = Object::Face();
                 faceMap[matIndex].materialIndex = matIndex;
@@ -109,29 +111,19 @@ Object Loader::parseFile(string filePath, string mFolder)
                 faceMap[matIndex].indices.push_back(idx.vertex_index);
                 newObject.oInfo.nIndices++;
             }
-
-            for (size_t v = 0; v < fv; v++) {
-                tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
-                vOffset = 3*size_t(idx.vertex_index);
-                colorVals.push_back(glm::vec3(
-                    attrib.colors[vOffset], 
-                    attrib.colors[vOffset+1], 
-                    attrib.colors[vOffset+2]));
-                newObject.oInfo.nColors++;
-            }
             
             index_offset += fv;
         }
-        
         newObject.oInfo.nShapes++;
     }
 
+    // Add all the material faces to the object.
     for (auto &pair : faceMap) {
         newObject.faces.push_back(pair.second);
     }
     
     if(!newObject.oInfo.hasMaterials) newObject.oInfo.useDefaultMat = true;
-    newObject.colorVals = colorVals;
+    newObject.indices = indices;
     float largestVectorLength = newObject.getLargestVertexLength();
     if(newObject.oInfo.nVertexNormals == 0) newObject.produceVertexNormals();
     if(newObject.oInfo.nTexCoords == 0) newObject.produceTextureCoords(largestVectorLength);

@@ -17,8 +17,6 @@ uniform vec3 ks;
 uniform sampler2D ourTexture;
 uniform bool showTexture;
 
-// Need to be able to map these later!
-
 void main() {
     vec3 lightDir = normalize(lsPos.xyz - fragPosition);
     vec3 viewDir = normalize(camPos - fragPosition);

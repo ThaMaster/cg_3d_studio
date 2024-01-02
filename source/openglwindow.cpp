@@ -209,6 +209,17 @@ void OpenGLWindow::resizeCallback(GLFWwindow* window, int width, int height)
     reshape(width, height);
 }
 
+/**
+ * Function for handling all the keyboard input. When a key has been
+ * pressed it will perform its corresponding action. When the key is later
+ * released, it will reset all the values that are necessary.
+ * 
+ * @param window:
+ * @param key:
+ * @param scancode:
+ * @param action:
+ * @param mods:
+ */
 void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     static ImGuiFileDialog fileDialog;
@@ -346,7 +357,7 @@ void OpenGLWindow::DrawGui()
     StudioGui::sceneWindow(wInfo.showSceneWindow, wContext);
 
     if(wContext.objects.size() != 0) {
-        StudioGui::objTransWindow(wInfo.showObjTransWindow, wContext.tInfo.reset);
+        StudioGui::objTransWindow(wInfo.showObjTransWindow, wContext);
         StudioGui::objMatWindow(wInfo.showObjMatWindow, wContext.objects[wContext.selectedObject]);
         StudioGui::objInfWindow(wInfo.showObjInfWindow, wContext.objects[wContext.selectedObject].fileName, wContext.objects[wContext.selectedObject].oInfo);
     }
@@ -362,9 +373,6 @@ void OpenGLWindow::DrawGui()
     StudioGui::logWindow(wInfo.showLogWindow, log);
 }
 
-/**
- * 
- */
 void OpenGLWindow::openObjectFile()
 {
     static ImGuiFileDialog objFileDialog;
