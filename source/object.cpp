@@ -15,7 +15,7 @@ void Object::sendDataToBuffers()
 {
     glBindVertexArray(vao);
     size_t vSize = vertices.size()*sizeof(Vertex);
-    size_t iSize = indices.size()*sizeof(unsigned int);
+    size_t iSize = oInfo.nIndices*sizeof(unsigned int);
 
     // Position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
@@ -31,7 +31,15 @@ void Object::sendDataToBuffers()
     
     // Allocate memory for both buffers without inserting data.
     glBufferData( GL_ARRAY_BUFFER, vSize, vertices.data(), GL_STATIC_DRAW );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, indices.data(), GL_STATIC_DRAW );
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, iSize, NULL, GL_STATIC_DRAW );
+
+    int offset = 0;
+    int iFaceSize; 
+    for(Face face : faces) {
+        iFaceSize = face.indices.size()*sizeof(unsigned int);
+        glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, offset, iFaceSize, face.indices.data());
+        offset += iFaceSize;
+    }
     glBindVertexArray(0);
 }
 

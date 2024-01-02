@@ -46,6 +46,8 @@ Object Loader::parseFile(string filePath, string mFolder)
     auto& attrib = reader.GetAttrib();
     auto& shapes = reader.GetShapes();
     auto& materials = reader.GetMaterials();
+
+    std::map<int, Object::Face> faceMap;
     
     // Allocate the number of shapes for the data vectors.
     vector<unsigned int> indices;
@@ -87,23 +89,24 @@ Object Loader::parseFile(string filePath, string mFolder)
         // Loop over faces(polygon)
         for (size_t f = 0; f < faceVertices.size(); f++) {
             size_t fv = size_t(faceVertices[f]);
-            Object::Face newFace = Object::Face();
             int matIndex = shapes[s].mesh.material_ids[f];
-
-            if(matIndex >= 0) {
-                newObject.oInfo.hasMaterials = true;
-                newFace.materialIndex = matIndex;
-                auto& mat = materials[matIndex];
-                newFace.mInfo.ka = glm::vec3(mat.ambient[0], mat.ambient[1], mat.ambient[2]);
-                newFace.mInfo.kd = glm::vec3(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]);
-                newFace.mInfo.ks = glm::vec3(mat.specular[0], mat.specular[1], mat.specular[2]);
+            if(faceMap.find(matIndex) == faceMap.end()) {
+                faceMap[matIndex] = Object::Face();
+                faceMap[matIndex].materialIndex = matIndex;
+                if(matIndex >= 0) {
+                    newObject.oInfo.hasMaterials = true;
+                    auto& mat = materials[matIndex];
+                    faceMap[matIndex].mInfo.ka = glm::vec3(mat.ambient[0], mat.ambient[1], mat.ambient[2]);
+                    faceMap[matIndex].mInfo.kd = glm::vec3(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]);
+                    faceMap[matIndex].mInfo.ks = glm::vec3(mat.specular[0], mat.specular[1], mat.specular[2]);
+                }
             }
 
             // Store all indices for each face
             for (size_t v = 0; v < fv; v++) {
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
                 indices.push_back(idx.vertex_index);
-                newFace.indices.push_back(idx.vertex_index);
+                faceMap[matIndex].indices.push_back(idx.vertex_index);
                 newObject.oInfo.nIndices++;
             }
 
@@ -116,15 +119,18 @@ Object Loader::parseFile(string filePath, string mFolder)
                     attrib.colors[vOffset+2]));
                 newObject.oInfo.nColors++;
             }
-
-            newObject.faces.push_back(newFace);
+            
             index_offset += fv;
         }
+        
         newObject.oInfo.nShapes++;
     }
 
+    for (auto &pair : faceMap) {
+        newObject.faces.push_back(pair.second);
+    }
+    
     if(!newObject.oInfo.hasMaterials) newObject.oInfo.useDefaultMat = true;
-    newObject.indices = indices;
     newObject.colorVals = colorVals;
     float largestVectorLength = newObject.getLargestVertexLength();
     if(newObject.oInfo.nVertexNormals == 0) newObject.produceVertexNormals();

@@ -44,19 +44,19 @@ class Object
         };
 
         MaterialInfo defMat = MaterialInfo();
+
         struct Face {
             int materialIndex;
             MaterialInfo mInfo;
             vector<unsigned int> indices;
         };
-        vector<Face> faces;
-
 
         string fileName;
 
         vector<unsigned int> indices;
         vector<glm::vec3> colorVals;
         vector<Vertex> vertices;
+        vector<Face> faces;
 
         float matAlpha = 2.0;
 
