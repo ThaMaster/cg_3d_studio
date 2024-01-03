@@ -93,17 +93,19 @@ void Object::drawObject(GLuint program)
 void Object::produceVertexNormals()
 {
     // Calculate normals per triangle and add them to each vertex normal
-    for(size_t i = 0; i < indices.size(); i+=3) {
-        Vertex v1 = vertices[indices[i]];
-        Vertex v2 = vertices[indices[i+1]];
-        Vertex v3 = vertices[indices[i+2]];
+    for(Face face : faces) {
+        for(size_t i = 0; i < face.indices.size(); i+=3) {
+            Vertex v1 = vertices[face.indices[i]];
+            Vertex v2 = vertices[face.indices[i+1]];
+            Vertex v3 = vertices[face.indices[i+2]];
 
-        glm::vec3 normal = glm::normalize(glm::cross(v2.position - v1.position, v3.position - v1.position));
+            glm::vec3 normal = glm::normalize(glm::cross(v2.position - v1.position, v3.position - v1.position));
 
-        vertices[indices[i]].normal += normal;
-        vertices[indices[i+1]].normal += normal;
-        vertices[indices[i+2]].normal += normal;
-        oInfo.nVertexNormals += 3;
+            vertices[face.indices[i]].normal += normal;
+            vertices[face.indices[i+1]].normal += normal;
+            vertices[face.indices[i+2]].normal += normal;
+            oInfo.nVertexNormals += 3;
+        }
     }
 
     // Normalize each vertex normal (this effectively averages the normals)

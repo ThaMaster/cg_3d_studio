@@ -52,7 +52,6 @@ class Object
 
         string fileName;
 
-        vector<unsigned int> indices;
         vector<Vertex> vertices;
         vector<Face> faces;
 

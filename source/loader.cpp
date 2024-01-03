@@ -49,9 +49,6 @@ Object Loader::parseFile(string filePath, string mFolder)
 
     std::map<int, Object::Face> faceMap;
     
-    // Allocate the number of shapes for the data vectors.
-    vector<unsigned int> indices;
-    
     // Loop over object shapes
     for (size_t s = 0; s < shapes.size(); s++) {
         size_t index_offset = 0;
@@ -107,7 +104,6 @@ Object Loader::parseFile(string filePath, string mFolder)
             // Store all indices for each face
             for (size_t v = 0; v < fv; v++) {
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
-                indices.push_back(idx.vertex_index);
                 faceMap[matIndex].indices.push_back(idx.vertex_index);
                 newObject.oInfo.nIndices++;
             }
@@ -123,7 +119,6 @@ Object Loader::parseFile(string filePath, string mFolder)
     }
     
     if(!newObject.oInfo.hasMaterials) newObject.oInfo.useDefaultMat = true;
-    newObject.indices = indices;
     float largestVectorLength = newObject.getLargestVertexLength();
     if(newObject.oInfo.nVertexNormals == 0) newObject.produceVertexNormals();
     if(newObject.oInfo.nTexCoords == 0) newObject.produceTextureCoords(largestVectorLength);
