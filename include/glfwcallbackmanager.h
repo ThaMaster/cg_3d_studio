@@ -30,9 +30,9 @@ class glfwCallbackManager
     }
     
 public:
-    static void initCallbacks(Studio3D* glfwapp)
+    static void initCallbacks(Studio3D* std3dapp)
     {
-        app = glfwapp;
+        app = std3dapp;
         
         glfwSetErrorCallback(errorCallback);
         glfwSetFramebufferSizeCallback(app->window() , resizeCallback);

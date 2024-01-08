@@ -7,13 +7,13 @@
 
 namespace StudioGui {
 
-    void mainMenuBar(GLFWwindow*, Studio3D::windowInfo&, WorldContext&);
+    void mainMenuBar(GLFWwindow*, Studio3D::WindowInfo&, WorldContext&);
     void sceneWindow(bool&, WorldContext&);
     void aboutPopupModal(bool&);
     void objTransWindow(bool&, WorldContext&);
     void objMatWindow(bool&, Object&);
-    void objInfWindow(bool&, std::string, Object::objectInfo&);
-    void camWindow(bool&, WorldContext::cameraInfo&, glm::vec3, glm::vec3);
+    void objInfWindow(bool&, std::string, Object::ObjectInfo&);
+    void camWindow(bool&, WorldContext::CameraInfo&, glm::vec3, glm::vec3);
     void keyRefWindow(bool&);
     void showStudioOverlay(bool&, WorldContext);
     void showLightSourcesWindow(bool&, WorldContext&);

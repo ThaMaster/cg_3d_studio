@@ -21,7 +21,7 @@ class Object
 {
     public:
 
-        struct objectInfo {
+        struct ObjectInfo {
             size_t nShapes = 0;
             int nVertices = 0;
             int nFaces = 0;

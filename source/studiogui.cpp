@@ -1,7 +1,33 @@
 #include "studiogui.h"
+
+/**
+ * StudioGui is simply a namespace where all the main components 
+ * of the 3D studios graphical user interface are implemented. 
+ * This seperates the implementation of the GUI somewhat from the
+ * main program.
+ * 
+ * It utilizes the ImGui library which can be found in the 
+ * following link:
+ * 
+ * https://github.com/ocornut/imgui
+ * 
+ * Author: Christoffer Nordlander (c20cnr@cs.umu.se)
+ * 
+ * Version information:
+ *      2024-01-08: v1.0, first version.
+ */
 namespace StudioGui 
 {
-    void mainMenuBar(GLFWwindow *glfwWindow, Studio3D::windowInfo &wInfo, WorldContext &wContext)
+    /**
+     * Function for creating the menu bar at the top of the program.
+     * Depending on if a object has been loaded, some of the menu 
+     * elements will not be available.
+     * 
+     * @param glfwWindow: The window of the program.
+     * @param wInfo: The window info, shows which windows should be open and not.
+     * @param wContext: The world context, holds information of the scene.
+     */
+    void mainMenuBar(GLFWwindow *glfwWindow, Studio3D::WindowInfo &wInfo, WorldContext &wContext)
     {
         if (ImGui::BeginMainMenuBar())
         {
@@ -14,17 +40,16 @@ namespace StudioGui
                 if(ImGui::MenuItem("Reset Scene")) { wContext.clearObjects(); }
                 if(noObjects) ImGui::EndDisabled();
                 if(ImGui::MenuItem("Settings", NULL, wInfo.showSettingsWindow)) { wInfo.showSettingsWindow = !wInfo.showSettingsWindow; }
-                ImGui::Separator();         
+                ImGui::Separator();
                 if(ImGui::MenuItem("Quit")) { glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE); }
                 ImGui::EndMenu();
             }
             if(ImGui::BeginMenu("View"))
             {
                 ImGui::SeparatorText("Scene");
-                if(ImGui::MenuItem("Loaded Objects", "F1", wInfo.showObjTransWindow)) { wInfo.showSceneWindow = !wInfo.showSceneWindow; }
+                if(ImGui::MenuItem("Loaded Objects", "F1", wInfo.showSceneWindow)) { wInfo.showSceneWindow = !wInfo.showSceneWindow; }
                 ImGui::SeparatorText("Object");
                 if(noObjects) ImGui::BeginDisabled();
-                if(ImGui::MenuItem("Object Transformation", "F2", wInfo.showObjTransWindow)) { wInfo.showObjTransWindow = !wInfo.showObjTransWindow; }
                 if(ImGui::MenuItem("Object Material", "F3", wInfo.showObjMatWindow)) { wInfo.showObjMatWindow = !wInfo.showObjMatWindow; }
                 if(ImGui::MenuItem("Object Information", "F4", wInfo.showObjInfWindow)) { wInfo.showObjInfWindow = !wInfo.showObjInfWindow; }
                 if(noObjects) ImGui::EndDisabled();
@@ -50,6 +75,17 @@ namespace StudioGui
         aboutPopupModal(wInfo.aboutOpen);
     }
 
+    /**
+     * Creates the scene window which contains all the loaded
+     * objects and the ability to switch which object that
+     * is currently selected. The selected object will 
+     * be affected by transformations, loading textures and
+     * such.
+     * 
+     * @param showWindow: Bool if the window should be visible.
+     * @param wContext: The world context, contains information regarding
+     *                  the loaded objects and currently selected one.
+     */
     void sceneWindow(bool& showWindow, WorldContext &wContext) 
     {
         if(showWindow) {
@@ -79,28 +115,18 @@ namespace StudioGui
         }
     }
 
-
-    // Contains only PLACEHOLDER for now.
-    void objTransWindow(bool &showWindow, WorldContext &wContext)
-    {
-        if(showWindow) {
-            ImGui::Begin("Object Transformation", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
-            ImGui::SeparatorText("Translation");
-            if(ImGui::Button("Up")) { wContext.tInfo.tVals[1] = wContext.TRA_SPEED; } ImGui::SameLine();
-            if(ImGui::Button("Down")) { wContext.tInfo.tVals[1] = -wContext.TRA_SPEED; }
-            ImGui::SeparatorText("Scaling");
-            ImGui::Text("--placeholder--");
-            ImGui::SeparatorText("Rotation");
-            ImGui::Text("--placeholder--");
-            ImGui::SeparatorText("Shearing");
-            ImGui::Text("--placeholder--");
-            ImGui::SeparatorText("Reset");
-            if(ImGui::Button("Reset Object Transformations")) { wContext.tInfo.reset = true; }
-            ImGui::End();
-        }
-    }
-
-    void objInfWindow(bool &showWindow, std::string objFileName, Object::objectInfo& oInfo)
+    /**
+     * Creates a window where information regarding the currently 
+     * selected object. It will display information such as
+     * number of vertices, indices, file name, path and more. It
+     * is also here where one can select to show textures or use
+     * wireframe.
+     * 
+     * @param showWindow: Bool if the window should be visible.
+     * @param objFileName: The name of the selected object.
+     * @param oInfo: The object information of the selected object.
+     */
+    void objInfWindow(bool &showWindow, std::string objFileName, Object::ObjectInfo& oInfo)
     {
         if(showWindow) {
             ImGui::Begin("Object Information", &showWindow, ImGuiWindowFlags_AlwaysAutoResize);
@@ -133,7 +159,17 @@ namespace StudioGui
         }
     }
 
-    // Contains only PLACEHOLDER for now.
+    /**
+     * Function for handling the material of an object. Since
+     * the specification of the project stated that the
+     * material coefficients should be able to change it is
+     * in this window where it happens. However, if the object
+     * has loaded with materials from its material file one must
+     * first disable and use the default materials first.
+     * 
+     * @param showWindow: Bool if the window should be visible.
+     * @param object: The currently selected object.
+     */
     void objMatWindow(bool &showWindow, Object &object)
     {
         if(showWindow) {
@@ -163,14 +199,21 @@ namespace StudioGui
         }
     }
 
-    void aboutPopupModal(bool &aboutOpen)
+    /**
+     * Function for creating the about modal that holds
+     * information regarding creator of the program, 
+     * version number, location of project and more.
+     * 
+     * @param showWindow: Bool if the window should be visible.
+     */
+    void aboutPopupModal(bool &showWindow)
     {
-        if(aboutOpen) {
+        if(showWindow) {
             ImGui::OpenPopup("About");    
             // Always center this window when appearing
             ImVec2 center = ImGui::GetMainViewport()->GetCenter();
             ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-            if (ImGui::BeginPopupModal("About", &aboutOpen, ImGuiWindowFlags_AlwaysAutoResize))
+            if (ImGui::BeginPopupModal("About", &showWindow, ImGuiWindowFlags_AlwaysAutoResize))
             {
                 ImGui::Text(VERSION);
                 ImGui::Separator();
@@ -181,7 +224,7 @@ namespace StudioGui
                 ImGui::Text("GitHub Page: https://github.com/ThaMaster/cg_3d_studio");
                 ImGui::Text("\n");
                 if (ImGui::Button("OK", ImVec2(120, 0))) { 
-                    aboutOpen = false;
+                    showWindow = false;
                     ImGui::CloseCurrentPopup(); 
                 }
                 ImGui::SetItemDefaultFocus();
@@ -190,7 +233,17 @@ namespace StudioGui
         }
     }
 
-    void camWindow(bool &showWindow, WorldContext::cameraInfo &cInfo, glm::vec3 defaultZero, glm::vec3 defaultRef)
+    /**
+     * Function for creating the window regarding the camera
+     * movement and information. One can change the cameras
+     * different projection types and position in this window.
+     * 
+     * @param showWindow: Bool if the window should be visible.
+     * @param cInfo: The camera info, containing position and more.
+     * @param defaultZero: The default camera position.
+     * @param defaultRef: The default cameras reference point.
+     */
+    void camWindow(bool &showWindow, WorldContext::CameraInfo &cInfo, glm::vec3 defaultZero, glm::vec3 defaultRef)
     {
         if(showWindow) {
             static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
@@ -233,7 +286,16 @@ namespace StudioGui
         }
     }
 
-    // Contains only PLACEHOLDER for now.
+    /**
+     * Function for creating the window regarding the handling
+     * of light sources. As of right now, the function only alters
+     * a single light source. Since the light is directional light
+     * one can change the direction, color of light and the color 
+     * of the ambient light.
+     * 
+     * @param showWindow: Bool if the window should be visible.
+     * @param wContext: The world context, which holds the light information.
+     */
     void showLightSourcesWindow(bool &showWindow, WorldContext& wContext)
     {
         if(showWindow) {
@@ -275,19 +337,26 @@ namespace StudioGui
         }
     }
     
+    /**
+     * Function for creating the key reference window.
+     * This window does not have any functionality but
+     * is good to have if any of the keyboard shortcuts
+     * are forgotten.
+     * 
+     * @param showWindow: Bool if the window shoulds be visible.
+     */
     void keyRefWindow(bool &showWindow)
     {
         int margin = 250;
         if(showWindow){ 
             ImGui::Begin("Keyboard Shortcuts", &showWindow);
             ImGui::SeparatorText("Camera Controls");
-            ImGui::Text("Move camera forward:"); ImGui::SameLine(margin); ImGui::Text("'W'");
-            ImGui::Text("Move camera backward:"); ImGui::SameLine(margin); ImGui::Text("'S'");
-            ImGui::Text("Move camera left:"); ImGui::SameLine(margin); ImGui::Text("'A'");
-            ImGui::Text("Move camera right:"); ImGui::SameLine(margin); ImGui::Text("'D'");
             ImGui::Text("Move camera up:"); ImGui::SameLine(margin); ImGui::Text("'E'");
             ImGui::Text("Move camera down:"); ImGui::SameLine(margin); ImGui::Text("'Q'");
-
+            ImGui::Text("Move camera left:"); ImGui::SameLine(margin); ImGui::Text("'A'");
+            ImGui::Text("Move camera right:"); ImGui::SameLine(margin); ImGui::Text("'D'");
+            ImGui::Text("Move camera forward:"); ImGui::SameLine(margin); ImGui::Text("'W'");
+            ImGui::Text("Move camera backward:"); ImGui::SameLine(margin); ImGui::Text("'S'");
             ImGui::SeparatorText("Translations");
             ImGui::Text("Move object up:"); ImGui::SameLine(margin); ImGui::Text("'I'");
             ImGui::Text("Move object down:"); ImGui::SameLine(margin); ImGui::Text("'K'");
@@ -321,6 +390,15 @@ namespace StudioGui
         }
     }
 
+    /**
+     * Function for creating the studio overlay. This overlay will
+     * display the version of the program and all loaded objects.
+     * It will also be displayed here which object that is currently
+     * selected.
+     * 
+     * @param showOverlay: Bool if the overlay should be visible.
+     * @param wContext: The world context, holds information regarding objects.
+     */
     void showStudioOverlay(bool &showOverlay, WorldContext wContext)
     {
         if(showOverlay) {
@@ -374,6 +452,16 @@ namespace StudioGui
         }
     }
 
+    /**
+     * Function for creating the logwindow. This enables the program
+     * to redirect all the output from loading objects and such to
+     * be displayed inside the program instead of using the standard
+     * output (terminal). One can copy and clear the contents if it
+     * should be needed.
+     * 
+     * @param showWindow: Bool if the window should be visible.
+     * @param log: The log object that holds the log entries.
+     */
     void logWindow(bool &showWindow, Logger &log)
     {
         if(showWindow) {
@@ -410,6 +498,15 @@ namespace StudioGui
         
     }
 
+    /**
+     * Function for creating the settings window. This window changes
+     * some of the more general values as the user sees fit. It would
+     * contain more regarding the visual representation of the GUI but
+     * since this is not a mandatory for the project this is enough.
+     *
+     * @param showWindow: Bool if the window should be visible.
+     * @param wContext: The world context, holds the values to be changed.
+     */
     void settingsWindow(bool &showWindow, WorldContext &wContext) 
     {
         if(showWindow) {

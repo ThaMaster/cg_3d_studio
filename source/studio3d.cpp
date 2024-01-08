@@ -1,9 +1,3 @@
-/*
- *  Workshop 1
- *  Computer Graphics course
- *  Dept Computing Science, Umea University
- *  Stefan Johansson, stefanj@cs.umu.se
- */
 #include "studio3d.h"
 #include "studiogui.h"
 
@@ -80,7 +74,12 @@ Studio3D::~Studio3D()
     glfwTerminate();
 }
 
-// OpenGL error handler
+/**
+ * Function for checking if any errors have occurred
+ * during reading the shader files.
+ * 
+ * @return: True/False if any errors has occurred.
+ */
 bool Studio3D::checkOpenGLError() const
 {
     bool foundError = false;
@@ -132,7 +131,15 @@ string Studio3D::readShaderSource(const string shaderFile) const
     return shaderSource;
 }
 
-// Initialize OpenGL shader program
+/**
+ * Initialize the specified vertex and fragment shader to 
+ * the program. If any errors ocurr, the content will be
+ * directed to standard output since the program will not
+ * be able to start if any errors were to occur.
+ * 
+ * @param vShaderFile: The file path to the vertex shader code.
+ * @param fShaderFile: The file path to the fragment shader code.
+ */ 
 GLuint Studio3D::initProgram(const string vShaderFile, const string fShaderFile) const
 {
     GLuint program;
@@ -204,7 +211,14 @@ GLuint Studio3D::initProgram(const string vShaderFile, const string fShaderFile)
     return program;
 }
 
-// The window resize callback function
+/**
+ * The window resize callback function. Reshapes the window
+ * to the new width and height.
+ * 
+ * @param window: The window to be resized.
+ * @param width: The new width of the window.
+ * @param height: The new height of the window.
+ */
 void Studio3D::resizeCallback(GLFWwindow* window, int width, int height)
 {
     reshape(width, height);
@@ -259,7 +273,6 @@ void Studio3D::keyCallback(GLFWwindow* window, int key, int scancode, int action
             // Detect shortcut keys.
             case GLFW_KEY_O: /**/ break;
             case GLFW_KEY_F1:  wInfo.showSceneWindow = !wInfo.showSceneWindow; break;
-            case GLFW_KEY_F2: if(wContext.objects.size() != 0) wInfo.showObjTransWindow = !wInfo.showObjTransWindow; break;
             case GLFW_KEY_F3: if(wContext.objects.size() != 0) wInfo.showObjMatWindow = !wInfo.showObjMatWindow; break;
             case GLFW_KEY_F4: if(wContext.objects.size() != 0) wInfo.showObjInfWindow = !wInfo.showObjInfWindow; break;
             case GLFW_KEY_F5: wInfo.showCamWindow = !wInfo.showCamWindow; break;
@@ -358,7 +371,6 @@ void Studio3D::DrawGui()
     StudioGui::sceneWindow(wInfo.showSceneWindow, wContext);
 
     if(wContext.objects.size() != 0) {
-        StudioGui::objTransWindow(wInfo.showObjTransWindow, wContext);
         StudioGui::objMatWindow(wInfo.showObjMatWindow, wContext.objects[wContext.selectedObject]);
         StudioGui::objInfWindow(wInfo.showObjInfWindow, wContext.objects[wContext.selectedObject].fileName, wContext.objects[wContext.selectedObject].oInfo);
     }

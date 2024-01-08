@@ -18,10 +18,9 @@
 class Studio3D
 {
     public:
-        struct windowInfo {
+        struct WindowInfo {
             bool aboutOpen = false;
             bool showOverlay = true;
-            bool showObjTransWindow = false;
             bool showObjInfWindow = false;
             bool showCamWindow = false;
             bool showKeyRefWindow = false;

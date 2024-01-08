@@ -1,10 +1,39 @@
 #include "worldcontext.h"
 
+/**
+ * The world context class is to represent all the information
+ * of the rendered scene. It will contain all the loaded objects,
+ * camera position, lights and more. This class is also the
+ * object that holds all the transformation values and camera
+ * values that are used to transform objects and move the camera.
+ * 
+ * Since most of the projects components are in need for the
+ * information stored in this class, the world context class
+ * is very hard coupled.
+ * 
+ * Author: Christoffer Nordlander (c20cnr@cs.umu.se)
+ * 
+ * Version information:
+ *      2024-01-08: v1.0, first version.
+ */
+
+/**
+ * Fuinction for getting the aspect ratio of the 
+ * window.
+ * 
+ * @return Float representing the aspect ration.
+ */
 float WorldContext::getAspectRatio() 
 {
     return (float)windowWidth/(float)windowHeight;
 }
 
+/**
+ * Function for updating the matrices that is used
+ * to produce the scene. Only the selected objects
+ * model matrix will be updated when transformations
+ * are occurring.
+ */
 void WorldContext::updateMatrices() 
 {
     objects[selectedObject].updateModelMatrix(tInfo.tVals, tInfo.scVal, tInfo.rVals, ROT_SPEED, tInfo.reset);
@@ -12,6 +41,11 @@ void WorldContext::updateMatrices()
     updateProjMatrix();
 }
 
+/**
+ * Function for updating the view matrix of the
+ * scene. It will however only update the values
+ * if any changes to the offsets are made.
+ */
 void WorldContext::updateViewMatrix()
 {
     glm::vec4 newZero;
@@ -42,6 +76,11 @@ void WorldContext::updateViewMatrix()
     matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
 }
 
+/**
+ * Function for updating the projection matrix of
+ * the scene. It will update the matrix in differnet
+ * ways depending on which projection to use.
+ */
 void WorldContext::updateProjMatrix()
 {
     if(cInfo.perspProj) {
@@ -53,6 +92,16 @@ void WorldContext::updateProjMatrix()
     }
 }
 
+/**
+ * Function for applying oblique projection and returning
+ * the resulting matrix.
+ * 
+ * @param m: The matrix to be altered.
+ * @param a: The scaling factor to be applied.
+ * @param angle: The angle of the oblique projection.
+ * 
+ * @return The oblique projection matrix.
+ */
 glm::mat4x4 WorldContext::obliqueProjection(glm::mat4x4 m, float a, float angle)
 {
     glm::mat4x4 shearMat = glm::mat4x4(1.0f);
@@ -63,6 +112,10 @@ glm::mat4x4 WorldContext::obliqueProjection(glm::mat4x4 m, float a, float angle)
     return m*shearMat;
 }
 
+/**
+ * Function for clearing all the loaded objects
+ * in the scene.
+ */
 void WorldContext::clearObjects()
 {
     objects.clear();

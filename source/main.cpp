@@ -1,10 +1,3 @@
-/*
- *  Workshop 1
- *  Computer Graphics course
- *  Dept Computing Science, Umea University
- *  Stefan Johansson, stefanj@cs.umu.se
- */
-
 #include "renderer.h"
 #include "glfwcallbackmanager.h"
 
