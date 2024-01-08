@@ -23,31 +23,30 @@
 class LightSource
 {
     public:
+        glm::vec4 position;
+        glm::vec4 color;
 
-    glm::vec4 position;
-    glm::vec4 color;
+        glm::vec4 defaultPos;
+        glm::vec4 defaultColor;
 
-    glm::vec4 defaultPos;
-    glm::vec4 defaultColor;
+        LightSource(glm::vec4 pos, glm::vec4 color)
+        {
+            LightSource::position = pos;
+            LightSource::defaultPos = pos;
+            LightSource::color = color;
+            LightSource::defaultColor = color;
 
-    LightSource(glm::vec4 pos, glm::vec4 color)
-    {
-        LightSource::position = pos;
-        LightSource::defaultPos = pos;
-        LightSource::color = color;
-        LightSource::defaultColor = color;
+        }
 
-    }
+        void resetDir() 
+        {
+            LightSource::position = defaultPos;
+        }
 
-    void resetDir() 
-    {
-        LightSource::position = defaultPos;
-    }
-
-    void resetColor() 
-    {
-        LightSource::color = defaultColor;
-    }
+        void resetColor() 
+        {
+            LightSource::color = defaultColor;
+        }
 };
 
 #endif
