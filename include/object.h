@@ -7,19 +7,35 @@
 #include <glm/gtx/component_wise.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 #include <vector>
 #include <iostream>
-
 #include "vertex.h"
 
 #define BUFFER_OFFSET(i) (reinterpret_cast<char*>(0 + (i)))
 
 using namespace std;
 
+/**
+ * This class represents an object in this program. An object
+ * contains the vertices and indices that are needed in order
+ * to render the object. In this program, all faces that has
+ * the same material are grouped and rendered togheter in order
+ * to get good performance.
+ * 
+ * Each object also holds their own vertex buffer and index 
+ * buffer. This is to make it possible for multiple objects to
+ * be rendered in the scene simultaneously.
+ * 
+ * Author: Christoffer Nordlander (c20cnr@cs.umu.se)
+ * 
+ * Version information:
+ *      2024-01-08: v1.0, first version.
+ */
 class Object
 {
     public:
+
+        string fileName;
 
         struct ObjectInfo {
             size_t nShapes = 0;
@@ -42,6 +58,7 @@ class Object
             glm::vec3 ks = glm::vec3(1.0, 1.0, 1.0);
         };
 
+        float matAlpha = 2.0;
         MaterialInfo defMat = MaterialInfo();
 
         struct Face {
@@ -50,15 +67,11 @@ class Object
             vector<unsigned int> indices;
         };
 
-        string fileName;
-
         vector<Vertex> vertices;
         vector<Face> faces;
 
-        float matAlpha = 2.0;
-
+        // Vertex buffer and texture.
         GLuint vao;
-        
         GLuint texture;
 
         // Model matrix
@@ -68,37 +81,19 @@ class Object
                             0.0, 0.0, 1.0, 0.0,
                             0.0, 0.0, 0.0, 1.0};
 
-        Object(string fileName)
-        {
-            Object::fileName = fileName;
-            
-            glGenVertexArrays(1, &vao);
-            glBindVertexArray(vao);
-
-            // Create vertex buffer in the shared display list space and
-            // bind it as VertexBuffer (GL_ARRAY_BUFFER)
-            glGenBuffers( 1, &vBuffer);
-            glBindBuffer( GL_ARRAY_BUFFER, vBuffer);
-
-            /* Create buffer in the shared display list space and 
-            bind it as GL_ELEMENT_ARRAY_BUFFER */
-            glGenBuffers(1, &iBuffer);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBuffer);
-
-            glBindVertexArray(0);
-        }
-
-        vector<glm::vec3> getVertexCoords();
-        vector<glm::vec3> getVertexNormals();
-        vector<glm::vec2> getTextureCoords();
+        Object(string);
 
         void sendDataToBuffers();
         void drawObject(GLuint);
         void produceVertexNormals();
         void produceTextureCoords(float r);
-        float getLargestVertexLength();
         void updateModelMatrix(glm::vec3 tVals, float scVal, glm::vec3 rDir, float rotSpeed, bool &reset);
         void resetModel(bool&);
+        float getLargestVertexLength();
+
+        vector<glm::vec3> getVertexCoords();
+        vector<glm::vec3> getVertexNormals();
+        vector<glm::vec2> getTextureCoords();
 
     private:
         GLuint vBuffer;

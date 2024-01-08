@@ -3,12 +3,24 @@
 
 #include "glm/glm.hpp"
 
+/**
+ * This class represents a single vertex. A single vertex 
+ * contains a position, texture coordinates and its vertex 
+ * normal. It also contains functions that are regarding 
+ * vertices.
+ * 
+ * Author: Christoffer Nordlander (c20cnr@cs.umu.se)
+ * 
+ * Version information:
+ *      2024-01-08: v1.0, first version.
+ */
 class Vertex
 { 
     public:
+        // Vertex attributes.
         glm::vec3 position;
-        glm::vec2 texCoords;
         glm::vec3 normal;
+        glm::vec2 texCoords;
 
         Vertex(float x, float y, float z)
         {
@@ -31,8 +43,6 @@ class Vertex
         {
             return sqrt(pow(position.x, 2.0) + pow(position.y, 2.0) + pow(position.z, 2.0));
         }
-        
-    private:
 
 };
 

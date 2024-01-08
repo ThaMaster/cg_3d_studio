@@ -1,6 +1,45 @@
 #include "object.h"
 
 /**
+ * This class represents an object in this program. An object
+ * contains the vertices and indices that are needed in order
+ * to render the object. In this program, all faces that has
+ * the same material are grouped and rendered togheter in order
+ * to get good performance.
+ * 
+ * Each object also holds their own vertex buffer and index 
+ * buffer. This is to make it possible for multiple objects to
+ * be rendered in the scene simultaneously.
+ * 
+ * Author: Christoffer Nordlander (c20cnr@cs.umu.se)
+ * 
+ * Version information:
+ *      2024-01-08: v1.0, first version.
+ */
+
+/**
+ * Constructor of the Object class. It takes a file name and generates
+ * both the objects vertex and index buffer.
+ * 
+ * @param fileName: The name of the object file.
+ */
+Object::Object(string fileName)
+{
+    Object::fileName = fileName;
+    
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glGenBuffers( 1, &vBuffer);
+    glBindBuffer( GL_ARRAY_BUFFER, vBuffer);
+
+    glGenBuffers(1, &iBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBuffer);
+
+    glBindVertexArray(0);
+}
+
+/**
  * Function for sending the data of the object to the vertex shader. The data
  * that is sent for each vertex is:
  * 

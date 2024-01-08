@@ -1,15 +1,23 @@
-/*
- *  Workshop 1
- *  Computer Graphics course
- *  Dept Computing Science, Umea University
- *  Stefan Johansson, stefanj@cs.umu.se
- */
 #include "renderer.h"
-#include <glm/gtx/string_cast.hpp>
 
 using namespace std;
 
-// Initialize OpenGL
+/**
+ * This class renders the objects and handles the OpenGL shader files such 
+ * as loading the files, loading objects, loading textures and more.
+ * It inherits the Studio3D object and overwrites certain functions in 
+ * order to make them available in the main program.
+ * 
+ * Author: Christoffer Nordlander (c20cnr@cs.umu.se)
+ * 
+ * Version information:
+ *      2024-01-08: v1.0, first version.
+ */
+
+/**
+ * Initialize the renderer with depth test and
+ * loads the two shader files.
+ */ 
 void Renderer::initialize()
 {
     // Enable depth test
@@ -40,7 +48,10 @@ void Renderer::loadGeometry(string fileName)
     }
 }
 
-// Check if any error has been reported from the shader
+/**
+ * Function for checking if any error has been reported from 
+ * the shader.
+ */
 void Renderer::debugShader(void) const
 {
     GLint  logSize;
@@ -53,7 +64,11 @@ void Renderer::debugShader(void) const
     }
 }
 
-// Render object
+/**
+ * Function for rendering all the loaded objects in the
+ * scene. If no objects has been loaded nohting will 
+ * happen.
+ */
 void Renderer::display()
 {
     glUseProgram(program);
@@ -78,8 +93,10 @@ void Renderer::display()
  *      - Resetting the model matrix
  *      - Load a new object in the program
  * 
- * This function runs each time a callback is detected to avoid unnecessary updates.
+ * The object that where these updates occurs are the selected
+ * object only.
  * 
+ * @param objIndex: The index of the selected object.
  */
 void Renderer::updateObject(int objIndex)
 {
@@ -96,6 +113,10 @@ void Renderer::updateObject(int objIndex)
     glUseProgram(0);    
 }
 
+/**
+ * Function for updating the camera values
+ * in the shader files.
+ */
 void Renderer::updateCamera()
 {
     glUseProgram(program);
@@ -105,6 +126,10 @@ void Renderer::updateCamera()
     glUseProgram(0);
 }
 
+/**
+ * Functoin for updating the values of the
+ * light in the shader files.
+ */
 void Renderer::updateLight()
 {
     glUseProgram(program);
@@ -123,6 +148,11 @@ void Renderer::updateLight()
     glUseProgram(0);
 }
 
+/**
+ * Function for updating the material on the selected object.
+ * 
+ * @param objIndex: The index of the selected object.
+ */
 void Renderer::updateMaterial(int objIndex)
 {
     if(wContext.objects.size() != 0) {
@@ -135,10 +165,14 @@ void Renderer::updateMaterial(int objIndex)
 }
 
 /**
- * Prompts the user to write the name of the object file that is to be loaded into the program.
- * The search path for the files starts in the object_files directory.
+ * Loads the object with the specified object file name.
+ * If any errors are occurs these will be added to the 
+ * output of the function and later displayed in the 
+ * logger.
  * 
- * If no problems prasing errors are present, load the geometry of the object into the program.
+ * @param objName: The name of the object file.
+ * 
+ * @return The output string.
  */
 string Renderer::loadObjectFromGui(string objName)
 {
@@ -162,6 +196,16 @@ string Renderer::loadObjectFromGui(string objName)
     return loader.getOutputString();
 }
 
+/**
+ * Attempts to load the specified texture for the currently
+ * selected object. If any errors occurs when trying to
+ * load the texture it will be displayed in the output string.
+ * 
+ * @param textureName: The name of the texture file.
+ * @param objIndex: The index of the selected object.
+ * 
+ * @return The output string.
+ */
 string Renderer::loadTextureFromGui(string textureName, int objIndex)
 {
     string outputString = "";
@@ -176,6 +220,13 @@ string Renderer::loadTextureFromGui(string textureName, int objIndex)
     return outputString;
 }
 
+/**
+ * Function for resetting the model matrix for the
+ * currently selected object. It will restore the
+ * objects model matrix to the identity matrix.
+ * 
+ * @param objIndex: The index of the selected object.
+ */
 void Renderer::resetTransformations(int objIndex) 
 {
     glUseProgram(program);
@@ -189,6 +240,18 @@ void Renderer::resetTransformations(int objIndex)
     glUseProgram(0); 
 }
 
+/**
+ * Function for loading a texture for the currently
+ * selected object. It will overwrite the texture value
+ * of the selected object which will cause the texture
+ * to change.
+ * 
+ * @param textureName: The name of the texture file.
+ * @param texture: The actual texture values for the selected object.
+ * @param selectedObject: The index of the selected object.
+ * 
+ * @return The output string.
+ */
 string Renderer::loadTexture(string textureName, GLuint &texture, int selectedObject)
 {
     glGenTextures(1, &texture);

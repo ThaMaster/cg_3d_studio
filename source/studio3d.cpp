@@ -3,7 +3,28 @@
 
 using namespace std;
 
-// Initialize OpenGL context and viewport.
+/**
+ * This is the main class of the whole program. This class
+ * compunicates with many classes in order for loadning new
+ * objects to the scene, rendering these objects, transforming
+ * these objects and more. This is essentially the center
+ * of the program.
+ * 
+ * Author: Christoffer Nordlnader (c20cnr@cs.umu.se)
+ * 
+ * Version information:
+ *      2024-01-08: v1.0, first version.
+ */
+
+/**
+ * Constructor of the 3D studio. Initializes the OpenGL
+ * context and the viewport that will be used when
+ * rendering in the scene.
+ * 
+ * @param title: The title of the window.
+ * @param width: The starting width of the window.
+ * @param height: The starting height of the window.
+ */
 Studio3D::Studio3D(string title, int width, int height)
 {
     // Initialize glfw
@@ -46,25 +67,24 @@ Studio3D::Studio3D(string title, int width, int height)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    // Enable Gamepad Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-    // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-    // Setup Platform/Renderer backends
+
     ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
     ImGui_ImplOpenGL3_Init(NULL);
 
     // Set graphics attributes
-    glPointSize(5.0); // Unsupported in OpenGL ES 2.0
+    glPointSize(5.0);
     glLineWidth(1.0);
     glClearColor(0.2, 0.2, 0.2, 0.0);
 
     glViewport(0, 0, width, height);
 }
 
+/**
+ * Deconstructor of the class. Shutsdown all the
+ * GLFW instances and destroys the window.
+ */
 Studio3D::~Studio3D()
 {
     ImGui_ImplOpenGL3_Shutdown();
@@ -93,27 +113,53 @@ bool Studio3D::checkOpenGLError() const
     return foundError;
 }
 
+/**
+ * Function for getting the window width of the program.
+ * 
+ * @return The width of the window of the program.
+ */
 int Studio3D::width() const
 {
     return windowWidth;
 }
 
+/**
+ * Function for getting the window height of the program.
+ * 
+ * @return The height of the window of the program.
+ */
 int Studio3D::height() const
 {
     return windowHeight;
 }
 
+/**
+ * Function for getting the window of the program.
+ * 
+ * @return Pointer to the window of the program.
+ */
 GLFWwindow* Studio3D::window() const
 {
     return glfwWindow;
 }
 
+/**
+ * Function for getting the aspect ratio of the window.
+ * 
+ * @return The aspect ratio.
+ */
 float Studio3D::getAspectRatio()
 {
     return (float)windowWidth / (float) windowHeight;
 }
 
-// Read shader source files
+/**
+ * Function for reading the specified shader file. 
+ * 
+ * @param shaderFile: The file path to the shader.
+ * 
+ * @return The contents of the shader file.
+ */
 string Studio3D::readShaderSource(const string shaderFile) const
 {
     string shaderSource;
@@ -229,11 +275,11 @@ void Studio3D::resizeCallback(GLFWwindow* window, int width, int height)
  * pressed it will perform its corresponding action. When the key is later
  * released, it will reset all the values that are necessary.
  * 
- * @param window:
- * @param key:
- * @param scancode:
- * @param action:
- * @param mods:
+ * @param window: The window of the program.
+ * @param key: The key that caused the callback.
+ * @param scancode: The scancode of the key that caused the callback.
+ * @param action: The action which were performed on the key.
+ * @param mods: The input mode.
  */
 void Studio3D::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -301,7 +347,12 @@ void Studio3D::errorCallback(int error, const char* description)
     cerr << "GLFW error: " << description << endl;
 }
 
-// Start the GLFW loop
+/**
+ * Function for starting the rendering loop where
+ * all the rendering and user interaction are occuring.
+ * If the window is emitting that it should close, the 
+ * loop will be stopped and the program will be exited.
+ */
 void Studio3D::start()
 {
     // Loop until the user closes the window
@@ -338,15 +389,6 @@ void Studio3D::start()
     
 }
 
-// Render the scene 
-void Studio3D::displayNow()
-{
-    if (glfwGetCurrentContext() == nullptr)
-        return;
-
-    display();
-}
-
 /**
  * Reshape the GLFW window if the window is resized.
  * 
@@ -362,7 +404,10 @@ void Studio3D::reshape(const int width, const int height) const
 }
 
 /**
- * Function for drawing the entire graphical user interface.
+ * Function for drawing the entire graphical user interface. It
+ * will use the window information and world context to get
+ * all the information needed in order to show the interface 
+ * correctly.
  */
 void Studio3D::DrawGui()
 {
@@ -386,6 +431,13 @@ void Studio3D::DrawGui()
     StudioGui::logWindow(wInfo.showLogWindow, log);
 }
 
+/**
+ * Function for creating a FileDialog window in order
+ * to load an object file. The FileDialog will only show
+ * ".obj" files since these are the only supported for this
+ * program. Any output created when attemptning to load the
+ * file will be added to the logger.
+ */
 void Studio3D::openObjectFile()
 {
     static ImGuiFileDialog objFileDialog;
@@ -403,6 +455,14 @@ void Studio3D::openObjectFile()
     log.addLog(loaderOutput.c_str());
 }
 
+/**
+ * Function for creating a FileDialog window in order
+ * to load a texture file on the currently selected
+ * object. The FileDialog will only show ".jpg" files
+ * but can be changed in the window. Any ouput created
+ * when attempting to load the texture file will be 
+ * added to the logger object.
+ */
 void Studio3D::openTextureFile()
 {
     static ImGuiFileDialog texFileDialog;

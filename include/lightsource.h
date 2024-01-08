@@ -8,6 +8,18 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+/**
+ * This class represents a lightsource in the 3D Studio
+ * program. A light source consists of a position and a
+ * color. The program concists, as of writing the this
+ * documentation, of a single light source but by creating
+ * this class makes it easy to add additional lights.
+ * 
+ * Author: Christoffer Nordlnader (c20cnr@cs.umu.se)
+ * 
+ * Version information:
+ *      2024-01-08: v1.0, first version.
+ */
 class LightSource
 {
     public:

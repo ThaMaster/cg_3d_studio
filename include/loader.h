@@ -26,17 +26,10 @@ using namespace std;
 class Loader 
 {   
     public:
+
         Object parseFile(string, string);
         void normalizeVertexCoords(vector<Vertex>&, float l);
-
         string outputString = "";
-
-        string getOutputString() const {
-            return outputString;
-        }
-
-    protected:
-
-    private:        
+        string getOutputString() const { return outputString; }
 
 };

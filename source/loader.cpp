@@ -9,7 +9,7 @@
  * to handle the inital parsing of the file.
  * 
  * Attributes effected by method:
- *      vertexCoords    - The all vertex coordinates for a shape.
+ *      vertexCoords    - The vertex coordinates for a shape.
  *      indices         - The index of vertex coordinates for each face of a shape.
  *      textureCoords   - The texture coordinates for each face of a shape.
  *      colorValues     - The color values for each face of a shape.

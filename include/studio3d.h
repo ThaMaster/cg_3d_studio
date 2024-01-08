@@ -15,6 +15,18 @@
 #include "logger.h"
 #include "worldcontext.h"
 
+/**
+ * This is the main class of the whole program. This class
+ * compunicates with many classes in order for loadning new
+ * objects to the scene, rendering these objects, transforming
+ * these objects and more. This is essentially the center
+ * of the program.
+ * 
+ * Author: Christoffer Nordlnader (c20cnr@cs.umu.se)
+ * 
+ * Version information:
+ *      2024-01-08: v1.0, first version.
+ */
 class Studio3D
 {
     public:
@@ -37,22 +49,19 @@ class Studio3D
         ~Studio3D();
 
         GLFWwindow* window() const;
+        void start();
+
         virtual void errorCallback(int error, const char* desc);
         virtual void resizeCallback(GLFWwindow* window, int width, int height);
         virtual void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
-        void start();
         virtual void initialize() = 0;
         virtual void display() = 0;
         virtual void updateObject(int) = 0;
         virtual void updateCamera() = 0;
         virtual void updateLight() = 0;
         virtual void updateMaterial(int) = 0;
-
         virtual std::string loadObjectFromGui(std::string) = 0;
         virtual std::string loadTextureFromGui(std::string, int) = 0;
-
-        void displayNow();
 
     protected:
         bool checkOpenGLError() const;
@@ -67,18 +76,19 @@ class Studio3D
         WorldContext wContext = WorldContext();
 
     private:
-        Logger log = Logger();
+        int windowWidth = 0;
+        int windowHeight = 0;
+
         std::string objFileName;
         std::string objFilePath;
         std::string texFileName;
         std::string texFilePath;  
 
+        GLFWwindow* glfwWindow;
+        Logger log = Logger();
+        
         void DrawGui();
         void handleMouseInput(); 
-        GLFWwindow* glfwWindow;
-        int windowWidth = 0;
-        int windowHeight = 0;
-
         void openObjectFile();
         void openTextureFile();
 };
