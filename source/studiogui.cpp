@@ -1,7 +1,7 @@
 #include "studiogui.h"
-namespace StudioGui {
-
-    void mainMenuBar(GLFWwindow *glfwWindow, OpenGLWindow::windowInfo &wInfo, WorldContext &wContext)
+namespace StudioGui 
+{
+    void mainMenuBar(GLFWwindow *glfwWindow, Studio3D::windowInfo &wInfo, WorldContext &wContext)
     {
         if (ImGui::BeginMainMenuBar())
         {

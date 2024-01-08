@@ -4,12 +4,12 @@
  *  Dept Computing Science, Umea University
  *  Stefan Johansson, stefanj@cs.umu.se
  */
-#include "openglwindow.h"
+#include "studio3d.h"
 
 // Class for bridging between the C callback functions in glfw and C++ object
 class glfwCallbackManager
 {
-    static OpenGLWindow* app;
+    static Studio3D* app;
 
     static void errorCallback(int error, const char* description)
     {
@@ -30,7 +30,7 @@ class glfwCallbackManager
     }
     
 public:
-    static void initCallbacks(OpenGLWindow* glfwapp)
+    static void initCallbacks(Studio3D* glfwapp)
     {
         app = glfwapp;
         

@@ -15,7 +15,7 @@
 #include "logger.h"
 #include "worldcontext.h"
 
-class OpenGLWindow
+class Studio3D
 {
     public:
         struct windowInfo {
@@ -34,8 +34,8 @@ class OpenGLWindow
             bool showSceneWindow = false;
         } wInfo;
 
-        OpenGLWindow(std::string title, int width, int height);
-        ~OpenGLWindow();
+        Studio3D(std::string title, int width, int height);
+        ~Studio3D();
 
         GLFWwindow* window() const;
         virtual void errorCallback(int error, const char* desc);

@@ -4,13 +4,13 @@
  *  Dept Computing Science, Umea University
  *  Stefan Johansson, stefanj@cs.umu.se
  */
-#include "geometryrender.h"
+#include "renderer.h"
 #include <glm/gtx/string_cast.hpp>
 
 using namespace std;
 
 // Initialize OpenGL
-void GeometryRender::initialize()
+void Renderer::initialize()
 {
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
@@ -27,7 +27,7 @@ void GeometryRender::initialize()
  * 
  * @param fileName The name of the *.obj file to load the geometry from.
  */
-void GeometryRender::loadGeometry(string fileName)
+void Renderer::loadGeometry(string fileName)
 {
     Object newObject = loader.parseFile(fileName, "./object_files/");
     
@@ -41,7 +41,7 @@ void GeometryRender::loadGeometry(string fileName)
 }
 
 // Check if any error has been reported from the shader
-void GeometryRender::debugShader(void) const
+void Renderer::debugShader(void) const
 {
     GLint  logSize;
     glGetProgramiv( program, GL_INFO_LOG_LENGTH, &logSize );
@@ -54,7 +54,7 @@ void GeometryRender::debugShader(void) const
 }
 
 // Render object
-void GeometryRender::display()
+void Renderer::display()
 {
     glUseProgram(program);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -81,7 +81,7 @@ void GeometryRender::display()
  * This function runs each time a callback is detected to avoid unnecessary updates.
  * 
  */
-void GeometryRender::updateObject(int objIndex)
+void Renderer::updateObject(int objIndex)
 {
     glUseProgram(program);
 
@@ -96,7 +96,7 @@ void GeometryRender::updateObject(int objIndex)
     glUseProgram(0);    
 }
 
-void GeometryRender::updateCamera()
+void Renderer::updateCamera()
 {
     glUseProgram(program);
     GLuint locCam;
@@ -105,7 +105,7 @@ void GeometryRender::updateCamera()
     glUseProgram(0);
 }
 
-void GeometryRender::updateLight()
+void Renderer::updateLight()
 {
     glUseProgram(program);
     
@@ -123,7 +123,7 @@ void GeometryRender::updateLight()
     glUseProgram(0);
 }
 
-void GeometryRender::updateMaterial(int objIndex)
+void Renderer::updateMaterial(int objIndex)
 {
     if(wContext.objects.size() != 0) {
         glUseProgram(program);
@@ -140,7 +140,7 @@ void GeometryRender::updateMaterial(int objIndex)
  * 
  * If no problems prasing errors are present, load the geometry of the object into the program.
  */
-string GeometryRender::loadObjectFromGui(string objName)
+string Renderer::loadObjectFromGui(string objName)
 {
     if(!objName.empty()) {
         loader.outputString += "\nLoading ";
@@ -162,7 +162,7 @@ string GeometryRender::loadObjectFromGui(string objName)
     return loader.getOutputString();
 }
 
-string GeometryRender::loadTextureFromGui(string textureName, int objIndex)
+string Renderer::loadTextureFromGui(string textureName, int objIndex)
 {
     string outputString = "";
     if(!textureName.empty()) {
@@ -176,7 +176,7 @@ string GeometryRender::loadTextureFromGui(string textureName, int objIndex)
     return outputString;
 }
 
-void GeometryRender::resetTransformations(int objIndex) 
+void Renderer::resetTransformations(int objIndex) 
 {
     glUseProgram(program);
 
@@ -189,7 +189,7 @@ void GeometryRender::resetTransformations(int objIndex)
     glUseProgram(0); 
 }
 
-string GeometryRender::loadTexture(string textureName, GLuint &texture, int selectedObject)
+string Renderer::loadTexture(string textureName, GLuint &texture, int selectedObject)
 {
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);

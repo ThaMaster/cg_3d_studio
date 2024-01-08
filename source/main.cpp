@@ -5,14 +5,14 @@
  *  Stefan Johansson, stefanj@cs.umu.se
  */
 
-#include "geometryrender.h"
+#include "renderer.h"
 #include "glfwcallbackmanager.h"
 
-OpenGLWindow* glfwCallbackManager::app = nullptr;
+Studio3D* glfwCallbackManager::app = nullptr;
 
 int main(int argc, char **argv)
 {
-    GeometryRender app("3D Studio", 1024, 768);
+    Renderer app("3D Studio", 1024, 768);
     glfwCallbackManager::initCallbacks(&app);
     app.initialize();
 

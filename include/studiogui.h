@@ -1,13 +1,13 @@
 #ifndef STUDIOGUI_H
 #define STUDIOGUI_H
 
-#include "openglwindow.h"
+#include "studio3d.h"
 
 #define VERSION "3D Studio v0.4.2"
 
 namespace StudioGui {
 
-    void mainMenuBar(GLFWwindow*, OpenGLWindow::windowInfo&, WorldContext&);
+    void mainMenuBar(GLFWwindow*, Studio3D::windowInfo&, WorldContext&);
     void sceneWindow(bool&, WorldContext&);
     void aboutPopupModal(bool&);
     void objTransWindow(bool&, WorldContext&);

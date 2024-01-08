@@ -59,12 +59,6 @@ class WorldContext
         glm::vec4 ambientLight = glm::vec4(0.1, 0.1, 0.1, 1.0);
         const glm::vec4 defaultAmbientLight = glm::vec4(0.1, 0.1, 0.1, 1.0);
 
-        // Model matrix
-        glm::mat4x4 matModel = {
-                            1.0, 0.0, 0.0, 0.0, 
-                            0.0, 1.0, 0.0, 0.0,
-                            0.0, 0.0, 1.0, 0.0,
-                            0.0, 0.0, 0.0, 1.0};
         // View matrix
         glm::mat4x4 matView = glm::lookAt(cInfo.pZero, cInfo.pRef, cInfo.upVec);
         

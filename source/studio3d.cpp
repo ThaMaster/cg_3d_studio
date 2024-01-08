@@ -4,12 +4,13 @@
  *  Dept Computing Science, Umea University
  *  Stefan Johansson, stefanj@cs.umu.se
  */
-#include "openglwindow.h"
+#include "studio3d.h"
 #include "studiogui.h"
+
 using namespace std;
 
 // Initialize OpenGL context and viewport.
-OpenGLWindow::OpenGLWindow(string title, int width, int height)
+Studio3D::Studio3D(string title, int width, int height)
 {
     // Initialize glfw
     if (!glfwInit())
@@ -70,7 +71,7 @@ OpenGLWindow::OpenGLWindow(string title, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-OpenGLWindow::~OpenGLWindow()
+Studio3D::~Studio3D()
 {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -80,7 +81,7 @@ OpenGLWindow::~OpenGLWindow()
 }
 
 // OpenGL error handler
-bool OpenGLWindow::checkOpenGLError() const
+bool Studio3D::checkOpenGLError() const
 {
     bool foundError = false;
     GLenum glError = glGetError();
@@ -93,28 +94,28 @@ bool OpenGLWindow::checkOpenGLError() const
     return foundError;
 }
 
-int OpenGLWindow::width() const
+int Studio3D::width() const
 {
     return windowWidth;
 }
 
-int OpenGLWindow::height() const
+int Studio3D::height() const
 {
     return windowHeight;
 }
 
-GLFWwindow* OpenGLWindow::window() const
+GLFWwindow* Studio3D::window() const
 {
     return glfwWindow;
 }
 
-float OpenGLWindow::getAspectRatio()
+float Studio3D::getAspectRatio()
 {
     return (float)windowWidth / (float) windowHeight;
 }
 
 // Read shader source files
-string OpenGLWindow::readShaderSource(const string shaderFile) const
+string Studio3D::readShaderSource(const string shaderFile) const
 {
     string shaderSource;
     string line;
@@ -132,7 +133,7 @@ string OpenGLWindow::readShaderSource(const string shaderFile) const
 }
 
 // Initialize OpenGL shader program
-GLuint OpenGLWindow::initProgram(const string vShaderFile, const string fShaderFile) const
+GLuint Studio3D::initProgram(const string vShaderFile, const string fShaderFile) const
 {
     GLuint program;
     int i;
@@ -204,7 +205,7 @@ GLuint OpenGLWindow::initProgram(const string vShaderFile, const string fShaderF
 }
 
 // The window resize callback function
-void OpenGLWindow::resizeCallback(GLFWwindow* window, int width, int height)
+void Studio3D::resizeCallback(GLFWwindow* window, int width, int height)
 {
     reshape(width, height);
 }
@@ -220,7 +221,7 @@ void OpenGLWindow::resizeCallback(GLFWwindow* window, int width, int height)
  * @param action:
  * @param mods:
  */
-void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void Studio3D::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     static ImGuiFileDialog fileDialog;
     
@@ -282,13 +283,13 @@ void OpenGLWindow::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 }
 
 // GLFW error callback function
-void OpenGLWindow::errorCallback(int error, const char* description)
+void Studio3D::errorCallback(int error, const char* description)
 {
     cerr << "GLFW error: " << description << endl;
 }
 
 // Start the GLFW loop
-void OpenGLWindow::start()
+void Studio3D::start()
 {
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(glfwWindow)) {
@@ -325,7 +326,7 @@ void OpenGLWindow::start()
 }
 
 // Render the scene 
-void OpenGLWindow::displayNow()
+void Studio3D::displayNow()
 {
     if (glfwGetCurrentContext() == nullptr)
         return;
@@ -340,7 +341,7 @@ void OpenGLWindow::displayNow()
  * @param height The new height to reshape the window to.
  * 
  */
-void OpenGLWindow::reshape(const int width, const int height) const
+void Studio3D::reshape(const int width, const int height) const
 {
     if (glfwGetCurrentContext() == nullptr) 
         return;
@@ -350,7 +351,7 @@ void OpenGLWindow::reshape(const int width, const int height) const
 /**
  * Function for drawing the entire graphical user interface.
  */
-void OpenGLWindow::DrawGui()
+void Studio3D::DrawGui()
 {
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
     StudioGui::mainMenuBar(glfwWindow, wInfo, wContext);
@@ -373,7 +374,7 @@ void OpenGLWindow::DrawGui()
     StudioGui::logWindow(wInfo.showLogWindow, log);
 }
 
-void OpenGLWindow::openObjectFile()
+void Studio3D::openObjectFile()
 {
     static ImGuiFileDialog objFileDialog;
     std::string loaderOutput;
@@ -390,7 +391,7 @@ void OpenGLWindow::openObjectFile()
     log.addLog(loaderOutput.c_str());
 }
 
-void OpenGLWindow::openTextureFile()
+void Studio3D::openTextureFile()
 {
     static ImGuiFileDialog texFileDialog;
     std::string textureOutput;
@@ -412,7 +413,7 @@ void OpenGLWindow::openTextureFile()
  * mouse is moving changes the camera rotation offset ONLY if the 
  * left mouse button is pressed.
  */
-void OpenGLWindow::handleMouseInput() 
+void Studio3D::handleMouseInput() 
 {
     if(ImGui::IsMouseDragging(ImGuiMouseButton_Left, -1.0f) && !ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow)) {
         wContext.cInfo.camRotOffset = glm::vec3(-ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y, 0.0f);

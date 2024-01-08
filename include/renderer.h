@@ -1,14 +1,14 @@
 #pragma once
 
-#include "openglwindow.h"
+#include "studio3d.h"
 #include "loader.h"
 #include "stb_image.h"
 
-class GeometryRender : public OpenGLWindow
+class Renderer : public Studio3D
 {
 public:
     template<typename... ARGS>
-    GeometryRender(ARGS&&... args) : OpenGLWindow{ std::forward<ARGS>(args)... }
+    Renderer(ARGS&&... args) : Studio3D{ std::forward<ARGS>(args)... }
     {}
     
     void initialize();
