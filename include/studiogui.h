@@ -16,7 +16,7 @@ namespace StudioGui {
     void camWindow(bool&, WorldContext::cameraInfo&, glm::vec3, glm::vec3);
     void keyRefWindow(bool&);
     void showStudioOverlay(bool&, WorldContext);
-    void showLightSourcesWindow(bool&, LightSource&, WorldContext&);
+    void showLightSourcesWindow(bool&, WorldContext&);
     void logWindow(bool&, Logger&);
     void settingsWindow(bool&, WorldContext&);
 

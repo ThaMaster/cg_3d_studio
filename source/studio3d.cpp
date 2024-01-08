@@ -363,7 +363,7 @@ void Studio3D::DrawGui()
         StudioGui::objInfWindow(wInfo.showObjInfWindow, wContext.objects[wContext.selectedObject].fileName, wContext.objects[wContext.selectedObject].oInfo);
     }
     StudioGui::camWindow(wInfo.showCamWindow, wContext.cInfo, wContext.pZeroDefault, wContext.pRefDefault);
-    StudioGui::showLightSourcesWindow(wInfo.showLightSourcesWindow, wContext.light, wContext);
+    StudioGui::showLightSourcesWindow(wInfo.showLightSourcesWindow, wContext);
     StudioGui::keyRefWindow(wInfo.showKeyRefWindow);
     StudioGui::showStudioOverlay(wInfo.showOverlay, wContext);
 

@@ -234,7 +234,7 @@ namespace StudioGui
     }
 
     // Contains only PLACEHOLDER for now.
-    void showLightSourcesWindow(bool &showWindow, LightSource &lightSource, WorldContext& wContext)
+    void showLightSourcesWindow(bool &showWindow, WorldContext& wContext)
     {
         if(showWindow) {
             static ImGuiSliderFlags flags = ImGuiSliderFlags_AlwaysClamp;
@@ -242,24 +242,24 @@ namespace StudioGui
             ImGui::SeparatorText("Position");
             ImGui::Text("Light Position: ");
             ImGui::PushItemWidth(100);
-            ImGui::Text("X: %.3f", lightSource.position.x); ImGui::SameLine(); 
-            ImGui::Text("Y: %.3f", lightSource.position.y); ImGui::SameLine(); 
-            ImGui::Text("Z: %.3f", lightSource.position.z);
+            ImGui::Text("X: %.3f", wContext.light.position.x); ImGui::SameLine(); 
+            ImGui::Text("Y: %.3f", wContext.light.position.y); ImGui::SameLine(); 
+            ImGui::Text("Z: %.3f", wContext.light.position.z);
             ImGui::PopItemWidth();
-            ImGui::SliderFloat("X",&lightSource.position.x, -10.0f, 10.0f, "%.2f", flags);
-            ImGui::SliderFloat("Y",&lightSource.position.y, -10.0f, 10.0f, "%.2f", flags);
-            ImGui::SliderFloat("Z",&lightSource.position.z, -10.0f, 10.0f, "%.2f", flags);
-            if(ImGui::Button("Reset Light Direction")) { lightSource.resetDir(); }
+            ImGui::SliderFloat("X",&wContext.light.position.x, -10.0f, 10.0f, "%.2f", flags);
+            ImGui::SliderFloat("Y",&wContext.light.position.y, -10.0f, 10.0f, "%.2f", flags);
+            ImGui::SliderFloat("Z",&wContext.light.position.z, -10.0f, 10.0f, "%.2f", flags);
+            if(ImGui::Button("Reset Light Direction")) { wContext.light.resetDir(); }
             ImGui::SeparatorText("Color");
             ImGui::PushItemWidth(100);
-            ImGui::Text("R: %.3f", lightSource.color.x); ImGui::SameLine(); 
-            ImGui::Text("G: %.3f", lightSource.color.y); ImGui::SameLine(); 
-            ImGui::Text("B: %.3f", lightSource.color.z);
+            ImGui::Text("R: %.3f", wContext.light.color.x); ImGui::SameLine(); 
+            ImGui::Text("G: %.3f", wContext.light.color.y); ImGui::SameLine(); 
+            ImGui::Text("B: %.3f", wContext.light.color.z);
             ImGui::PopItemWidth();
-            ImGui::SliderFloat("R",&lightSource.color.x, 0.0f, 1.0f, "%.2f", flags);
-            ImGui::SliderFloat("G",&lightSource.color.y, 0.0f, 1.0f, "%.2f", flags);
-            ImGui::SliderFloat("B",&lightSource.color.z, 0.0f, 1.0f, "%.2f", flags);
-            if(ImGui::Button("Reset Light Color")) { lightSource.resetColor(); }
+            ImGui::SliderFloat("R",&wContext.light.color.x, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("G",&wContext.light.color.y, 0.0f, 1.0f, "%.2f", flags);
+            ImGui::SliderFloat("B",&wContext.light.color.z, 0.0f, 1.0f, "%.2f", flags);
+            if(ImGui::Button("Reset Light Color")) { wContext.light.resetColor(); }
             ImGui::SeparatorText("Ambient Light Intensity");
             ImGui::PushItemWidth(100);
             ImGui::Text("R: %.3f", wContext.ambientLight.x); ImGui::SameLine(); 
