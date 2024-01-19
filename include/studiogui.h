@@ -20,7 +20,7 @@
  *      2024-01-08: v1.0, first version.
  */
 
-#define VERSION "3D Studio v1.0.0"
+#define VERSION "3D Studio v1.1.0"
 
 namespace StudioGui {
 
