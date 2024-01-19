@@ -20,18 +20,19 @@
  * 
  * @returns New 3D object from the file.
  */
-Object Loader::parseFile(string filePath, string mFolder) 
+Object Loader::parseFile(bool &parseSuccessful, string fileName, string filePath) 
 {
+    parseSuccessful = false;
     tinyobj::ObjReaderConfig readerConfig;
-    readerConfig.mtl_search_path = mFolder;
+    readerConfig.mtl_search_path = filePath;
     tinyobj::ObjReader reader;
-    Object newObject = Object(filePath);
-    if(!reader.ParseFromFile("./object_files/" + filePath, readerConfig)) {
+    Object newObject = Object(fileName);
+    if(!reader.ParseFromFile(filePath + "/" + fileName, readerConfig)) {
         // If reader detects known error.
         if (!reader.Error().empty()) {
             outputString += "\nError: \n";
             outputString += "\tTinyObjReader: ";
-            outputString += reader.Error(); 
+            outputString += reader.Error();
         }
         // If reader is unable to parse the file.
         return newObject;
@@ -124,6 +125,7 @@ Object Loader::parseFile(string filePath, string mFolder)
     if(newObject.oInfo.nTexCoords == 0) newObject.produceTextureCoords(largestVectorLength);
     normalizeVertexCoords(newObject.vertices, largestVectorLength);
     newObject.oInfo.objectLoaded = true;
+    parseSuccessful = true;
     return newObject;
 }
 

@@ -103,6 +103,10 @@ void Object::drawObject(GLuint program)
     locHasTexture = glGetUniformLocation(program, "showTexture");
     glUniform1i(locHasTexture, oInfo.showTexture);
 
+    GLuint locAlpha;
+    locAlpha = glGetUniformLocation(program, "alpha");
+    glUniform1f(locAlpha, (matAlpha));
+
     int offset = 0;
     for(Face face : faces) {
         if(oInfo.useDefaultMat) {

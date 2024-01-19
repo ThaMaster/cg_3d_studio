@@ -28,9 +28,8 @@ class Renderer : public Studio3D
         void updateObject(int) override;
         void updateCamera() override;
         void updateLight() override;
-        void updateMaterial(int) override;
-        string loadObjectFromGui(string) override;
-        string loadTextureFromGui(string, int) override;
+        string loadObjectFromGui(string, string) override;
+        string loadTextureFromGui(string, string, int) override;
 
     private:
         GLuint program;
@@ -38,7 +37,7 @@ class Renderer : public Studio3D
         bool objectParseSuccess;
 
         void debugShader(void) const;
-        void loadGeometry(string);
+        void loadGeometry(string, string);
         void resetTransformations(int);
-        string loadTexture(string, GLuint&, int);
+        string loadTexture(string, string, GLuint&, int);
 };

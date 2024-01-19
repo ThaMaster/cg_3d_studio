@@ -372,7 +372,6 @@ void Studio3D::start()
         updateObject(wContext.selectedObject);
         updateCamera();
         updateLight();
-        updateMaterial(wContext.selectedObject);
         
         // Call display in geomentryRender to render the scene
         display();
@@ -447,7 +446,7 @@ void Studio3D::openObjectFile()
         if (objFileDialog.IsOk() == true) {
             objFileName = objFileDialog.GetCurrentFileName();
             objFilePath = objFileDialog.GetCurrentPath();
-            loaderOutput = loadObjectFromGui(objFileName);
+            loaderOutput = loadObjectFromGui(objFilePath, objFileName);
         }
         objFileDialog.Close();
         wInfo.openObjFileDialog = false;
@@ -470,9 +469,9 @@ void Studio3D::openTextureFile()
     texFileDialog.OpenDialog("ChooseFileDlgKey", "Choose File", ".jpg", ".");
     if (texFileDialog.Display("ChooseFileDlgKey")) {
         if (texFileDialog.IsOk() == true) {
-            texFileName = texFileDialog.GetCurrentFileName();
-            texFilePath = texFileDialog.GetCurrentPath();
-            textureOutput = loadTextureFromGui(texFileName, wContext.selectedObject);
+            texName = texFileDialog.GetCurrentFileName();
+            texPath = texFileDialog.GetCurrentPath();
+            textureOutput = loadTextureFromGui(texName, texPath, wContext.selectedObject);
         }
         texFileDialog.Close();
         wInfo.openTexFileDialog = false;

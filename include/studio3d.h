@@ -45,7 +45,7 @@ class Studio3D
             bool showSceneWindow = false;
         } wInfo;
 
-        Studio3D(std::string title, int width, int height);
+        Studio3D(string title, int width, int height);
         ~Studio3D();
 
         GLFWwindow* window() const;
@@ -59,9 +59,8 @@ class Studio3D
         virtual void updateObject(int) = 0;
         virtual void updateCamera() = 0;
         virtual void updateLight() = 0;
-        virtual void updateMaterial(int) = 0;
-        virtual std::string loadObjectFromGui(std::string) = 0;
-        virtual std::string loadTextureFromGui(std::string, int) = 0;
+        virtual string loadObjectFromGui(string, string) = 0;
+        virtual string loadTextureFromGui(string, string, int) = 0;
 
     protected:
         bool checkOpenGLError() const;
@@ -69,8 +68,8 @@ class Studio3D
         int height() const;
         float getAspectRatio();
 
-        std::string readShaderSource(const std::string shaderFile) const;
-        GLuint initProgram(const std::string vShaderFile, const std::string fShaderFile) const;
+        string readShaderSource(const string shaderFile) const;
+        GLuint initProgram(const string vShaderFile, const string fShaderFile) const;
 
         void reshape(const int width, const int height) const;
         WorldContext wContext = WorldContext();
@@ -79,10 +78,10 @@ class Studio3D
         int windowWidth = 0;
         int windowHeight = 0;
 
-        std::string objFileName;
-        std::string objFilePath;
-        std::string texFileName;
-        std::string texFilePath;  
+        string objFileName;
+        string objFilePath;
+        string texName;
+        string texPath;  
 
         GLFWwindow* glfwWindow;
         Logger log = Logger();

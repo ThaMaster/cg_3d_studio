@@ -419,7 +419,6 @@ namespace StudioGui
             ImGui::SetNextWindowBgAlpha(0.35f);
             if(ImGui::Begin("Overlay", &showOverlay, window_flags))
             {
-                //d
                 string selected;
                 ImGui::SeparatorText(VERSION);
                 if(wContext.objects.size() != 0) {
@@ -428,7 +427,6 @@ namespace StudioGui
                     for(Object object : wContext.objects) {
                         char fileName[object.fileName.length()+1];
                         strcpy(fileName, object.fileName.c_str());
-
                         if(wContext.selectedObject == oIndex) {
                             selected = "(Selected)";
                         } else {

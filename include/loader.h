@@ -27,7 +27,7 @@ class Loader
 {   
     public:
 
-        Object parseFile(string, string);
+        Object parseFile(bool&, string, string);
         void normalizeVertexCoords(vector<Vertex>&, float l);
         string outputString = "";
         string getOutputString() const { return outputString; }

@@ -35,9 +35,9 @@ void Renderer::initialize()
  * 
  * @param fileName The name of the *.obj file to load the geometry from.
  */
-void Renderer::loadGeometry(string fileName)
+void Renderer::loadGeometry(string filePath, string fileName)
 {
-    Object newObject = loader.parseFile(fileName, "./object_files/");
+    Object newObject = loader.parseFile(objectParseSuccess, fileName, filePath + "/");
     
     // Only load the object if it successfully parsed the object file.
     if(newObject.oInfo.objectLoaded) {
@@ -149,22 +149,6 @@ void Renderer::updateLight()
 }
 
 /**
- * Function for updating the material on the selected object.
- * 
- * @param objIndex: The index of the selected object.
- */
-void Renderer::updateMaterial(int objIndex)
-{
-    if(wContext.objects.size() != 0) {
-        glUseProgram(program);
-        GLuint locAlpha;
-        locAlpha = glGetUniformLocation(program, "alpha");
-        glUniform1f(locAlpha, (wContext.objects[objIndex].matAlpha));
-        glUseProgram(0);
-    }
-}
-
-/**
  * Loads the object with the specified object file name.
  * If any errors are occurs these will be added to the 
  * output of the function and later displayed in the 
@@ -174,21 +158,15 @@ void Renderer::updateMaterial(int objIndex)
  * 
  * @return The output string.
  */
-string Renderer::loadObjectFromGui(string objName)
+string Renderer::loadObjectFromGui(string objPath, string objName)
 {
     if(!objName.empty()) {
-        loader.outputString += "\nLoading ";
-        loader.outputString += objName;
-        loader.outputString += "...\n";
-        loadGeometry(objName);
+        loader.outputString += "\nLoading " + objName + "...\n";
+        loadGeometry(objPath, objName);
         if(objectParseSuccess) {
-            loader.outputString += "\nSuccessfully loaded \"";
-            loader.outputString += objName;
-            loader.outputString += "\"\n\n";
+            loader.outputString += "\nSuccessfully loaded \"" + objName + "\"\n\n";
         } else {
-            loader.outputString += "\nFailed to load \"";
-            loader.outputString += objName;
-            loader.outputString += "\", returning.\n\n";
+            loader.outputString += "\nFailed to load \"" + objName + "\" at path: " + objPath + "/" + objName + " \n returning...\n";
         }
     } else {
         loader.outputString += "\nNo file specified, returning.\n\n";
@@ -206,14 +184,12 @@ string Renderer::loadObjectFromGui(string objName)
  * 
  * @return The output string.
  */
-string Renderer::loadTextureFromGui(string textureName, int objIndex)
+string Renderer::loadTextureFromGui(string texName, string texPath, int objIndex)
 {
     string outputString = "";
-    if(!textureName.empty()) {
-        outputString += "\nLoading ";
-        outputString += textureName;
-        outputString += "...\n";
-        outputString += loadTexture(textureName, wContext.objects[objIndex].texture, objIndex);
+    if(!texName.empty()) {
+        outputString += "\nLoading " + texName + "...\n";
+        outputString += loadTexture(texName, texPath, wContext.objects[objIndex].texture, objIndex);
     } else {
         outputString += "\nNo texture specified, returning.\n\n";
     }
@@ -246,13 +222,14 @@ void Renderer::resetTransformations(int objIndex)
  * of the selected object which will cause the texture
  * to change.
  * 
- * @param textureName: The name of the texture file.
+ * @param texName: The name of the texture file.
+ * @param texPath: The path to the texture file.
  * @param texture: The actual texture values for the selected object.
  * @param selectedObject: The index of the selected object.
  * 
  * @return The output string.
  */
-string Renderer::loadTexture(string textureName, GLuint &texture, int selectedObject)
+string Renderer::loadTexture(string texName, string texPath,  GLuint &texture, int selectedObject)
 {
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -263,15 +240,15 @@ string Renderer::loadTexture(string textureName, GLuint &texture, int selectedOb
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char *data = stbi_load(("./textures/" + textureName).c_str(), &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load((texPath + "/" + texName).c_str(), &width, &height, &nrChannels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
-        return "\nFailed to load texture \"" + textureName + "\"\n";
+        return "\nFailed to load texture \"" + texName + "\" at path: " + texPath + "/" + texName + " \n returning...\n";
     }
     stbi_image_free(data);
     wContext.objects[selectedObject].oInfo.hasTexture = true;
     wContext.objects[selectedObject].oInfo.showTexture = true;
-    return "\nSuccessfully loaded texture \"" + textureName + "\"\n";
+    return "\nSuccessfully loaded texture \"" + texName + "\"\n";
 }

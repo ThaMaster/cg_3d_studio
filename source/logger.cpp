@@ -42,6 +42,7 @@ void Logger::clear()
  */
 void Logger::addLog(const char* logEntry, ...) 
 {
+    textBuffer.clear();
     int prevSize = textBuffer.size();
     va_list args;
     va_start(args, logEntry);
